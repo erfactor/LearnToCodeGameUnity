@@ -35,7 +35,7 @@ namespace Services
 
         private void Start()
         {
-            var levelFile = "good_level.txt";
+            var levelFile = "Level2.lvl";
             var path = Path.Combine(Application.dataPath, "Levels", levelFile);
             LoadLevel(path);
         }
