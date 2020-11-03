@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Enumerations;
+using UnityEngine;
 
 namespace Models
 {
@@ -30,6 +31,12 @@ namespace Models
                 }
                 _fields[x, y] = value;
             }
+        }
+
+        public Field this[Vector2Int location]
+        {
+            get => _fields[location.x, location.y];
+            set => _fields[location.x, location.y] = value;
         }
     }
 }

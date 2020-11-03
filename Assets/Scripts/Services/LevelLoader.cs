@@ -15,13 +15,17 @@ namespace Services
     {
         // The instance of the LevelEditor
         public static LevelLoader Instance;
-        // Dictionary as the parent for all the GameObjects per layer
-        private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
-        // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
-        private GameObject _tileLevelParent;
 
         // The list of tiles the user can use to create maps. Public so the user can add all user-created prefabs
         public Tileset Tileset;
+
+        public string LevelFileName;
+
+        // Dictionary as the parent for all the GameObjects per layer
+        private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
+
+        // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
+        private GameObject _tileLevelParent;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
@@ -35,8 +39,7 @@ namespace Services
 
         private void Start()
         {
-            var levelFile = "Level2.lvl";
-            var path = Path.Combine(Application.dataPath, "Levels", levelFile);
+            var path = Path.Combine(Application.dataPath, "Levels", LevelFileName);
             LoadLevel(path);
         }
 
@@ -69,7 +72,16 @@ namespace Services
 
                     if (tilePrefabName != string.Empty)
                     {
-                        var tile = CreateGameObject(tilePrefabName, x, y, 2).GetComponent<Tile>();
+                        var rotation = Quaternion.identity;
+                        if (y == 0 || y == height - 1)
+                        {
+                            rotation = Quaternion.AngleAxis(90, Vector3.forward);
+                            if (x == 0 && y == 0) rotation = Quaternion.AngleAxis(90, Vector3.back);
+                            if (x == 0 && y == height - 1) rotation = Quaternion.AngleAxis(180, Vector3.forward);
+                            if (x == width -1 && y == 0) rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                        }
+
+                        var tile = CreateGameObject(tilePrefabName, x, y, 2, rotation).GetComponent<Tile>();
                         tileType = tile.TileType;
                     }
 
@@ -85,28 +97,26 @@ namespace Services
         {
             var code = new ICommand[]
             {
-                new MoveCommand(Direction.Right, 1),
+                new MoveCommand(Direction.Left, 1),
                 new MoveCommand(Direction.Up, 2),
                 new MoveCommand(Direction.Left, 3),
                 new MoveCommand(Direction.Down, 4),
-                new JumpCommand(0),
+                new JumpCommand(0)
             };
-            
-            while(true)
+
+            while (true)
             {
-                foreach (var bot in board.Bots)
-                {
-                    bot.CommandId = code[bot.CommandId].Execute(board, bot);
-                }
+                foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
                 yield return new WaitForSeconds(.5f);
             }
         }
 
-        private Transform CreateGameObject(string prefabName, int xPos, int yPos, int zPos)
+        private Transform CreateGameObject(string prefabName, int xPos, int yPos, int zPos,
+            Quaternion rotation = new Quaternion())
         {
             var prefab = Tiles.First(t => t.name == prefabName);
             var parent = GetLayerParent(zPos).transform;
-            var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), Quaternion.identity);
+            var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), rotation);
             newObject.name = prefab.name;
             // Set the object's parent to the layer parent variable so it doesn't clutter our Hierarchy
             newObject.parent = parent;

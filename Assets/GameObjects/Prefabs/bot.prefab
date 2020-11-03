@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6515459190667696462}
   - component: {fileID: 6515459190667696457}
   m_Layer: 0
-  m_Name: Player
+  m_Name: bot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,7 +48,6 @@ SpriteRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -72,8 +71,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 8244664223469170920, guid: 2b22e58cf7fbd7946b874f61d6cbbebc, type: 3}
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 8244664223469170920, guid: 2b22e58cf7fbd7946b874f61d6cbbebc,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
