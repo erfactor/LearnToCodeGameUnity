@@ -166,6 +166,75 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tileset: {fileID: 1598100341489071453, guid: 2c85fd0df67b4df4aaddbb3cc7ecaf1c, type: 3}
   LevelFileName: pro_lvl.txt
+--- !u!1001 &734359456
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -5.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.54
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696456, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6515459190667696461, guid: 34a02393232ba65468a926dbf974770d,
+        type: 3}
+      propertyPath: m_Name
+      value: bot
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 34a02393232ba65468a926dbf974770d, type: 3}
 --- !u!1 &1696428837
 GameObject:
   m_ObjectHideFlags: 0
