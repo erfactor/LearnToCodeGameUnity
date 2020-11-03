@@ -30,7 +30,7 @@ namespace Commands
         {
             var newLocation = bot.BoardLocation + _directionVector[_direction];
             var newLocationField = board[newLocation];
-            if (newLocationField.TileType == TileType.Normal || newLocationField.Bot == null)
+            if (newLocationField?.TileType == TileType.Normal || newLocationField.Bot == null)
             {
                 Console.WriteLine(newLocationField.TileType);
                 board[bot.BoardLocation].Bot = null;

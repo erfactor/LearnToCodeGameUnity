@@ -99,7 +99,7 @@ namespace Services
             {
                 new MoveCommand(Direction.Left, 1),
                 new MoveCommand(Direction.Up, 2),
-                new MoveCommand(Direction.Left, 3),
+                new MoveCommand(Direction.Right, 3),
                 new MoveCommand(Direction.Down, 4),
                 new JumpCommand(0)
             };

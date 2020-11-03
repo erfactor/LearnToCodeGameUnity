@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 384539013}
   - component: {fileID: 384539014}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: LevelLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tileset: {fileID: 1598100341489071453, guid: 2c85fd0df67b4df4aaddbb3cc7ecaf1c, type: 3}
-  LevelFileName: good_level.txt
+  LevelFileName: pro_lvl.txt
 --- !u!1 &1696428837
 GameObject:
   m_ObjectHideFlags: 0
