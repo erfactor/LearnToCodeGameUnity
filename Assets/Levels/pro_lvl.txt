@@ -3,7 +3,7 @@
 ,edge;,tile1;,tile2;,tile1;,tile2;,tile1;,tile2;,tile1;,tile2;,edge
 ,edge;,tile2;,tile1;bot,tile2;bot,tile1;bot,tile2;bot,tile1;,tile2;,tile1;,edge
 ,edge;,tile1;bot,tile2;bot,tile1;bot,tile2;bot,tile1;bot,tile2;bot,tile1;,tile2;,edge
-,edge;,tile2;,tile1;bot,tile2;bot,tile1;bot,tile1;bot,tile1;,tile2;,tile1;,edge
+,edge;,tile2;,tile1;bot,tile2;bot,tile1;bot,tile2;bot,tile1;,tile2;,tile1;,edge
 ,edge;,tile1;,tile2;bot,tile1;,tile2;,tile1;bot,tile2;,tile1;,tile2;,edge
 ,edge;,tile2;,tile1;,tile2;,tile1;,tile2;,tile1;,tile2;,tile1;,edge
 ,corner;,edge;,edge;,edge;,edge;,edge;,edge;,edge;,edge;,corner
