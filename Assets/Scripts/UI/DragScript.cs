@@ -12,14 +12,30 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     private Transform startParent;
     private Vector3 startPosition;
 
+    private bool isReplicator = true;
+
     public void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
     }
 
+    public void Replicate()
+    {
+        var newObject = Instantiate(gameObject);
+        newObject.transform.SetParent(gameObject.transform.parent);
+        newObject.transform.position = transform.position;
+        newObject.name = transform.name;
+    }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (isReplicator)
+        {
+            isReplicator = false;
+            Replicate();
+        }
+
         Debug.Log("OnBeginDrag");
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;

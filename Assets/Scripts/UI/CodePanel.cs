@@ -14,23 +14,37 @@ public class CodePanel : MonoBehaviour, IDropHandler
 
     public static GameObject draggedObject;
 
-    private List<CodeLine> codeLines;
+
+    private static List<List<CodeLine>> solutions;
+    private const int numberOfSolutions = 3;
+    private static int currentSolutionIndex = 0;
+
+    private static List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
+
     private float ScrollY;
 
-    private Vector2 topLeftCorner;
-    private Rect panelRect;
+    private static Vector2 topLeftCorner;
+    private static Rect panelRect;
+
+    private void InitializeSolutions()
+    {
+        solutions = new List<List<CodeLine>>();
+        for(int i=0; i<numberOfSolutions; i++)
+        {
+            solutions.Add(new List<CodeLine>());
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        codeLines = new List<CodeLine>();
+        InitializeSolutions();
+        InitializePanel();
         draggedObject = null;
         ScrollY = 0;
-
-        SetHelper();
     }
 
-    void SetHelper()
+    void InitializePanel()
     {
         Rect rect = this.gameObject.GetComponent<RectTransform>().rect;
         float left = gameObject.transform.position.x - rect.width / 2;
@@ -40,7 +54,7 @@ public class CodePanel : MonoBehaviour, IDropHandler
         panelRect = new Rect(left, top, rect.width, rect.height);
     }
 
-    public bool IsInRect(Rect r, Vector2 pos)
+    public static bool IsInRect(Rect r, Vector2 pos)
     {
         return (pos.x >= r.x && pos.x <= r.x + r.width && pos.y <= r.y && pos.y >= r.y - r.height);
     }
@@ -57,6 +71,11 @@ public class CodePanel : MonoBehaviour, IDropHandler
         SetPositions();
     }
 
+    public void ChangeCurrentSolution(int newIndex)
+    {
+        currentSolutionIndex = newIndex;
+    }
+
     public void HandleDrag()
     {
 
@@ -67,15 +86,15 @@ public class CodePanel : MonoBehaviour, IDropHandler
 
     }
 
-    public void SetPositions()
+    public static void SetPositions()
     {
         bool isDragged = draggedObject != null && IsInRect(panelRect, Input.mousePosition);
         //if (isDragged) Debug.Log("Set positions, isDragged");
 
-        for (int i = 0; i < codeLines.Count; i++)
+        for (int i = 0; i < CurrentSolution.Count; i++)
         {
-            bool isThisOneDragged = draggedObject == codeLines[i].go;
-            codeLines[i].UpdatePosition(isDragged, isThisOneDragged);
+            bool isThisOneDragged = draggedObject == CurrentSolution[i].go;
+            CurrentSolution[i].UpdatePosition(isDragged, isThisOneDragged);
         }
     }
 
@@ -88,34 +107,34 @@ public class CodePanel : MonoBehaviour, IDropHandler
         }
     }
 
-    private void HandleDrop(PointerEventData eventData)
+    private static void HandleDrop(PointerEventData eventData)
     {
         int index = GetSlotIndexUnderMousePosition(eventData);
 
         InsertAtSlot(index, eventData.pointerDrag); //TODO: sprawdzic czy tutaj nie lepiej dac selectedObject
     }
 
-    private int GetSlotIndexUnderMousePosition(PointerEventData eventData)
+    private static int GetSlotIndexUnderMousePosition(PointerEventData eventData)
     {
-        if (codeLines.Count == 0) return 0;
+        if (CurrentSolution.Count == 0) return 0;
 
         else
         {
-            if (eventData.position.y >= codeLines[0].dockPosition.y) // add at the top
+            if (eventData.position.y >= CurrentSolution[0].dockPosition.y) // add at the top
             {
                 return 0;
             }
 
-            else if (eventData.position.y < codeLines[codeLines.Count - 1].dockPosition.y)//add at the bottom
+            else if (eventData.position.y < CurrentSolution[CurrentSolution.Count - 1].dockPosition.y)//add at the bottom
             {
-                return codeLines.Count;
+                return CurrentSolution.Count;
             }
 
             else
             {
-                for (int i = 0; i < codeLines.Count - 1; i++)
+                for (int i = 0; i < CurrentSolution.Count - 1; i++)
                 {
-                    if (eventData.position.y <= codeLines[i].dockPosition.y && eventData.position.y > codeLines[i + 1].dockPosition.y)
+                    if (eventData.position.y <= CurrentSolution[i].dockPosition.y && eventData.position.y > CurrentSolution[i + 1].dockPosition.y)
                     {
                         return i + 1;
                     }
@@ -126,34 +145,34 @@ public class CodePanel : MonoBehaviour, IDropHandler
         throw new System.Exception("Could not find a slot to fill.");
     }
 
-    public int GetGameObjectIndexOnList(GameObject go)
+    public static int GetGameObjectIndexOnList(GameObject go)
     {
-        for (int i = 0; i < codeLines.Count; i++)
+        for (int i = 0; i < CurrentSolution.Count; i++)
         {
-            if (codeLines[i].go == go) return i;
+            if (CurrentSolution[i].go == go) return i;
         }
 
         return -1;
     }
 
-    private void InsertAtSlot(int index, GameObject go)
+    private static void InsertAtSlot(int index, GameObject go)
     {
         int indexOfPresentLine = GetGameObjectIndexOnList(go); //check if the dragged object is already on the code panel
 
         if (indexOfPresentLine >= 0)
         {
-            CodeLine draggedLine = codeLines[indexOfPresentLine];
-            codeLines.RemoveAt(indexOfPresentLine);
+            CodeLine draggedLine = CurrentSolution[indexOfPresentLine];
+            CurrentSolution.RemoveAt(indexOfPresentLine);
 
             if (index > indexOfPresentLine) index--;
-            codeLines.Insert(index, draggedLine);
+            CurrentSolution.Insert(index, draggedLine);
         }
         
         else
         {
             Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-            CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == codeLines.Count);
-            codeLines.Insert(index, newCodeLine);
+            CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == CurrentSolution.Count);
+            CurrentSolution.Insert(index, newCodeLine);
         }
 
         //Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
@@ -163,17 +182,27 @@ public class CodePanel : MonoBehaviour, IDropHandler
         Rearrange();
     }
 
-    private void Rearrange()
+    public static void Remove(GameObject go)
     {
-        for (int i = 0; i < codeLines.Count; i++)
+        int indexOfLineToRemove = GetGameObjectIndexOnList(go);
+        if (indexOfLineToRemove >= 0)
         {
-            codeLines[i].SetTopBot(i == 0, i == codeLines.Count - 1);
-            codeLines[i].ChangeDockPosition(GetAbsoluteDockPositionForIndex(i));
+            CurrentSolution.RemoveAt(indexOfLineToRemove);
+            Rearrange();
+        }
+    }
+
+    private static void Rearrange()
+    {
+        for (int i = 0; i < CurrentSolution.Count; i++)
+        {
+            CurrentSolution[i].SetTopBot(i == 0, i == CurrentSolution.Count - 1);
+            CurrentSolution[i].ChangeDockPosition(GetAbsoluteDockPositionForIndex(i));
             //codeLines[i] = new CodeLine(codeLines[i].go, GetAbsoluteDockPositionForIndex(i), i == 0, i == codeLines.Count - 1);
         }
     }
 
-    private Vector2 GetAbsoluteDockPositionForIndex(int index)
+    private static Vector2 GetAbsoluteDockPositionForIndex(int index)
     {
         float newY = topLeftCorner.y - index * lineSizeY - (index + 1) * SpacingY - lineSizeY / 2;
         float newX = topLeftCorner.x + SpacingX + lineSizeX / 2;
@@ -305,4 +334,5 @@ public class CodeLine
         go.transform.position = newPosition;
         CheckIfOutOfBounds();
     }
+
 }
