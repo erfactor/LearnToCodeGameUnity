@@ -19,6 +19,7 @@ public class CodePanel : MonoBehaviour, IDropHandler
 
     private Vector2 topLeftCorner;
     private Rect panelRect;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -137,17 +138,27 @@ public class CodePanel : MonoBehaviour, IDropHandler
 
     private void InsertAtSlot(int index, GameObject go)
     {
-        int indexOfPresentLine = GetGameObjectIndexOnList(go); //check if the dragged object is on the code panel
+        int indexOfPresentLine = GetGameObjectIndexOnList(go); //check if the dragged object is already on the code panel
 
-        if (GetGameObjectIndexOnList(go) >= 0)
+        if (indexOfPresentLine >= 0)
         {
             CodeLine draggedLine = codeLines[indexOfPresentLine];
-            codeLines.Remove(draggedLine);
+            codeLines.RemoveAt(indexOfPresentLine);
+
+            if (index > indexOfPresentLine) index--;
+            codeLines.Insert(index, draggedLine);
+        }
+        
+        else
+        {
+            Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
+            CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == codeLines.Count);
+            codeLines.Insert(index, newCodeLine);
         }
 
-        Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-        CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == codeLines.Count);
-        codeLines.Insert(index, newCodeLine);
+        //Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
+        //CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == codeLines.Count);
+        //codeLines.Insert(index, newCodeLine);
 
         Rearrange();
     }
@@ -196,7 +207,7 @@ public class CodeLine
         SetTopBot(isTop, isBottom);
     }
 
-    public void ChangeDockPosition(Vector2 newDockPosition)
+    public void ChangeDockPosition(Vector2 newDockPosition, int indent = 0)
     {
         this.dockPosition = newDockPosition;
         lockCageTopY = dockPosition.y + lockCageSize;
@@ -223,7 +234,6 @@ public class CodeLine
     public const float MaxDistanceForRepelForce = SizeY + SpacingY; // height of the single element
     public const float ReturnForceScaleFactor = 0.08f;
     public const float RepelForceScaleFactor = 8;
-
 
     /// <summary>
     /// 
@@ -290,7 +300,8 @@ public class CodeLine
 
         velocity = sumForce;
 
-        Vector2 newPosition = new Vector2(go.transform.position.x + velocity.x, go.transform.position.y + velocity.y);
+        //Vector2 newPosition = new Vector2(go.transform.position.x + velocity.x, go.transform.position.y + velocity.y);
+        Vector2 newPosition = new Vector2(dockPosition.x, go.transform.position.y + velocity.y);
         go.transform.position = newPosition;
         CheckIfOutOfBounds();
     }
