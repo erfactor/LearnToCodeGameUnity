@@ -10,10 +10,18 @@ public class TrashScript : MonoBehaviour, IDropHandler
         Debug.Log("OnDrop - usuwanie obiektu");
         if (eventData.pointerDrag != null)
         {
-            //eventData.pointerDrag.transform.position = transform.position;
+            //eventData.pointerDrag.transform.position = transform.position;            
 
-            CodePanel.Remove(eventData.pointerDrag);
-            Destroy(eventData.pointerDrag);
+            Delete(eventData.pointerDrag);
+            //CodePanel.Remove(eventData.pointerDrag);
+
+            //GameObject.Find("RaycastManager").GetComponent<RaycastManagerScript>().SetRaycastBlockingAfterInstructionReleased();
+            RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
         }
+    }
+
+    public void Delete(GameObject go)
+    {
+        GameObject.Find("SolutionPanel").GetComponent<CodePanel>().Remove(go);
     }
 }

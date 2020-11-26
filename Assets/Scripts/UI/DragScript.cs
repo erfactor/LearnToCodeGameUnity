@@ -12,7 +12,7 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     private Transform startParent;
     private Vector3 startPosition;
 
-    private bool isReplicator = true;
+    public bool IsReplicator { get; set; } = true;
 
     public void Awake()
     {
@@ -30,10 +30,11 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (isReplicator)
+        if (IsReplicator)
         {
-            isReplicator = false;
+            IsReplicator = false;
             Replicate();
+            transform.SetParent(transform.parent.parent);
         }
 
         Debug.Log("OnBeginDrag");
@@ -46,22 +47,16 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         startPosition = transform.position;
 
         CodePanel.draggedObject = gameObject;
+
+        //GameObject.Find("RaycastManager").GetComponent<RaycastManagerScript>().SetRaycastBlockingOnInstructionDragged();
+        RaycastManagerScript.SetRaycastBlockingOnInstructionDragged();
+        //CodePanel.SetRaycastBlockingForAllInstructions(false);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        //Debug.Log("OnDrag");
-
-
-        //var newPosition = Camera.main.ScreenToWorldPoint(eventData.position);
-        //rectTransform.anchoredPosition = newPosition;
-
-        transform.position = Input.mousePosition;
-
-        //Debug.Log($"Mousepos: x:{eventData.position.x} y:{eventData.position.y}, rectPos: x:{rectTransform.anchoredPosition.x}, y:{rectTransform.anchoredPosition.y}");
-        //Vector2 pos;
-        //RectTransformUtility.ScreenPointToLocalPointInRectangle(myCanvas.transform as RectTransform, Input.mousePosition, myCanvas.worldCamera, out pos);
-        //transform.position = myCanvas.transform.TransformPoint(pos);
+        transform.position = Input.mousePosition; 
+        transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -70,12 +65,6 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         canvasGroup.blocksRaycasts = true;
         canvasGroup.interactable = true;
         canvasGroup.alpha = 1f;
-
-        //if (transform.parent == startParent || transform.parent == transform.root)
-        //{
-        //    transform.position = startPosition;
-        //    transform.SetParent(startParent);
-        //}
 
         CodePanel.draggedObject = null;
     }

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Commands;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,11 +17,11 @@ public class CodePanel : MonoBehaviour, IDropHandler
     public static GameObject draggedObject;
 
 
-    private static List<List<CodeLine>> solutions;
+    private List<List<CodeLine>> solutions;
     private const int numberOfSolutions = 3;
     private static int currentSolutionIndex = 0;
 
-    private static List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
+    private List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
 
     private float ScrollY;
 
@@ -86,7 +88,7 @@ public class CodePanel : MonoBehaviour, IDropHandler
 
     }
 
-    public static void SetPositions()
+    public void SetPositions()
     {
         bool isDragged = draggedObject != null && IsInRect(panelRect, Input.mousePosition);
         //if (isDragged) Debug.Log("Set positions, isDragged");
@@ -107,14 +109,25 @@ public class CodePanel : MonoBehaviour, IDropHandler
         }
     }
 
-    private static void HandleDrop(PointerEventData eventData)
+    private void HandleDrop(PointerEventData eventData)
     {
+        ShowDirectionIndicatorIfNeeded(eventData);
+        RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
+
         int index = GetSlotIndexUnderMousePosition(eventData);
 
         InsertAtSlot(index, eventData.pointerDrag); //TODO: sprawdzic czy tutaj nie lepiej dac selectedObject
     }
 
-    private static int GetSlotIndexUnderMousePosition(PointerEventData eventData)
+    private static void ShowDirectionIndicatorIfNeeded(PointerEventData eventData)
+    {
+        if (eventData.pointerDrag.transform.Find("DirectionIndicator") != null)
+        {
+            eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().Show();
+        }
+    }
+
+    private int GetSlotIndexUnderMousePosition(PointerEventData eventData)
     {
         if (CurrentSolution.Count == 0) return 0;
 
@@ -145,7 +158,7 @@ public class CodePanel : MonoBehaviour, IDropHandler
         throw new System.Exception("Could not find a slot to fill.");
     }
 
-    public static int GetGameObjectIndexOnList(GameObject go)
+    public int GetGameObjectIndexOnList(GameObject go)
     {
         for (int i = 0; i < CurrentSolution.Count; i++)
         {
@@ -155,7 +168,7 @@ public class CodePanel : MonoBehaviour, IDropHandler
         return -1;
     }
 
-    private static void InsertAtSlot(int index, GameObject go)
+    private void InsertAtSlot(int index, GameObject go)
     {
         int indexOfPresentLine = GetGameObjectIndexOnList(go); //check if the dragged object is already on the code panel
 
@@ -175,6 +188,16 @@ public class CodePanel : MonoBehaviour, IDropHandler
             CurrentSolution.Insert(index, newCodeLine);
         }
 
+        if (IsJumpInstruction(go) && indexOfPresentLine < 0)
+        {
+            GameObject jumpInstructionLabel = GetJumpInstructionLabel(go);
+            //index++;
+            Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
+            CodeLine newCodeLine = new CodeLine(jumpInstructionLabel, newDockPosition, index == 0, index == CurrentSolution.Count);
+            CurrentSolution.Insert(index, newCodeLine);
+            go.GetComponent<JumpInstructionScript>().AttachArrow();
+        }
+
         //Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
         //CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == codeLines.Count);
         //codeLines.Insert(index, newCodeLine);
@@ -182,17 +205,29 @@ public class CodePanel : MonoBehaviour, IDropHandler
         Rearrange();
     }
 
-    public static void Remove(GameObject go)
+    public void Remove(GameObject go)
     {
-        int indexOfLineToRemove = GetGameObjectIndexOnList(go);
+        if (IsJumpInstruction(go))
+        {
+            GameObject bindedInstruction = go.GetComponent<JumpInstructionScript>().bindedInstruction;
+            if (bindedInstruction != null)
+            {
+                go.GetComponent<JumpInstructionScript>().bindedInstruction = null;
+                Remove(bindedInstruction);
+            }
+        }
+
+        int indexOfLineToRemove = GetGameObjectIndexOnList(go);        
+
         if (indexOfLineToRemove >= 0)
         {
             CurrentSolution.RemoveAt(indexOfLineToRemove);
+            Destroy(go);
             Rearrange();
         }
     }
 
-    private static void Rearrange()
+    private void Rearrange()
     {
         for (int i = 0; i < CurrentSolution.Count; i++)
         {
@@ -202,13 +237,125 @@ public class CodePanel : MonoBehaviour, IDropHandler
         }
     }
 
-    private static Vector2 GetAbsoluteDockPositionForIndex(int index)
+    private Vector2 GetAbsoluteDockPositionForIndex(int index)
     {
         float newY = topLeftCorner.y - index * lineSizeY - (index + 1) * SpacingY - lineSizeY / 2;
         float newX = topLeftCorner.x + SpacingX + lineSizeX / 2;
         return new Vector2(newX, newY);
     }
+
+    public void SetRaycastBlockingForAllInstructions(bool blockRaycasts)
+    {
+        foreach (var instruction in CurrentSolution)
+        {
+            instruction.go.GetComponent<CanvasGroup>().blocksRaycasts = blockRaycasts;
+        }
+    }
+
+    public static bool IsJumpInstruction(GameObject go)
+    {
+        return go.GetComponent<JumpInstructionScript>() != null;
+    }
+
+    public static bool IsJumpInstructionLabel(GameObject go)
+    {
+        return go.GetComponent<JumpInstructionScript>().IsLabel;
+    }
+
+    public static bool IsPutInstruction(GameObject go)
+    {
+        return false;
+    }
+
+    public static bool IsPickInstruction(GameObject go)
+    {
+        return false;
+    }
+
+    public static bool IsMoveInstruction(GameObject go)
+    {
+        return go.GetComponent<MoveInstructionScript>() != null;
+    }
+
+    public static Direction GetInstructionDirection(GameObject go)
+    {
+        string direction = go.transform.Find("DirectionIndicator").GetChild(0).name;
+        return (Direction)Enum.Parse(typeof(Direction), direction);
+    }
+
+    public GameObject GetJumpInstructionLabel(GameObject jumpInstruction)
+    {
+        GameObject jumpInstructionLabel = jumpInstruction.GetComponent<JumpInstructionScript>().CreateBindedLabel();
+        jumpInstructionLabel.transform.SetParent(transform);
+        return jumpInstructionLabel;
+    }    
 }
+
+public class CommandHelper
+{
+    public ICommand GetCommand(List<CodeLine> solution, int currentLine)
+    {
+        var line = solution[currentLine];
+
+        if (CodePanel.IsMoveInstruction(line.go))
+        {
+            return new MoveCommand(CodePanel.GetInstructionDirection(line.go), GetIndexOnTheList(solution, line.go) + 1);
+        }
+
+        if (CodePanel.IsPickInstruction(line.go))
+        {
+
+        }
+
+        if (CodePanel.IsPutInstruction(line.go))
+        {
+
+        }
+
+        if (CodePanel.IsJumpInstruction(line.go))
+        {
+            if (CodePanel.IsJumpInstructionLabel(line.go))
+            {
+                return new JumpCommand(currentLine + 1);
+            }
+
+            int jumpIndex = GetJumpLineNumber(solution, line.go);
+            return new JumpCommand(jumpIndex);
+        }
+
+        throw new System.Exception("nie udalo sie wygenerowac komendy");
+    }
+
+    public int GetJumpLineNumber(List<CodeLine> solution, GameObject go)
+    {
+        return GetIndexOnTheList(solution, go.GetComponent<JumpInstructionScript>().bindedInstruction);
+    }
+     
+
+    public List<ICommand> GetCommands(List<CodeLine> solution)
+    {
+        List<ICommand> commandList = new List<ICommand>();
+
+        for (int i = 0; i < solution.Count; i++)
+        {
+            var command = GetCommand(solution, i);
+            commandList.Add(command);
+        }
+
+        return commandList;
+    }
+
+    public int GetIndexOnTheList(List<CodeLine> solution, GameObject go)
+    {
+        for(int i=0; i<solution.Count; i++)
+        {
+            if (go == solution[i].go) return i;
+        }
+
+        return -1;
+    }
+}
+
 
 public class CodeLine
 {
@@ -333,6 +480,13 @@ public class CodeLine
         Vector2 newPosition = new Vector2(dockPosition.x, go.transform.position.y + velocity.y);
         go.transform.position = newPosition;
         CheckIfOutOfBounds();
+
+        if (CodePanel.IsJumpInstruction(this.go))
+        {
+            if (this.go.GetComponent<JumpInstructionScript>().arrow == null) Debug.Log("Null at arrow");
+            if (this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");
+            this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>().UpdateCurve();
+        }
     }
 
 }
