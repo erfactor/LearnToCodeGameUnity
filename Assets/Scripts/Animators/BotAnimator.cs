@@ -1,4 +1,5 @@
-﻿using Enumerations;
+﻿using System;
+using Enumerations;
 using UnityEngine;
 
 namespace Animators
@@ -7,9 +8,9 @@ namespace Animators
     {
         public Animator animator;
 
-        void Test()
+        void Update()
         {
-            // var moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            var moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
             if(Input.GetKeyDown(KeyCode.UpArrow))
                 animator.SetTrigger("Up");
             if(Input.GetKeyDown(KeyCode.DownArrow))

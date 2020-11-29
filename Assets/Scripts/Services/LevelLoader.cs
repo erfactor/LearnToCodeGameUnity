@@ -66,8 +66,12 @@ namespace Services
 
                     if (botPrefabName != string.Empty)
                     {
-                        var botAnimator = CreateGameObject(botPrefabName, x, y, 1).GetComponent<BotAnimator>();
-                        bot = new Bot(new Vector2Int(x, y), botAnimator);
+                        var botTransform = CreateGameObject(botPrefabName, x, y, 1);
+                        if (botPrefabName != "piece")
+                        {
+                            var botAnimator = botTransform.GetComponent<BotAnimator>();
+                            bot = new Bot(new Vector2Int(x, y), botAnimator);
+                        }
                     }
 
                     if (tilePrefabName != string.Empty)
@@ -78,7 +82,7 @@ namespace Services
                             rotation = Quaternion.AngleAxis(90, Vector3.forward);
                             if (x == 0 && y == 0) rotation = Quaternion.AngleAxis(90, Vector3.back);
                             if (x == 0 && y == height - 1) rotation = Quaternion.AngleAxis(180, Vector3.forward);
-                            if (x == width -1 && y == 0) rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                            if (x == width - 1 && y == 0) rotation = Quaternion.AngleAxis(0, Vector3.forward);
                         }
 
                         var tile = CreateGameObject(tilePrefabName, x, y, 2, rotation).GetComponent<Tile>();
@@ -107,15 +111,21 @@ namespace Services
             while (true)
             {
                 foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
-                yield return new WaitForSeconds(.5f);
+                yield return new WaitForSeconds(1.5f);
             }
         }
 
-        private Transform CreateGameObject(string prefabName, int xPos, int yPos, int zPos,
+        private Transform CreateGameObject(string prefabName, float xPos, float yPos, int zPos,
             Quaternion rotation = new Quaternion())
         {
             var prefab = Tiles.First(t => t.name == prefabName);
             var parent = GetLayerParent(zPos).transform;
+            if (prefab.name == "botHead")
+            {
+                prefab = Resources.Load<Transform>("Bot/Bot");
+                yPos -= 0.472f;
+            }
+
             var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), rotation);
             newObject.name = prefab.name;
             // Set the object's parent to the layer parent variable so it doesn't clutter our Hierarchy
