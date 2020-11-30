@@ -9,6 +9,7 @@ namespace Commands
     public class MoveCommand : ICommand
     {
         private readonly Direction _direction;
+        public int NextCommandId { get; }
 
         private readonly Dictionary<Direction, Vector2Int> _directionVector = new Dictionary<Direction, Vector2Int>
         {
@@ -24,19 +25,16 @@ namespace Commands
             NextCommandId = nextCommandId;
         }
 
-        public int NextCommandId { get; }
-
         public int Execute(Board board, Bot bot)
         {
             var newLocation = bot.BoardLocation + _directionVector[_direction];
             var newLocationField = board[newLocation];
             if (newLocationField.TileType == TileType.Normal && newLocationField.Bot == null)
             {
-                Console.WriteLine(newLocationField.TileType);
                 board[bot.BoardLocation].Bot = null;
                 bot.BoardLocation = newLocation;
                 newLocationField.Bot = bot;
-                bot.Animator.ExecuteMove(_direction);
+                bot.Animator.Move(_direction);
             }
 
             return NextCommandId;

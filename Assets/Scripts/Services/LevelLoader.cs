@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using Enumerations;
 using Models;
 using Packages._2DTileMapLevelEditor.Scripts;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Services
 {
@@ -29,6 +31,8 @@ namespace Services
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
+
+        private static Random _random = new Random();
 
         private void Awake()
         {
@@ -59,19 +63,26 @@ namespace Services
                 {
                     var cell = line[x].Split(DepthSeparator.ToCharArray());
 
-                    var botPrefabName = cell[0];
-                    var tilePrefabName = cell[1];
+                    var piecePrefabName = cell[0];
+                    var botPrefabName = cell[1];
+                    var tilePrefabName = cell[2];
+                    
+                    Piece piece = null;
                     Bot bot = null;
                     var tileType = TileType.Hole;
+
+                    if (piecePrefabName != String.Empty)
+                    {
+                        var pieceTransform = CreateGameObject(piecePrefabName, x, y, 1);
+                        piece = new Piece(new Vector2Int(x, y), _random.Next(100), pieceTransform);
+                    }
 
                     if (botPrefabName != string.Empty)
                     {
                         var botTransform = CreateGameObject(botPrefabName, x, y, 1);
-                        if (botPrefabName != "piece")
-                        {
-                            var botAnimator = botTransform.GetComponent<BotAnimator>();
-                            bot = new Bot(new Vector2Int(x, y), botAnimator);
-                        }
+                        var botAnimator = botTransform.GetComponent<BotAnimator>();
+                        bot = new Bot(new Vector2Int(x, y), botAnimator);
+                        botAnimator.Bot = bot;
                     }
 
                     if (tilePrefabName != string.Empty)
@@ -89,7 +100,7 @@ namespace Services
                         tileType = tile.TileType;
                     }
 
-                    var field = new Field(tileType, bot);
+                    var field = new Field(tileType, bot, piece);
                     board[x, y] = field;
                 }
             }
@@ -101,17 +112,18 @@ namespace Services
         {
             var code = new ICommand[]
             {
-                new MoveCommand(Direction.Up, 1),
+                new PickCommand(1),
                 new MoveCommand(Direction.Right, 2),
                 new MoveCommand(Direction.Down, 3),
-                new MoveCommand(Direction.Right, 4),
+                new MoveCommand(Direction.Left, 4),
+                new MoveCommand(Direction.Up, 5),
                 new JumpCommand(0)
             };
 
             while (true)
             {
                 foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
-                yield return new WaitForSeconds(1.5f);
+                yield return new WaitForSeconds(1.2f);
             }
         }
 
@@ -124,6 +136,9 @@ namespace Services
             {
                 prefab = Resources.Load<Transform>("Bot/Bot");
                 yPos -= 0.472f;
+            } else if (prefab.name == "piece")
+            {
+                yPos -= 0.255f;
             }
 
             var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), rotation);

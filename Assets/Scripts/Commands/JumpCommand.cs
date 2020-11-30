@@ -1,5 +1,4 @@
-﻿using Enumerations;
-using Models;
+﻿using Models;
 
 namespace Commands
 {

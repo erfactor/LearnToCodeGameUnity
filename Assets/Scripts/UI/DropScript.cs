@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 //this is the script that should be associated with the SLOT at which the UI element is dropped, not the draggable UI element.

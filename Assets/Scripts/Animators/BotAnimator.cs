@@ -1,5 +1,4 @@
-﻿using System;
-using Enumerations;
+﻿using Models;
 using UnityEngine;
 
 namespace Animators
@@ -7,6 +6,8 @@ namespace Animators
     public class BotAnimator : MonoBehaviour
     {
         public Animator animator;
+        private static readonly int PickPiece = Animator.StringToHash("PickPiece");
+        public Bot Bot { get; set; }
 
         void Update()
         {
@@ -21,9 +22,23 @@ namespace Animators
                 animator.SetTrigger("Right");
         }
 
-        public void ExecuteMove(Direction direction)
+        public void Move(Direction direction)
         {
             animator.SetTrigger(direction.ToString());
+        }
+
+        private Piece _pickedPiece = null;
+        public void Pick(Piece piece)
+        {
+            _pickedPiece = piece;
+            animator.SetTrigger(PickPiece);
+        }
+
+        public void AttachPieceToHand()
+        {
+            var pieceTransform = _pickedPiece._pieceTransform;
+            var leftArm = GetComponent<Transform>().Find("LeftArmSolver").Find("LeftArmSolver_Target");
+            pieceTransform.parent = leftArm;
         }
     }
 }
