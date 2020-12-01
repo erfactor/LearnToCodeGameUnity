@@ -260,7 +260,13 @@ public class CodePanel : MonoBehaviour, IDropHandler
         GameObject jumpInstructionLabel = jumpInstruction.GetComponent<JumpInstructionScript>().CreateBindedLabel();
         jumpInstructionLabel.transform.SetParent(transform);
         return jumpInstructionLabel;
-    }    
+    }
+    
+    public List<ICommand> GetCommands()
+    {
+        var commandHelper = new CommandHelper();
+        return commandHelper.GetCommands(CurrentSolution);
+    }
 }
 
 public class CommandHelper
@@ -301,8 +307,7 @@ public class CommandHelper
     public int GetJumpLineNumber(List<CodeLine> solution, GameObject go)
     {
         return GetIndexOnTheList(solution, go.GetComponent<JumpInstructionScript>().bindedInstruction);
-    }
-     
+    }     
 
     public List<ICommand> GetCommands(List<CodeLine> solution)
     {
