@@ -36,7 +36,7 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
             var selectionPanel = Instantiate(directionSelector);
             selectionPanel.transform.SetParent(gameObject.transform.parent.parent);

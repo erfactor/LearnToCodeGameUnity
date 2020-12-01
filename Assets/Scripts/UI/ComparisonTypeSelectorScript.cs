@@ -27,10 +27,9 @@ public class ComparisonTypeSelectorScript : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        Debug.Log(gameObject.name);
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            Debug.Log("prawy klik");
-
             parentScript.SetSelected(this.comparedType);
         }
     }

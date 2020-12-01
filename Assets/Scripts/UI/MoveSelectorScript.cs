@@ -23,10 +23,8 @@ public class MoveSelectorScript : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            Debug.Log("prawy klik");
-
             parentScript.SetSelected(this.direction);
         }
     }

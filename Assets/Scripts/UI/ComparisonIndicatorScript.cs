@@ -38,7 +38,7 @@ public class ComparisonIndicatorScript : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (eventData.button == PointerEventData.InputButton.Right)
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
             var selectionPanel = Instantiate(comparisonTypeSelector);
             selectionPanel.transform.SetParent(gameObject.transform.parent.parent);
