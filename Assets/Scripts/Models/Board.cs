@@ -38,5 +38,13 @@ namespace Models
             get => _fields[location.x, location.y];
             set => _fields[location.x, location.y] = value;
         }
+
+        public int Width => _fields.GetLength(0);
+        public int Height => _fields.GetLength(1);
+
+        public bool IsInside(Vector2Int location)
+        {
+            return (location.x < 0 || location.x >= Width || location.y < 0 || location.y >= Height);
+        }
     }
 }

@@ -14,5 +14,15 @@ namespace Models
             Bot = bot;
             Piece = piece;
         }
+
+        public bool IsNothing
+        {
+            get
+            {
+                return Bot == null && Piece == null;
+            }
+        }
+
+        public bool HasItem => Piece != null;
     }
 }

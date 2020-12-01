@@ -182,31 +182,36 @@ public class CodePanel : MonoBehaviour, IDropHandler
         
         else
         {
-            Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-            CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == CurrentSolution.Count);
-            CurrentSolution.Insert(index, newCodeLine);
+            InsertNormalInstruction(index, go);
         }
 
-        if (IsJumpInstruction(go) && indexOfPresentLine < 0)
+        if (InstructionHelper.IsJumpInstruction(go) && indexOfPresentLine < 0)
         {
-            GameObject jumpInstructionLabel = GetJumpInstructionLabel(go);
-            //index++;
-            Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-            CodeLine newCodeLine = new CodeLine(jumpInstructionLabel, newDockPosition, index == 0, index == CurrentSolution.Count);
-            CurrentSolution.Insert(index, newCodeLine);
-            go.GetComponent<JumpInstructionScript>().AttachArrow();
+            InsertJumpInstruction(index, go);
         }
-
-        //Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-        //CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == codeLines.Count);
-        //codeLines.Insert(index, newCodeLine);
 
         Rearrange();
     }
 
+    public void InsertNormalInstruction(int index, GameObject go)
+    {
+        Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
+        CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == CurrentSolution.Count);
+        CurrentSolution.Insert(index, newCodeLine);
+    }
+
+    public void InsertJumpInstruction(int index, GameObject go)
+    {
+        GameObject jumpInstructionLabel = GetJumpInstructionLabel(go);
+        Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
+        CodeLine newCodeLine = new CodeLine(jumpInstructionLabel, newDockPosition, index == 0, index == CurrentSolution.Count);
+        CurrentSolution.Insert(index, newCodeLine);
+        go.GetComponent<JumpInstructionScript>().AttachArrow();
+    }
+
     public void Remove(GameObject go)
     {
-        if (IsJumpInstruction(go))
+        if (InstructionHelper.IsJumpInstruction(go))
         {
             GameObject bindedInstruction = go.GetComponent<JumpInstructionScript>().bindedInstruction;
             if (bindedInstruction != null)
@@ -232,7 +237,6 @@ public class CodePanel : MonoBehaviour, IDropHandler
         {
             CurrentSolution[i].SetTopBot(i == 0, i == CurrentSolution.Count - 1);
             CurrentSolution[i].ChangeDockPosition(GetAbsoluteDockPositionForIndex(i));
-            //codeLines[i] = new CodeLine(codeLines[i].go, GetAbsoluteDockPositionForIndex(i), i == 0, i == codeLines.Count - 1);
         }
     }
 
@@ -251,37 +255,6 @@ public class CodePanel : MonoBehaviour, IDropHandler
         }
     }
 
-    public static bool IsJumpInstruction(GameObject go)
-    {
-        return go.GetComponent<JumpInstructionScript>() != null;
-    }
-
-    public static bool IsJumpInstructionLabel(GameObject go)
-    {
-        return go.GetComponent<JumpInstructionScript>().IsLabel;
-    }
-
-    public static bool IsPutInstruction(GameObject go)
-    {
-        return false;
-    }
-
-    public static bool IsPickInstruction(GameObject go)
-    {
-        return false;
-    }
-
-    public static bool IsMoveInstruction(GameObject go)
-    {
-        return go.GetComponent<MoveInstructionScript>() != null;
-    }
-
-    public static Direction GetInstructionDirection(GameObject go)
-    {
-        string direction = go.transform.Find("DirectionIndicator").GetChild(0).name;
-        return (Direction)Enum.Parse(typeof(Direction), direction);
-    }
-
     public GameObject GetJumpInstructionLabel(GameObject jumpInstruction)
     {
         GameObject jumpInstructionLabel = jumpInstruction.GetComponent<JumpInstructionScript>().CreateBindedLabel();
@@ -296,24 +269,24 @@ public class CommandHelper
     {
         var line = solution[currentLine];
 
-        if (CodePanel.IsMoveInstruction(line.go))
+        if (InstructionHelper.IsMoveInstruction(line.go))
         {
-            return new MoveCommand(CodePanel.GetInstructionDirection(line.go), GetIndexOnTheList(solution, line.go) + 1);
+            return new MoveCommand(InstructionHelper.GetInstructionDirection(line.go), currentLine + 1);
         }
 
-        if (CodePanel.IsPickInstruction(line.go))
+        if (InstructionHelper.IsPickInstruction(line.go))
         {
-
+            return new PickCommand(currentLine + 1);
         }
 
-        if (CodePanel.IsPutInstruction(line.go))
+        if (InstructionHelper.IsPutInstruction(line.go))
         {
-
+            return new PutCommand(currentLine + 1);
         }
 
-        if (CodePanel.IsJumpInstruction(line.go))
+        if (InstructionHelper.IsJumpInstruction(line.go))
         {
-            if (CodePanel.IsJumpInstructionLabel(line.go))
+            if (InstructionHelper.IsJumpInstructionLabel(line.go))
             {
                 return new JumpCommand(currentLine + 1);
             }
@@ -352,6 +325,45 @@ public class CommandHelper
         }
 
         return -1;
+    }
+}
+
+public class InstructionHelper
+{
+    public static bool IsJumpInstruction(GameObject go)
+    {
+        return go.GetComponent<JumpInstructionScript>() != null;
+    }
+
+    public static bool IsJumpInstructionLabel(GameObject go)
+    {
+        return go.GetComponent<JumpInstructionScript>().IsLabel;
+    }
+
+    public static bool IsPutInstruction(GameObject go)
+    {
+        return false;
+    }
+
+    public static bool IsPickInstruction(GameObject go)
+    {
+        return false;
+    }
+
+    public static bool IsMoveInstruction(GameObject go)
+    {
+        return go.GetComponent<MoveInstructionScript>() != null;
+    }
+
+    public static bool IsIfInstruction(GameObject go)
+    {
+        return go.GetComponent<MoveInstructionScript>() != null;
+    }
+
+    public static Direction GetInstructionDirection(GameObject go)
+    {
+        string direction = go.transform.Find("DirectionIndicator").GetChild(0).name;
+        return (Direction)Enum.Parse(typeof(Direction), direction);
     }
 }
 
@@ -480,7 +492,7 @@ public class CodeLine
         go.transform.position = newPosition;
         CheckIfOutOfBounds();
 
-        if (CodePanel.IsJumpInstruction(this.go))
+        if (InstructionHelper.IsJumpInstruction(this.go))
         {
             if (this.go.GetComponent<JumpInstructionScript>().arrow == null) Debug.Log("Null at arrow");
             if (this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");

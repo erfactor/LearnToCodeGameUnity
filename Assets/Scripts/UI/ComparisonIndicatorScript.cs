@@ -1,23 +1,25 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
+public class ComparisonIndicatorScript : MonoBehaviour, IPointerClickHandler
 {
-    GameObject comparisonSelector;
+    GameObject comparisonTypeSelector;
     CanvasGroup canvasGroup;
 
     // Start is called before the first frame update
     void Start()
     {
-        comparisonSelector = GameObject.Find("ComparisonSelector");
+        comparisonTypeSelector = GameObject.Find("ComparisonTypeSelector");
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
-        Hide();
+        //Hide();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void Hide()
@@ -38,12 +40,12 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            var selectionPanel = Instantiate(comparisonSelector);
+            var selectionPanel = Instantiate(comparisonTypeSelector);
             selectionPanel.transform.SetParent(gameObject.transform.parent.parent);
             //direction selector is only in Instructions. gameObject.parent = Instruction, Instruction.parent = Panel. Therefore, we need gameObject.parent.parent.
 
-            var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectorScript>();
-            selectionPanelScript.changedDirectionIndicator = gameObject;
+            var selectionPanelScript = selectionPanel.GetComponent<ComparisonSelectorScript>();
+            selectionPanelScript.changedComparisonIndicator = gameObject;
         }
     }
 }
