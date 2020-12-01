@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using Models;
-
+﻿using Models;
 
 namespace Commands
 {
@@ -14,21 +9,20 @@ namespace Commands
             NextCommandId = nextCommandId;
         }
 
-        public int NextCommandId { get; }
-
         public int Execute(Board board, Bot bot)
         {
-            var putLocation = bot.BoardLocation;
-            var putLocationField = board[putLocation];
-            if (putLocationField.Piece != null)
+            var boardPiece = board[bot.BoardLocation].Piece;
+            
+            if (bot.Piece != null && boardPiece == null)
             {
-                Debug.Log("Successfully put a piece down");
-                //putLocationField.Piece = null;
-                //bot.Animator.ExecutePut();
+                bot.Animator.Put(bot.Piece);
+                board[bot.BoardLocation].Piece = bot.Piece;
+                bot.Piece = null;
             }
 
             return NextCommandId;
         }
+
+        public int NextCommandId { get; }
     }
 }
-

@@ -117,6 +117,7 @@ namespace Services
                 new MoveCommand(Direction.Down, 3),
                 new MoveCommand(Direction.Left, 4),
                 new MoveCommand(Direction.Up, 5),
+                new PutCommand(6),
                 new JumpCommand(0)
             };
 

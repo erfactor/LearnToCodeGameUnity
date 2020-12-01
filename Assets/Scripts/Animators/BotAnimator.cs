@@ -7,6 +7,7 @@ namespace Animators
     {
         public Animator animator;
         private static readonly int PickPiece = Animator.StringToHash("PickPiece");
+        private static readonly int PutPiece = Animator.StringToHash("PutPiece");
         public Bot Bot { get; set; }
 
         void Update()
@@ -27,18 +28,27 @@ namespace Animators
             animator.SetTrigger(direction.ToString());
         }
 
-        private Piece _pickedPiece = null;
+        private Piece _piece = null;
+        private bool _isPicking;
         public void Pick(Piece piece)
         {
-            _pickedPiece = piece;
+            _isPicking = true;
+            _piece = piece;
             animator.SetTrigger(PickPiece);
+        }
+        
+        public void Put(Piece piece)
+        {
+            _isPicking = false;
+            _piece = piece;
+            animator.SetTrigger(PutPiece);
         }
 
         public void AttachPieceToHand()
         {
-            var pieceTransform = _pickedPiece._pieceTransform;
+            var pieceTransform = _piece._pieceTransform;
             var leftArm = GetComponent<Transform>().Find("LeftArmSolver").Find("LeftArmSolver_Target");
-            pieceTransform.parent = leftArm;
+            pieceTransform.parent = _isPicking ? leftArm : null;
         }
     }
 }

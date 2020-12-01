@@ -11,9 +11,11 @@ namespace Commands
 
         public int Execute(Board board, Bot bot)
         {
-            if (board[bot.BoardLocation].Piece != null)
+            var boardPiece = board[bot.BoardLocation].Piece;
+            if (bot.Piece == null && boardPiece != null)
             {
-                bot.Animator.Pick(board[bot.BoardLocation].Piece);
+                bot.Animator.Pick(boardPiece);
+                bot.Piece = boardPiece;
                 board[bot.BoardLocation].Piece = null;
             }
 
