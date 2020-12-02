@@ -3,13 +3,15 @@ using UnityEngine.EventSystems;
 
 public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
 {
-    GameObject directionSelector;
+    GameObject directionSelectionWindow;
     CanvasGroup canvasGroup;
+
+    public Direction SelectedDirection { get; set; } = Direction.Center;
 
     // Start is called before the first frame update
     void Start()
     {
-        directionSelector = GameObject.Find("DirectionSelector");
+        directionSelectionWindow = GameObject.Find("DirectionSelectionWindow");
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         Hide();
     }
@@ -38,11 +40,12 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            var selectionPanel = Instantiate(directionSelector);
-            selectionPanel.transform.SetParent(gameObject.transform.parent.parent);
-            //direction selector is only in Instructions. gameObject.parent = Instruction, Instruction.parent = Panel. Therefore, we need gameObject.parent.parent.
+            RaycastManagerScript.SetFocus();
 
-            var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectorScript>();
+            var selectionPanel = Instantiate(directionSelectionWindow);
+            selectionPanel.transform.SetParent(GameObject.Find("Canvas").transform);
+
+            var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectionWindowScript>();
             selectionPanelScript.changedDirectionIndicator = gameObject;
         }
     }

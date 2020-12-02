@@ -1,35 +1,18 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class DirectionSelectorScript : MonoBehaviour
+public class DirectionSelectorScript : MonoBehaviour, IPointerClickHandler
 {
-    public GameObject changedDirectionIndicator;
+    public Direction direction;
 
-    static Dictionary<Direction, Sprite> directionSprites;
-
-    private static void InitializeDirectionSprites()
-    {
-        if (directionSprites == null)
-        {
-            directionSprites = new Dictionary<Direction, Sprite>();
-            directionSprites.Add(Direction.UpRight, Resources.Load<Sprite>("Sprites/UI/Directions/direction_upright"));
-            directionSprites.Add(Direction.Right, Resources.Load<Sprite>("Sprites/UI/Directions/direction_right"));
-            directionSprites.Add(Direction.DownRight, Resources.Load<Sprite>("Sprites/UI/Directions/direction_downright"));
-            directionSprites.Add(Direction.Left, Resources.Load<Sprite>("Sprites/UI/Directions/direction_left"));
-            directionSprites.Add(Direction.UpLeft, Resources.Load<Sprite>("Sprites/UI/Directions/direction_upleft"));
-            directionSprites.Add(Direction.DownLeft, Resources.Load<Sprite>("Sprites/UI/Directions/direction_downleft"));
-            directionSprites.Add(Direction.Up, Resources.Load<Sprite>("Sprites/UI/Directions/direction_up"));
-            directionSprites.Add(Direction.Center, Resources.Load<Sprite>("Sprites/UI/Directions/direction_center"));
-            directionSprites.Add(Direction.Down, Resources.Load<Sprite>("Sprites/UI/Directions/direction_down"));
-            Debug.Log("DirectionSelector initialization done");
-        }        
-    }
+    private GameObject DirectionSelector;
+    private DirectionSelectionWindowScript parentScript;
 
     // Start is called before the first frame update
     void Start()
     {
-        InitializeDirectionSprites();
+        DirectionSelector = transform.parent.gameObject;
+        parentScript = DirectionSelector.GetComponent<DirectionSelectionWindowScript>();
     }
 
     // Update is called once per frame
@@ -38,17 +21,24 @@ public class DirectionSelectorScript : MonoBehaviour
         
     }
 
-    public void SetSelected(Direction direction)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        InitializeDirectionSprites();
-        var newSprite = GetSprite(direction);
-        changedDirectionIndicator.GetComponent<Image>().sprite = newSprite;
-        changedDirectionIndicator.transform.GetChild(0).name = direction.ToString();
-        Destroy(gameObject);
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            parentScript.SetSelected(this.direction);
+        }
     }
+}
 
-    public static Sprite GetSprite(Direction direction)
-    {
-        return directionSprites[direction];
-    }
+public enum Direction
+{
+    UpLeft = 0,
+    Up = 1,
+    UpRight = 2,
+    Right = 3,
+    DownRight = 4,
+    Down = 5,
+    DownLeft = 6,
+    Left = 7,
+    Center = 8,
 }

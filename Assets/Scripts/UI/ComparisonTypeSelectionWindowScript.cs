@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Models;
 using Commands;
 
-public class ComparisonSelectorScript : MonoBehaviour
+public class ComparisonTypeSelectionWindowScript : MonoBehaviour
 {
     public GameObject changedComparisonIndicator;
 
@@ -45,8 +45,9 @@ public class ComparisonSelectorScript : MonoBehaviour
         InitializeComparisonSprites();
         var newSprite = GetSprite(type);
         changedComparisonIndicator.GetComponent<Image>().sprite = newSprite;
-        changedComparisonIndicator.transform.GetChild(0).name = type.ToString();
+        changedComparisonIndicator.GetComponent<ComparisonTypeIndicatorScript>().SelectedComparisonType = type;
         Destroy(gameObject);
+        RaycastManagerScript.ReleaseFocus();
     }
 
     public static Sprite GetSprite(ComparedType type)

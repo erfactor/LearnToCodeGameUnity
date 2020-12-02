@@ -53,8 +53,10 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = Input.mousePosition; 
-        transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var mousePos = Input.mousePosition;
+        transform.position = mousePos;
+        //var worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //transform.position = worldMousePos;
     }
 
     public void OnEndDrag(PointerEventData eventData)

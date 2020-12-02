@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class CodePanel : MonoBehaviour, IDropHandler
+public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 {
 
     public const float SpacingY = 10; // height of the space between two lines
@@ -267,6 +267,16 @@ public class CodePanel : MonoBehaviour, IDropHandler
         var commandHelper = new CommandHelper();
         return commandHelper.GetCommands(CurrentSolution);
     }
+
+    public void OnScroll(PointerEventData eventData)
+    {
+        ApplyScroll(eventData);
+    }
+
+    private void ApplyScroll(PointerEventData eventData)
+    {
+        this.ScrollY += eventData.scrollDelta.y;
+    }
 }
 
 public class CommandHelper
@@ -347,12 +357,12 @@ public class InstructionHelper
 
     public static bool IsPutInstruction(GameObject go)
     {
-        return false;
+        return go.GetComponent<PutInstructionScript>() != null;
     }
 
     public static bool IsPickInstruction(GameObject go)
     {
-        return false;
+        return go.GetComponent<PickInstructionScript>() != null;
     }
 
     public static bool IsMoveInstruction(GameObject go)
@@ -367,8 +377,8 @@ public class InstructionHelper
 
     public static Direction GetInstructionDirection(GameObject go)
     {
-        string direction = go.transform.Find("DirectionIndicator").GetChild(0).name;
-        return (Direction)Enum.Parse(typeof(Direction), direction);
+        Direction direction = go.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().SelectedDirection;
+        return direction;
     }
 }
 
@@ -387,6 +397,11 @@ public class CodeLine
     public Vector2 dockPosition;
 
     private Vector2 velocity;
+
+    public Vector2 GetDockPositionWithScroll(Vector2 scrollVector)
+    {
+        return dockPosition + scrollVector;
+    }
 
     public CodeLine(GameObject go, Vector2 dockPosition, bool isTop, bool isBottom)
     {

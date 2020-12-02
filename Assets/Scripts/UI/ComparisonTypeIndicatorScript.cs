@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Commands;
+using Models;
 
-public class ComparisonIndicatorScript : MonoBehaviour, IPointerClickHandler
+public class ComparisonTypeIndicatorScript : MonoBehaviour, IPointerClickHandler
 {
-    GameObject comparisonTypeSelector;
+    GameObject comparisonTypeWindow;
     CanvasGroup canvasGroup;
+
+    public ComparedType SelectedComparisonType { get; set; } = ComparedType.Direction;
 
     // Start is called before the first frame update
     void Start()
     {
-        comparisonTypeSelector = GameObject.Find("ComparisonTypeSelector");
+        comparisonTypeWindow = GameObject.Find("ComparisonTypeSelectionWindow");
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         //Hide();
     }
@@ -40,11 +44,12 @@ public class ComparisonIndicatorScript : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            var selectionPanel = Instantiate(comparisonTypeSelector);
-            selectionPanel.transform.SetParent(gameObject.transform.parent.parent);
-            //direction selector is only in Instructions. gameObject.parent = Instruction, Instruction.parent = Panel. Therefore, we need gameObject.parent.parent.
+            RaycastManagerScript.SetFocus();
 
-            var selectionPanelScript = selectionPanel.GetComponent<ComparisonSelectorScript>();
+            var selectionPanel = Instantiate(comparisonTypeWindow);
+            selectionPanel.transform.SetParent(GameObject.Find("Canvas").transform);
+
+            var selectionPanelScript = selectionPanel.GetComponent<ComparisonTypeSelectionWindowScript>();
             selectionPanelScript.changedComparisonIndicator = gameObject;
         }
     }

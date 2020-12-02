@@ -93,6 +93,7 @@ GameObject:
   - component: {fileID: 2664594475410349009}
   - component: {fileID: 2664594475410349010}
   - component: {fileID: 2664594475410349011}
+  - component: {fileID: 2585658084273558392}
   m_Layer: 5
   m_Name: PickInstruction
   m_TagString: Untagged
@@ -182,3 +183,15 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &2585658084273558392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2664594475410349013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff5224a90cc5c074392940b472ae3829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

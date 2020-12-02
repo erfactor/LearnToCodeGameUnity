@@ -9,14 +9,14 @@ public class ComparisonTypeSelectorScript : MonoBehaviour, IPointerClickHandler
 {
     public ComparedType comparedType;
 
-    private GameObject DirectionSelector;
-    private ComparisonSelectorScript parentScript;
+    private GameObject comparisonTypeWindow;
+    private ComparisonTypeSelectionWindowScript parentScript;
 
     // Start is called before the first frame update
     void Start()
     {
-        DirectionSelector = transform.parent.gameObject;
-        parentScript = DirectionSelector.GetComponent<ComparisonSelectorScript>();
+        comparisonTypeWindow = transform.parent.gameObject;
+        parentScript = comparisonTypeWindow.GetComponent<ComparisonTypeSelectionWindowScript>();
     }
 
     // Update is called once per frame

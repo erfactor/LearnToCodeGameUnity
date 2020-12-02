@@ -29,4 +29,14 @@ public class RaycastManagerScript : MonoBehaviour
 
         GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(true);
     }
+
+    public static void SetFocus()
+    {
+        GameObject.Find("Panel").GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
+    public static void ReleaseFocus()
+    {
+        GameObject.Find("Panel").GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
 }
