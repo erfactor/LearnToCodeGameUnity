@@ -115,14 +115,17 @@ namespace Services
                 new PickCommand(1),
                 new MoveCommand(Direction.Right, 2),
                 new DecCommand(3),
-                new MoveCommand(Direction.Right, 4),
-                new IncCommand(5),
-                new MoveCommand(Direction.Right, 6),
+                new AddCommand(4),
+                new MoveCommand(Direction.Right, 5),
+                new IncCommand(6),
+                new SubCommand(7),
+                new MoveCommand(Direction.Right, 8),
                 new JumpCommand(0)
             };
 
             while (true)
             {
+                Debug.unityLogger.Log(board.Bots.Count);
                 foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
                 yield return new WaitForSeconds(1.2f);
             }

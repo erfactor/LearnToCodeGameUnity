@@ -42,7 +42,6 @@ namespace Commands
                 if (newLocationField.TileType == TileType.Hole)
                 {
                     bot.Animator.Fall(bot);
-                    board.Bots.Remove(bot);
                 }
             }
 
