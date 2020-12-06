@@ -1,7 +1,0 @@
-8,6,2
-,corner;,edge;,edge;,edge;,edge;,edge;,edge;,corner
-,edge;piece,tile1;,tile1;botHead,tile2;,tile1;,tile2;,tile1;,edge
-,edge;piece,tile1;,tile2;,tile1;botHead,tile2;,tile1;,tile2;,edge
-,edge;piece,tile1;,tile1;botHead,tile2;,tile1;,tile2;,tile1;,edge
-,edge;piece,tile1;,tile2;,tile1;botHead,tile2;,tile1;,tile2;,edge
-,corner;,edge;,edge;,edge;,edge;,edge;,edge;,corner

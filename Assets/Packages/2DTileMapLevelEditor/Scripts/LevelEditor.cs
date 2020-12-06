@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using Packages._2DTileMapLevelEditor.Scripts.Functionalities;
 using Packages._2DTileMapLevelEditor.Scripts.UI;
 using UnityEngine;
@@ -137,8 +138,9 @@ namespace Packages._2DTileMapLevelEditor.Scripts {
 		}
 
 		// Set the start path for the save and load functionality
-		private void SetStartPath() {
-			_startPath = Application.dataPath + "/GracesGames/2DTileMapLevelEditor/DemoLevels/";
+		private void SetStartPath()
+		{
+			_startPath = Path.Combine(Application.dataPath, "Levels");
 		}
 
 		// Set variables and creates empty level with the correct size
