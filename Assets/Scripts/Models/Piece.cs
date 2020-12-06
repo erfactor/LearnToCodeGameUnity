@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Animators;
+using UnityEngine;
 
 namespace Models
 {
@@ -7,12 +8,23 @@ namespace Models
         public Piece(Vector2Int location, int number, Transform pieceTransform)
         {
             Location = location;
+            PieceTransform = pieceTransform;
             Number = number;
-            _pieceTransform = pieceTransform;
         }
 
-        public Vector2Int Location;
-        public int Number;
-        public readonly Transform _pieceTransform;
+        private Vector2Int Location;
+
+        public int Number
+        {
+            get => _number;
+            set
+            {
+                _number = value;
+                PieceTransform.GetComponent<PieceText>().Text = value.ToString();
+            }
+        }
+
+        public readonly Transform PieceTransform;
+        private int _number;
     }
 }

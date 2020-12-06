@@ -1,4 +1,5 @@
-﻿using Models;
+﻿using System;
+using Models;
 using UnityEngine;
 
 namespace Animators
@@ -8,6 +9,7 @@ namespace Animators
         public Animator animator;
         private static readonly int PickPiece = Animator.StringToHash("PickPiece");
         private static readonly int PutPiece = Animator.StringToHash("PutPiece");
+        private static readonly int Add1 = Animator.StringToHash("Add");
         public Bot Bot { get; set; }
 
         void Update()
@@ -28,8 +30,10 @@ namespace Animators
             animator.SetTrigger(direction.ToString());
         }
 
-        private Piece _piece = null;
+        private Piece _piece;
+        private Piece _heldPiece;
         private bool _isPicking;
+
         public void Pick(Piece piece)
         {
             _isPicking = true;
@@ -46,9 +50,29 @@ namespace Animators
 
         public void AttachPieceToHand()
         {
-            var pieceTransform = _piece._pieceTransform;
+            var pieceTransform = _piece.PieceTransform;
             var leftArm = GetComponent<Transform>().Find("LeftArmSolver").Find("LeftArmSolver_Target");
             pieceTransform.parent = _isPicking ? leftArm : null;
+        }
+        
+        public void Add(Piece piece, Piece heldPiece)
+        {
+            _piece = piece;
+            _heldPiece = heldPiece;
+            animator.SetTrigger(Add1);
+        }
+
+        public void AttachPieceToHandAdd()
+        {
+            var pieceTransform = _piece.PieceTransform;
+            var rightArm = GetComponent<Transform>().Find("RightArmSolver").Find("RightArmSolver_Target");
+            pieceTransform.parent = rightArm;
+        }
+
+        public void MergePieces()
+        {
+            Destroy(_piece.PieceTransform.gameObject);
+            _heldPiece.Number += _piece.Number;
         }
     }
 }
