@@ -114,11 +114,10 @@ namespace Services
             {
                 new PickCommand(1),
                 new MoveCommand(Direction.Right, 2),
-                new AddCommand(3),
-                new MoveCommand(Direction.Left, 4),
-                new MoveCommand(Direction.Down, 5),
-                new MoveCommand(Direction.Up, 6),
-                new PutCommand(7),
+                new DecCommand(3),
+                new MoveCommand(Direction.Right, 4),
+                new IncCommand(5),
+                new MoveCommand(Direction.Right, 6),
                 new JumpCommand(0)
             };
 

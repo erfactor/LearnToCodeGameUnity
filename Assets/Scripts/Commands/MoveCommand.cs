@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Enumerations;
 using Models;
 using UnityEngine;
@@ -9,7 +8,6 @@ namespace Commands
     public class MoveCommand : ICommand
     {
         private readonly Direction _direction;
-        public int NextCommandId { get; }
 
         private readonly Dictionary<Direction, Vector2Int> _directionVector = new Dictionary<Direction, Vector2Int>
         {
@@ -25,16 +23,27 @@ namespace Commands
             NextCommandId = nextCommandId;
         }
 
+        public int NextCommandId { get; }
+
         public int Execute(Board board, Bot bot)
         {
             var newLocation = bot.BoardLocation + _directionVector[_direction];
             var newLocationField = board[newLocation];
-            if (newLocationField.TileType == TileType.Normal && newLocationField.Bot == null)
+            if (newLocationField.TileType != TileType.Wall && newLocationField.Bot == null)
             {
                 board[bot.BoardLocation].Bot = null;
-                bot.BoardLocation = newLocation;
-                newLocationField.Bot = bot;
+                if (newLocationField.TileType == TileType.Normal)
+                {
+                    bot.BoardLocation = newLocation;
+                    newLocationField.Bot = bot;
+                }
+
                 bot.Animator.Move(_direction);
+                if (newLocationField.TileType == TileType.Hole)
+                {
+                    bot.Animator.Fall(bot);
+                    board.Bots.Remove(bot);
+                }
             }
 
             return NextCommandId;

@@ -2,6 +2,6 @@
 ,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner
 ,,edge;,,tile1;piece,,tile2;piece,,tile1;piece,,tile2;piece,,tile1;,,tile2;,,edge
 ,,edge;,,tile2;,,tile1;,,tile2;,,tile1;,,tile2;,,tile1;,,edge
-,,edge;,,tile1;piece,,tile2;piece,botHead,tile1;piece,,tile2;piece,,tile1;,,tile2;,,edge
+,,edge;,,tile1;piece,,tile2;piece,botHead,tile1;piece,,tile2;piece,,tile1;,,hole;,,edge
 ,,edge;,,tile2;,,tile1;,,tile2;,,tile1;,,tile2;,,tile1;,,edge
 ,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner

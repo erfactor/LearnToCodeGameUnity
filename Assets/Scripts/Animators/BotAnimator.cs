@@ -1,27 +1,36 @@
-﻿using System;
-using Models;
+﻿using Models;
 using UnityEngine;
 
 namespace Animators
 {
     public class BotAnimator : MonoBehaviour
     {
-        public Animator animator;
         private static readonly int PickPiece = Animator.StringToHash("PickPiece");
         private static readonly int PutPiece = Animator.StringToHash("PutPiece");
         private static readonly int Add1 = Animator.StringToHash("Add");
+        private static readonly int Inc1 = Animator.StringToHash("Inc");
+        private static readonly int Fall1 = Animator.StringToHash("Fall");
+        public Animator animator;
+        private Piece _heldPiece;
+        private bool _isAdd;
+        private bool _isInc;
+        private bool _isPickingUp;
+
+        private Piece _piece;
+        private GameObject _tempPiece;
+        private GameObject _fallingBot;
         public Bot Bot { get; set; }
 
-        void Update()
+        private void Update()
         {
             var moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            if(Input.GetKeyDown(KeyCode.UpArrow))
+            if (Input.GetKeyDown(KeyCode.UpArrow))
                 animator.SetTrigger("Up");
-            if(Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKeyDown(KeyCode.DownArrow))
                 animator.SetTrigger("Down");
-            if(Input.GetKeyDown(KeyCode.LeftArrow))
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
                 animator.SetTrigger("Left");
-            if(Input.GetKeyDown(KeyCode.RightArrow))
+            if (Input.GetKeyDown(KeyCode.RightArrow))
                 animator.SetTrigger("Right");
         }
 
@@ -30,20 +39,16 @@ namespace Animators
             animator.SetTrigger(direction.ToString());
         }
 
-        private Piece _piece;
-        private Piece _heldPiece;
-        private bool _isPicking;
-
         public void Pick(Piece piece)
         {
-            _isPicking = true;
+            _isPickingUp = true;
             _piece = piece;
             animator.SetTrigger(PickPiece);
         }
-        
+
         public void Put(Piece piece)
         {
-            _isPicking = false;
+            _isPickingUp = false;
             _piece = piece;
             animator.SetTrigger(PutPiece);
         }
@@ -52,11 +57,12 @@ namespace Animators
         {
             var pieceTransform = _piece.PieceTransform;
             var leftArm = GetComponent<Transform>().Find("LeftArmSolver").Find("LeftArmSolver_Target");
-            pieceTransform.parent = _isPicking ? leftArm : null;
+            pieceTransform.parent = _isPickingUp ? leftArm : null;
         }
-        
-        public void Add(Piece piece, Piece heldPiece)
+
+        public void Add(Piece piece, Piece heldPiece, bool isAdd)
         {
+            _isAdd = isAdd;
             _piece = piece;
             _heldPiece = heldPiece;
             animator.SetTrigger(Add1);
@@ -64,15 +70,54 @@ namespace Animators
 
         public void AttachPieceToHandAdd()
         {
-            var pieceTransform = _piece.PieceTransform;
             var rightArm = GetComponent<Transform>().Find("RightArmSolver").Find("RightArmSolver_Target");
-            pieceTransform.parent = rightArm;
+            _tempPiece = Instantiate(_piece.PieceTransform.gameObject, rightArm, true);
         }
 
         public void MergePieces()
         {
-            Destroy(_piece.PieceTransform.gameObject);
-            _heldPiece.Number += _piece.Number;
+            Destroy(_tempPiece);
+            if (_isAdd)
+                _heldPiece.Number += _piece.Number;
+            else
+                _heldPiece.Number -= _piece.Number;
+        }
+
+        public void Inc(Piece heldPiece, bool isInc)
+        {
+            _isInc = isInc;
+            _heldPiece = heldPiece;
+            animator.SetTrigger(Inc1);
+        }
+
+        public void AttachPieceToHandInc()
+        {
+            var rightArm = GetComponent<Transform>().Find("RightArmSolver").Find("RightArmSolver_Target");
+            _tempPiece = Instantiate(_heldPiece.PieceTransform.gameObject, rightArm, true);
+            var position = _tempPiece.transform.position;
+            position.y += 0.636f;
+            _tempPiece.transform.position = position;
+            _tempPiece.GetComponent<PieceText>().Text = _isInc ? "+" : "-";
+        }
+
+        public void MergePiecesInc()
+        {
+            Destroy(_tempPiece);
+            if (_isInc)
+                _heldPiece.Number++;
+            else
+                _heldPiece.Number--;
+        }
+
+        public void Fall(Bot bot)
+        {
+            _fallingBot = bot.Animator.gameObject;
+            animator.SetBool(Fall1, true);
+        }
+
+        public void DestroyFallenBot()
+        {
+            Destroy(_fallingBot);
         }
     }
 }

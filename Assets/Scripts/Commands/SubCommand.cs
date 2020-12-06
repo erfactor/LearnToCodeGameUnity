@@ -2,9 +2,9 @@
 
 namespace Commands
 {
-    public class AddCommand : ICommand
+    public class SubCommand : ICommand
     {
-        public AddCommand(int nextCommandId)
+        public SubCommand(int nextCommandId)
         {
             NextCommandId = nextCommandId;
         }
@@ -15,7 +15,7 @@ namespace Commands
             
             if (bot.Piece != null && boardPiece != null)
             {
-                bot.Animator.Add(boardPiece, bot.Piece, true);
+                bot.Animator.Add(boardPiece, bot.Piece, false);
             }
 
             return NextCommandId;

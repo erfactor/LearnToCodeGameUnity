@@ -2,20 +2,18 @@
 
 namespace Commands
 {
-    public class AddCommand : ICommand
+    public class IncCommand : ICommand
     {
-        public AddCommand(int nextCommandId)
+        public IncCommand(int nextCommandId)
         {
             NextCommandId = nextCommandId;
         }
 
         public int Execute(Board board, Bot bot)
         {
-            var boardPiece = board[bot.BoardLocation].Piece;
-            
-            if (bot.Piece != null && boardPiece != null)
+            if (bot.Piece != null)
             {
-                bot.Animator.Add(boardPiece, bot.Piece, true);
+                bot.Animator.Inc(bot.Piece, true);
             }
 
             return NextCommandId;
