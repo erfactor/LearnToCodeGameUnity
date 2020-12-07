@@ -7,11 +7,11 @@ using UnityEngine.EventSystems;
 public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 {
 
-    public const float SpacingY = 10; // height of the space between two lines
-    public const float SpacingX = 20; // left Margin
+    public float SpacingY = 10; // height of the space between two lines
+    public float SpacingX = 20; // left Margin
 
-    public const float lineSizeX = 150;
-    public const float lineSizeY = 40; //height of the single line
+    private float lineSizeX = 150;
+    private float lineSizeY = 40; //height of the single line
 
     public static GameObject draggedObject;
 
@@ -22,7 +22,9 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
 
-    private float ScrollY;
+    private float scrollY;
+
+    private float CanvasScale => GameObject.Find("Canvas").GetComponent<Canvas>().scaleFactor;
 
     private static Vector2 topLeftCorner;
     private static Rect panelRect;
@@ -41,16 +43,35 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     {
         InitializeSolutions();
         InitializePanel();
+        InitializeConstants();
+
         draggedObject = null;
-        ScrollY = 0;
+        scrollY = 0;
+    }
+
+    void InitializeConstants()
+    {
+        lineSizeX = 0;
+        lineSizeY = 0;
+
+        Rect rect = GameObject.Find("MoveInstruction").GetComponent<RectTransform>().rect;
+        lineSizeX = rect.width * CanvasScale;
+        lineSizeY = rect.height * CanvasScale;
+
+        SpacingX = 20;
+        SpacingY = lineSizeY / 4;
     }
 
     void InitializePanel()
     {
         Rect rect = this.gameObject.GetComponent<RectTransform>().rect;
-        float left = gameObject.transform.position.x - rect.width / 2;
-        float top = gameObject.transform.position.y + rect.height / 2;
+
+        float left = gameObject.transform.position.x - rect.width / 2 * CanvasScale;
+        float top = gameObject.transform.position.y + rect.height / 2 * CanvasScale;
+
         topLeftCorner = new Vector2(left, top);
+
+        Debug.Log($"InitializePanel: x: {left} y :{top}");
 
         panelRect = new Rect(left, top, rect.width, rect.height);
     }
@@ -95,7 +116,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         for (int i = 0; i < CurrentSolution.Count; i++)
         {
             bool isThisOneDragged = draggedObject == CurrentSolution[i].go;
-            CurrentSolution[i].UpdatePosition(isDragged, isThisOneDragged);
+            CurrentSolution[i].UpdatePosition(isDragged, isThisOneDragged, scrollY);
         }
     }
 
@@ -198,6 +219,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
         CodeLine newCodeLine = new CodeLine(go, newDockPosition, index == 0, index == CurrentSolution.Count);
         CurrentSolution.Insert(index, newCodeLine);
+        go.transform.SetParent(transform);
     }
 
     public void InsertJumpInstruction(int index, GameObject go)
@@ -259,6 +281,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     {
         GameObject jumpInstructionLabel = jumpInstruction.GetComponent<JumpInstructionScript>().CreateBindedLabel();
         jumpInstructionLabel.transform.SetParent(transform);
+        jumpInstructionLabel.transform.localScale = new Vector3(1, 1, 1);
         return jumpInstructionLabel;
     }
     
@@ -275,7 +298,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private void ApplyScroll(PointerEventData eventData)
     {
-        this.ScrollY += eventData.scrollDelta.y;
+        this.scrollY += eventData.scrollDelta.y;
+        Debug.Log($"Added {eventData.scrollDelta.y} to scrollY, now scrollY = {scrollY}");
     }
 }
 
@@ -490,15 +514,16 @@ public class CodeLine
         }
     }
 
-    public void UpdatePosition(bool isAnythingDragged, bool isThisOneDragged)
+    public void UpdatePosition(bool isAnythingDragged, bool isThisOneDragged, float scrollY)
     {
         if (isThisOneDragged) return;
 
-        Vector2 sumForce;// = GetRepelForce(Input.mousePosition) + GetReturnVector();
+        Vector2 sumForce;
+        Vector2 relativeMousePosition = (Vector2)Input.mousePosition - new Vector2(0, scrollY);
 
         if (isAnythingDragged)
         {
-            sumForce = GetRepelForce(Input.mousePosition) + GetReturnVector();
+            sumForce = GetRepelForce(relativeMousePosition) + GetReturnVector();
         }
         else
         {
@@ -508,7 +533,7 @@ public class CodeLine
         velocity = sumForce;
 
         //Vector2 newPosition = new Vector2(go.transform.position.x + velocity.x, go.transform.position.y + velocity.y);
-        Vector2 newPosition = new Vector2(dockPosition.x, go.transform.position.y + velocity.y);
+        Vector2 newPosition = new Vector2(dockPosition.x, scrollY + go.transform.position.y + velocity.y);
         go.transform.position = newPosition;
         CheckIfOutOfBounds();
 

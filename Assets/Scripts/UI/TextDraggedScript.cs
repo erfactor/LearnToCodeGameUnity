@@ -21,8 +21,6 @@ public class TextDraggedScript : MonoBehaviour
     void Update()
     {
         if (CodePanel.draggedObject == null) return;
-        Debug.Log($"drag x: {CodePanel.draggedObject.transform.position.x}");
-        Debug.Log($"drag y: {CodePanel.draggedObject.transform.position.y}");
         text.text = $"Drag: x: {CodePanel.draggedObject.transform.position.x} y: {CodePanel.draggedObject.transform.position.y}";
 
 

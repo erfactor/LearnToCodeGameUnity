@@ -24,6 +24,7 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         newObject.transform.SetParent(gameObject.transform.parent);
         newObject.transform.position = transform.position;
         newObject.name = transform.name;
+        newObject.transform.localScale = new Vector3(1, 1, 1);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
