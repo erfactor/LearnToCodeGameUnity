@@ -21,7 +21,7 @@ namespace Services
         // The list of tiles the user can use to create maps. Public so the user can add all user-created prefabs
         public Tileset Tileset;
 
-        public string LevelFileName;
+        public static string LevelFileName;
 
         // Dictionary as the parent for all the GameObjects per layer
         private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
@@ -34,6 +34,8 @@ namespace Services
 
         private static Random _random = new Random();
 
+        public Board initialBoardState;
+
         private void Awake()
         {
             if (Instance == null)
@@ -44,10 +46,10 @@ namespace Services
         private void Start()
         {
             var path = Path.Combine(Application.dataPath, "Levels", LevelFileName);
-            LoadLevel(path);
+            initialBoardState = LoadLevel(path);
         }
 
-        private void LoadLevel(string path)
+        private Board LoadLevel(string path)
         {
             var lines = File.ReadAllLines(path);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
@@ -105,31 +107,60 @@ namespace Services
                 }
             }
 
-            StartCoroutine("InterpretCode", board);
+            GameObject.Find("TileLevel").transform.localScale = new Vector3(100, 100);
+            GameObject.Find("TileLevel").transform.position = new Vector3(100, 100);
+            return board;
+            //StartCoroutine("InterpretCode", board);
         }
 
-        private IEnumerator InterpretCode(Board board)
+        public void StartExecution(List<ICommand> commands)
         {
-            var code = new ICommand[]
-            {
-                new PickCommand(1),
-                new MoveCommand(Direction.Right, 2),
-                new DecCommand(3),
-                new AddCommand(4),
-                new MoveCommand(Direction.Right, 5),
-                new IncCommand(6),
-                new SubCommand(7),
-                new MoveCommand(Direction.Right, 8),
-                new JumpCommand(0)
-            };
+            StartCoroutine("InterpretCode", commands);
+        }
+
+        public IEnumerator InterpretCode(List<ICommand> commands)
+        {
+            Board board = initialBoardState;
 
             while (true)
             {
                 Debug.unityLogger.Log(board.Bots.Count);
-                foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
+                foreach (var bot in board.Bots) bot.CommandId = commands[bot.CommandId].Execute(board, bot);
                 yield return new WaitForSeconds(1.2f);
             }
         }
+
+        public void StopExecution()
+        {
+            StopAllCoroutines();
+            _layerParents.Clear();
+            var levelInstance = GameObject.Find("TileLevel");
+            DestroyImmediate(levelInstance);
+            Start();
+        }
+
+        //private IEnumerator InterpretCode(Board board)
+        //{
+        //    var code = new ICommand[]
+        //    {
+        //        new PickCommand(1),
+        //        new MoveCommand(Direction.Right, 2),
+        //        new DecCommand(3),
+        //        new AddCommand(4),
+        //        new MoveCommand(Direction.Right, 5),
+        //        new IncCommand(6),
+        //        new SubCommand(7),
+        //        new MoveCommand(Direction.Right, 8),
+        //        new JumpCommand(0)
+        //    };
+
+        //    while (true)
+        //    {
+        //        Debug.unityLogger.Log(board.Bots.Count);
+        //        foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
+        //        yield return new WaitForSeconds(1.2f);
+        //    }
+        //}
 
         private Transform CreateGameObject(string prefabName, float xPos, float yPos, int zPos,
             Quaternion rotation = new Quaternion())

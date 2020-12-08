@@ -13,6 +13,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     private float lineSizeX = 150;
     private float lineSizeY = 40; //height of the single line
 
+    private float ScrollMultiplier = 5;
+
     public static GameObject draggedObject;
 
 
@@ -149,6 +151,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private int GetSlotIndexUnderMousePosition(PointerEventData eventData)
     {
+        eventData.position += new Vector2(0, scrollY);
+
         if (CurrentSolution.Count == 0) return 0;
 
         else
@@ -298,8 +302,14 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private void ApplyScroll(PointerEventData eventData)
     {
-        this.scrollY += eventData.scrollDelta.y;
+        this.scrollY += eventData.scrollDelta.y * ScrollMultiplier;
         Debug.Log($"Added {eventData.scrollDelta.y} to scrollY, now scrollY = {scrollY}");
+        TrimScroll();
+    }
+
+    private void TrimScroll()
+    {
+        scrollY = Mathf.Min(0, scrollY);
     }
 }
 
@@ -324,6 +334,26 @@ public class CommandHelper
             return new PutCommand(currentLine + 1);
         }
 
+        if (InstructionHelper.IsAddInstruction(line.go))
+        {
+            return new AddCommand(currentLine + 1);
+        }
+
+        if (InstructionHelper.IsSubInstruction(line.go))
+        {
+            return new SubCommand(currentLine + 1);
+        }
+
+        if (InstructionHelper.IsDecInstruction(line.go))
+        {
+            return new DecCommand(currentLine + 1);
+        }
+
+        if (InstructionHelper.IsIncInstruction(line.go))
+        {
+            return new IncCommand(currentLine + 1);
+        }
+
         if (InstructionHelper.IsJumpInstruction(line.go))
         {
             if (InstructionHelper.IsJumpInstructionLabel(line.go))
@@ -333,6 +363,11 @@ public class CommandHelper
 
             int jumpIndex = GetJumpLineNumber(solution, line.go);
             return new JumpCommand(jumpIndex);
+        }
+
+        if (InstructionHelper.IsIfInstruction(line.go))
+        {
+            throw new NotImplementedException("If command is not implemented yet");
         }
 
         throw new System.Exception("nie udalo sie wygenerowac komendy");
@@ -396,7 +431,27 @@ public class InstructionHelper
 
     public static bool IsIfInstruction(GameObject go)
     {
-        return go.GetComponent<MoveInstructionScript>() != null;
+        return go.GetComponent<IfElseInstructionScript>() != null;
+    }
+
+    public static bool IsAddInstruction(GameObject go)
+    {
+        return go.GetComponent<AddInstructionScript>() != null;
+    }
+
+    public static bool IsSubInstruction(GameObject go)
+    {
+        return go.GetComponent<SubInstructionScript>() != null;
+    }
+
+    public static bool IsDecInstruction(GameObject go)
+    {
+        return go.GetComponent<DecInstructionScript>() != null;
+    }
+
+    public static bool IsIncInstruction(GameObject go)
+    {
+        return go.GetComponent<IncInstructionScript>() != null;
     }
 
     public static Direction GetInstructionDirection(GameObject go)
@@ -416,15 +471,17 @@ public class CodeLine
     public float lockCageTopY;
     public float lockCageBotY;
 
-    public float lockCageSize => SizeY + SpacingY;
+    public float LockCageSize => SizeY + SpacingY;
 
     public Vector2 dockPosition;
 
     private Vector2 velocity;
 
+    private Vector2 shift;
+
     public Vector2 GetDockPositionWithScroll(Vector2 scrollVector)
     {
-        return dockPosition + scrollVector;
+        return dockPosition - scrollVector;
     }
 
     public CodeLine(GameObject go, Vector2 dockPosition, bool isTop, bool isBottom)
@@ -440,25 +497,22 @@ public class CodeLine
 
     public void ChangeDockPosition(Vector2 newDockPosition, int indent = 0)
     {
+        //RepairShift(dockPosition, newDockPosition);
         this.dockPosition = newDockPosition;
-        lockCageTopY = dockPosition.y + lockCageSize;
-        lockCageBotY = dockPosition.y - lockCageSize;
+        lockCageTopY = dockPosition.y + LockCageSize;
+        lockCageBotY = dockPosition.y - LockCageSize;
+    }
+
+    public void RepairShift(Vector2 oldPos, Vector2 newPos)
+    {
+        Vector2 midpoint = oldPos + shift;
+        shift = newPos - midpoint;
     }
 
     public void SetTopBot(bool isTop, bool isBottom)
     {
-        lockCageTopY = dockPosition.y + lockCageSize;
-        lockCageBotY = dockPosition.y - lockCageSize;
-
-        if (isTop)
-        {
-            //lockCageTopY = dockPosition.y;
-        }
-
-        else if (isBottom)
-        {
-            //lockCageBotY = dockPosition.y;
-        }
+        lockCageTopY = dockPosition.y + LockCageSize;
+        lockCageBotY = dockPosition.y - LockCageSize;
     }
 
     public const float MinDistanceForRepelForce = 10f;
@@ -470,35 +524,32 @@ public class CodeLine
     /// 
     /// </summary>
     /// <param name="forceSourcePosition">Mouse position AFTER applying the scroll</param>
-    public Vector2 GetRepelForce(Vector2 forceSourcePosition)
+    public Vector2 GetRepelForce(Vector2 forceSourcePosition, Vector2 scrollVector)
     {
-        Vector2 pos2 = dockPosition;
+        Vector2 relativeDock = GetDockPositionWithScroll(scrollVector);
 
-        float yDiff = dockPosition.y - forceSourcePosition.y;
+        float yDiff = relativeDock.y - forceSourcePosition.y - scrollVector.y;
 
-        //if (Mathf.Abs(yDiff) > MaxDistanceForRepelForce) return Vector2.zero;
         yDiff = Mathf.Clamp(yDiff, -MinDistanceForRepelForce, MinDistanceForRepelForce);
 
         if (yDiff >= 0 && yDiff < MinDistanceForRepelForce) yDiff = MinDistanceForRepelForce;
         if (yDiff <= 0 && yDiff > -MinDistanceForRepelForce) yDiff = -MinDistanceForRepelForce;
 
-        //return new Vector2(0, RepelForceScaleFactor / Mathf.Sqrt(Mathf.Abs(yDiff)) * Mathf.Sign(yDiff));
         return new Vector2(0, RepelForceScaleFactor / Mathf.Pow(Mathf.Abs(yDiff), 0.6f) * Mathf.Sign(yDiff));
     }
 
-    public Vector2 GetReturnVector()
+    public Vector2 GetReturnVector(Vector2 scrollVector)
     {
-        //return Vector2.zero;
+        //float yDiff = GetDockPositionWithScroll(scrollVector).y - go.transform.position.y;
 
-        float yDiff = dockPosition.y - go.transform.position.y;
+        //if (yDiff == 0) return Vector2.zero;
+        //if (yDiff >= 0 && yDiff < 0.1) yDiff = 0.1f;
+        //if (yDiff <= 0 && yDiff > -0.1) yDiff = -0.1f;
 
-        if (yDiff == 0) return Vector2.zero;
-        if (yDiff >= 0 && yDiff < 0.1) yDiff = 0.1f;
-        if (yDiff <= 0 && yDiff > -0.1) yDiff = -0.1f;
+        //Vector2 newForce = new Vector2(0, ReturnForceScaleFactor * yDiff);
+        //return newForce;
 
-        Vector2 newForce = new Vector2(0, ReturnForceScaleFactor * yDiff);
-        //Debug.Log($"yDiff at repel: {yDiff}");
-        return newForce;
+        return -shift / 10;
     }
 
     public void CheckIfOutOfBounds()
@@ -518,24 +569,31 @@ public class CodeLine
     {
         if (isThisOneDragged) return;
 
-        Vector2 sumForce;
-        Vector2 relativeMousePosition = (Vector2)Input.mousePosition - new Vector2(0, scrollY);
+        Vector2 sumForce = Vector2.zero;
+
+        Vector2 scrollVector = new Vector2(0, scrollY);
+        Vector2 relativeMousePosition = (Vector2)Input.mousePosition - scrollVector;
 
         if (isAnythingDragged)
         {
-            sumForce = GetRepelForce(relativeMousePosition) + GetReturnVector();
+            sumForce = GetRepelForce(relativeMousePosition, scrollVector) + GetReturnVector(scrollVector);
         }
         else
         {
-            sumForce = GetReturnVector();
+            sumForce = GetReturnVector(scrollVector);
         }
 
         velocity = sumForce;
 
+        shift += velocity;
+
         //Vector2 newPosition = new Vector2(go.transform.position.x + velocity.x, go.transform.position.y + velocity.y);
-        Vector2 newPosition = new Vector2(dockPosition.x, scrollY + go.transform.position.y + velocity.y);
+        //Vector2 newPosition = new Vector2(dockPosition.x, scrollY + go.transform.position.y + velocity.y);
+        Vector2 newPosition = new Vector2(dockPosition.x, shift.y + GetDockPositionWithScroll(scrollVector).y);
         go.transform.position = newPosition;
-        CheckIfOutOfBounds();
+        //CheckIfOutOfBounds();
+
+        
 
         if (InstructionHelper.IsJumpInstruction(this.go))
         {

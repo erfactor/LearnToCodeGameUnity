@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Services;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class PlayButtonScript : MonoBehaviour, IPointerClickHandler
@@ -22,6 +23,8 @@ public class PlayButtonScript : MonoBehaviour, IPointerClickHandler
         var codePanel = GameObject.Find("SolutionPanel");
         var codePanelScript = codePanel.GetComponent<CodePanel>();
         var commands = codePanelScript.GetCommands();
+
+        GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StartExecution(commands);
     }
 
 
