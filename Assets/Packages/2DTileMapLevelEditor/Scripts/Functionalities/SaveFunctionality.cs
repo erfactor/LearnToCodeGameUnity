@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Animators;
 using Packages._2DTileMapLevelEditor.Common.Scripts;
 using Packages._2DTileMapLevelEditor.SimpleFileBrowser.Scripts;
 using Services;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities
 {
@@ -108,7 +111,19 @@ namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities
                     for (var z = 0; z < depth; z++)
                     {
                         var tileIndex = levelToSave[x, y, z];
-                        if (tileIndex != LevelEditor.GetEmpty()) file.Append(_tiles[tileIndex].gameObject.name);
+                        if (tileIndex != LevelEditor.GetEmpty())
+                        {
+                            var go = _tiles[tileIndex].gameObject;
+                            file.Append(go.name);
+                            if (go.name == "piece")
+                            {
+                                throw new Exception();
+                                var text = go.GetComponent<PieceText>().Text;
+                                Console.WriteLine(text);
+                                if (string.IsNullOrEmpty(text) is false)
+                                    file.Append(text);
+                            }
+                        }
 
                         if (z != depth - 1) file.Append(LevelLoader.DepthSeparator);
                     }

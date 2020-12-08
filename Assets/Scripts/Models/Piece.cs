@@ -5,6 +5,9 @@ namespace Models
 {
     public class Piece
     {
+        private int _number;
+        public readonly Transform PieceTransform;
+        
         public Piece(Vector2Int location, int number, Transform pieceTransform)
         {
             Location = location;
@@ -23,8 +26,5 @@ namespace Models
                 PieceTransform.GetComponent<PieceText>().Text = value.ToString();
             }
         }
-
-        public readonly Transform PieceTransform;
-        private int _number;
     }
 }

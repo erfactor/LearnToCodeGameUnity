@@ -8,6 +8,7 @@ namespace Animators
         public string Text
         {
             set => GetComponentInChildren<Text>().text = value; 
+            get => GetComponentInChildren<Text>().text; 
         }
     }
 }

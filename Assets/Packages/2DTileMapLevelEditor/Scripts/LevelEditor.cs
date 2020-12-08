@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Animators;
 using Packages._2DTileMapLevelEditor.Scripts.Functionalities;
 using Packages._2DTileMapLevelEditor.Scripts.UI;
 using UnityEngine;
@@ -377,16 +378,22 @@ namespace Packages._2DTileMapLevelEditor.Scripts {
 			return emptyLevel;
 		}
 
+		public string PieceNumberText { get; set; }
 		private void BuildBlock(Transform toCreate, int xPos, int yPos, int zPos, Transform parent) {
 			//Create the object we want to create
 			Transform newObject = Instantiate(toCreate, new Vector3(xPos, yPos, toCreate.position.z), Quaternion.identity);
 			//Give the new object the same name as our tile prefab
 			newObject.name = toCreate.name;
+			if (newObject.name == "piece")
+			{
+				newObject.GetComponent<PieceText>().Text = PieceNumberText;
+			}
 			// Set the object's parent to the layer parent variable so it doesn't clutter our Hierarchy
 			newObject.parent = parent;
 			// Add the new object to the gameObjects array for correct administration
 			_gameObjects[xPos, yPos, zPos] = newObject;
 		}
+
 
 		private void DestroyBlock(int posX, int posY, int posZ) {
 			DestroyImmediate(_gameObjects[posX, posY, posZ].gameObject);

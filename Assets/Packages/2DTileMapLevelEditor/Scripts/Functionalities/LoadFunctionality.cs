@@ -63,12 +63,7 @@ namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities
             _levelEditor.ToggleLevelEditor(_preFileBrowserState);
             if (path.Length != 0)
             {
-                // Reset the level
                 _levelEditor.ResetBeforeLoad();
-                // BinaryFormatter bFormatter = new BinaryFormatter();
-                // FileStream file = File.OpenRead(path);
-                // string levelData = bFormatter.Deserialize(file) as string;
-                // file.Close();
                 LoadLevelFromStringLayers(path);
             }
             else
