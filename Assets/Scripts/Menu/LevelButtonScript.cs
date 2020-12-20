@@ -16,12 +16,6 @@ public class LevelButtonScript : MonoBehaviour
         button.onClick.AddListener(PlayLevel);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void PlayLevel()
     {
         Debug.Log($"Loading level with name: [{filename}]");

@@ -115,7 +115,13 @@ namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities
                     for (var z = 0; z < depth; z++)
                     {
                         var blockString = cell[z];
-                        _levelEditor.CreateBlock(TileStringRepresentationToInt(blockString), x, y, z);
+                        string pieceValue = null;
+                        if (blockString.StartsWith("piece"))
+                        {
+                            pieceValue = blockString.Substring(5);
+                            blockString = "piece";
+                        }
+                        _levelEditor.CreateBlock(TileStringRepresentationToInt(blockString), x, y, z, pieceValue);
                     }
                 }
             }

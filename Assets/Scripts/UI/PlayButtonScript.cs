@@ -4,19 +4,6 @@ using UnityEngine.EventSystems;
 
 public class PlayButtonScript : MonoBehaviour, IPointerClickHandler
 {
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void OnPointerClick(PointerEventData eventData)
     {
         Debug.Log("Play button clicked");
@@ -26,6 +13,4 @@ public class PlayButtonScript : MonoBehaviour, IPointerClickHandler
 
         GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StartExecution(commands);
     }
-
-
 }

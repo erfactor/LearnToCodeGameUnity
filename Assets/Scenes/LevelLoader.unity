@@ -451,7 +451,7 @@ PrefabInstance:
     - target: {fileID: 6852722343080261384, guid: 708e5467721e1a548b2503eb292c9cbd,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6852722343080261384, guid: 708e5467721e1a548b2503eb292c9cbd,
         type: 3}
@@ -654,7 +654,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &384539014
 MonoBehaviour:
@@ -668,8 +668,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d78e1dae75043e39a113424e06bbd50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testFileName: test.lvl
   Tileset: {fileID: 1598100341489071453, guid: 2c85fd0df67b4df4aaddbb3cc7ecaf1c, type: 3}
-  LevelFileName: changed.lvl
 --- !u!1001 &1455437059
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -715,7 +715,7 @@ PrefabInstance:
     - target: {fileID: 1696273168587726576, guid: 43c0349d34f38714cac6a5ed3427d90b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1696273168587726576, guid: 43c0349d34f38714cac6a5ed3427d90b,
         type: 3}

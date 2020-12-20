@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Animators;
 using Packages._2DTileMapLevelEditor.Common.Scripts;
 using Packages._2DTileMapLevelEditor.SimpleFileBrowser.Scripts;
 using Services;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities
 {
@@ -117,10 +117,11 @@ namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities
                             file.Append(go.name);
                             if (go.name == "piece")
                             {
-                                throw new Exception();
-                                var text = go.GetComponent<PieceText>().Text;
-                                Console.WriteLine(text);
-                                if (string.IsNullOrEmpty(text) is false)
+                                var piece = GameObject.FindGameObjectsWithTag("piece")
+                                    .First(p => p.transform.position.x == x && p.transform.position.y == y);
+
+                                var text = piece.GetComponent<PieceText>().Text;
+                                if (!string.IsNullOrEmpty(text))
                                     file.Append(text);
                             }
                         }

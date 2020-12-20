@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,23 +17,24 @@ namespace Services
         // The instance of the LevelEditor
         public static LevelLoader Instance;
 
+        public static string LevelFileName;
+        public string testFileName;
+
+        private static readonly Random _random = new Random();
+
         // The list of tiles the user can use to create maps. Public so the user can add all user-created prefabs
         public Tileset Tileset;
-
-        public static string LevelFileName;
 
         // Dictionary as the parent for all the GameObjects per layer
         private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
 
         // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
         private GameObject _tileLevelParent;
+
+        public Board initialBoardState;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
-
-        private static Random _random = new Random();
-
-        public Board initialBoardState;
 
         private void Awake()
         {
@@ -45,7 +45,7 @@ namespace Services
 
         private void Start()
         {
-            var path = Path.Combine(Application.dataPath, "Levels", LevelFileName);
+            var path = Path.Combine(Application.dataPath, "Levels", LevelFileName ?? testFileName);
             initialBoardState = LoadLevel(path);
         }
 
@@ -68,15 +68,18 @@ namespace Services
                     var piecePrefabName = cell[0];
                     var botPrefabName = cell[1];
                     var tilePrefabName = cell[2];
-                    
+
                     Piece piece = null;
                     Bot bot = null;
                     var tileType = TileType.Hole;
 
-                    if (piecePrefabName != String.Empty)
+                    if (piecePrefabName != string.Empty)
                     {
-                        var pieceTransform = CreateGameObject(piecePrefabName, x, y, 1);
-                        piece = new Piece(new Vector2Int(x, y), _random.Next(100), pieceTransform);
+                        int pieceNumber = piecePrefabName != "piece"
+                            ? int.Parse(piecePrefabName.Substring(5))
+                            : _random.Next(100);
+                        var pieceTransform = CreateGameObject("piece", x, y, 1);
+                        piece = new Piece(new Vector2Int(x, y), pieceNumber, pieceTransform);
                     }
 
                     if (botPrefabName != string.Empty)
@@ -120,7 +123,7 @@ namespace Services
 
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
-            Board board = initialBoardState;
+            var board = initialBoardState;
 
             while (true)
             {
@@ -171,20 +174,19 @@ namespace Services
             {
                 prefab = Resources.Load<Transform>("Bot/Bot");
                 yPos -= 0.472f;
-            } else if (prefab.name == "piece")
+            }
+            else if (prefab.name == "piece")
             {
                 yPos -= 0.255f;
             }
 
             var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), rotation);
             newObject.name = prefab.name;
-            // Set the object's parent to the layer parent variable so it doesn't clutter our Hierarchy
             newObject.parent = parent;
 
             return newObject;
         }
 
-        // Method that returns the parent GameObject for a layer
         private GameObject GetLayerParent(int layer)
         {
             if (_layerParents.ContainsKey(layer))
@@ -194,12 +196,6 @@ namespace Services
             layerParent.transform.parent = _tileLevelParent.transform;
             _layerParents.Add(layer, layerParent);
             return _layerParents[layer];
-        }
-
-        private void MaybeFuture()
-        {
-            foreach (Transform child in _tileLevelParent.transform) Destroy(child.gameObject);
-            DestroyImmediate(gameObject);
         }
     }
 }
