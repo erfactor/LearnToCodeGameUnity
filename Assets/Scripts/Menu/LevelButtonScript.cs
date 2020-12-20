@@ -1,25 +1,29 @@
 ﻿using Services;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelButtonScript : MonoBehaviour
+namespace Menu
 {
-    public string filename;
-    Button button;
-    // Start is called before the first frame update
-    void Start()
+    public class LevelButtonScript : MonoBehaviour
     {
-        button = GetComponentInChildren<Button>();
-        button.onClick.AddListener(PlayLevel);
-    }
+        public string filename;
 
-    private void PlayLevel()
-    {
-        Debug.Log($"Loading level with name: [{filename}]");
-        LevelLoader.LevelFileName = filename;
-        SceneManager.LoadScene("UI Example Scene");
+        private Button button;
+
+        // Start is called before the first frame update
+        private void Start()
+        {
+            button = GetComponentInChildren<Button>();
+            button.onClick.AddListener(LoadLevel);
+        }
+
+        private void LoadLevel()
+        {
+            Debug.Log($"Loading level with name: [{filename}]");
+            LevelLoader.LevelFileName = filename;
+            var animator = GameObject.Find("Canvas").GetComponent<Animator>();
+            animator.SetTrigger("ChangeScene");
+        }
     }
 }
