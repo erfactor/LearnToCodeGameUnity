@@ -23,7 +23,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
 
     private List<List<CodeLine>> solutions;
-    private const int numberOfSolutions = 3;
+    private const int numberOfSolutions = 1;
     private static int currentSolutionIndex = 0;
 
     private List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
@@ -85,6 +85,31 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     public static bool IsInRect(Rect r, Vector2 pos)
     {
         return (pos.x >= r.x && pos.x <= r.x + r.width && pos.y <= r.y && pos.y >= r.y - r.height);
+    }
+
+    public void ChangeCurrentSolutionIndex(int newIndex)
+    {
+        if (currentSolutionIndex == newIndex) return;
+        SwapSolutions(currentSolutionIndex, newIndex);
+        currentSolutionIndex = newIndex;
+    }
+
+    public void SwapSolutions(int toStore, int toLoad)
+    {
+        var storeBasket = GameObject.Find("UnusedCommands").transform.Find($"Solution{toStore}");
+        var newDataBasket = GameObject.Find("UnusedCommands").transform.Find($"Solution{toLoad}");        
+        var currentSolution = GameObject.Find("SolutionPanel").transform;
+
+        MoveAllChildren(currentSolution, storeBasket);
+        MoveAllChildren(newDataBasket, currentSolution);
+    }
+
+    public void MoveAllChildren(Transform from, Transform to)
+    {
+        for(int i=0; i<from.childCount; )
+        {
+            from.GetChild(i).SetParent(to);
+        }
     }
 
     // Update is called once per frame
