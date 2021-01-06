@@ -51,7 +51,7 @@ namespace Services
 
         private string GetFullPathToLevel(string filename)
         {
-            return Path.Combine(Application.dataPath, "Levels", filename);
+            return Path.Combine(Application.dataPath, "Resources", "Levels", filename);
         }
 
         public Board PublicLoadLevel(string filename)
