@@ -7,11 +7,11 @@ namespace Menu
 {
     public class LevelButtonScript : MonoBehaviour
     {
-        public string filename;
-
         private Button button;
 
         public LevelLoader LevelLoaderPrefab;
+
+        public TextAsset levelData;
 
         // Start is called before the first frame update
         private void Start()
@@ -22,17 +22,14 @@ namespace Menu
 
         private void LoadLevel()
         {
-            Debug.Log($"Loading level with name: [{filename}]");
-            //LevelLoader.LevelFileName = filename;
-            
-
             var loader = Instantiate<LevelLoader>(LevelLoaderPrefab);
             loader.gameObject.name = "LevelLoader";
-            loader.PublicLoadLevel(filename);
+            loader.LoadLevel(levelData.text);
+
             DontDestroyOnLoad(loader.gameObject);
 
             SceneManager.LoadScene(1);
-            var animator = GameObject.Find("LevelCanvas").GetComponent<Animator>();
+            var animator = GameObject.Find("Canvas").GetComponent<Animator>();
             animator.SetTrigger("ChangeScene");
 
             

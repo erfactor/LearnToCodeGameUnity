@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Animators;
@@ -17,7 +18,6 @@ namespace Services
         // The instance of the LevelEditor
         public static LevelLoader Instance;
 
-        public static string LevelFileName;
         public string testFileName;
 
         private static readonly Random _random = new Random();
@@ -54,16 +54,9 @@ namespace Services
             return Path.Combine(Application.dataPath, "Resources", "Levels", filename);
         }
 
-        public Board PublicLoadLevel(string filename)
+        public Board LoadLevel(string fileData)
         {
-            Board board = LoadLevel(GetFullPathToLevel(filename));
-            initialBoardState = board;
-            return board;
-        }
-
-        private Board LoadLevel(string path)
-        {
-            var lines = File.ReadAllLines(path);
+            var lines = fileData.Split(new char[] { '\n', '\r'}, System.StringSplitOptions.RemoveEmptyEntries);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
             var width = boardParameters[0];
             var height = boardParameters[1];
@@ -120,6 +113,8 @@ namespace Services
                     var field = new Field(tileType, bot, piece);
                     board[x, y] = field;
                 }
+
+                initialBoardState = board;
             }
 
             GameObject.Find("TileLevel").transform.localScale = new Vector3(100, 100);
