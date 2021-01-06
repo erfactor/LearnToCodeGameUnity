@@ -20,7 +20,8 @@ public class StopButtonScript : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StopExecution();
+        var levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.StopAndReload();
     }
 
     

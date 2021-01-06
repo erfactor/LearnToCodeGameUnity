@@ -31,6 +31,8 @@ namespace Services
         // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
         private GameObject _tileLevelParent;
 
+        private string currentLevelData;
+
         public Board initialBoardState;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
@@ -56,6 +58,7 @@ namespace Services
 
         public Board LoadLevel(string fileData)
         {
+            currentLevelData = fileData;
             var lines = fileData.Split(new char[] { '\n', '\r'}, System.StringSplitOptions.RemoveEmptyEntries);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
             var width = boardParameters[0];
@@ -143,11 +146,26 @@ namespace Services
 
         public void StopExecution()
         {
-            StopAllCoroutines();
+            StopAllCoroutines();            
+        }
+
+        public void StopAndReload()
+        {
+            StopExecution();
+            ReloadLevel();
+        }
+
+        public void ReloadLevel()
+        {
             _layerParents.Clear();
+            DestroyCurrentLevelData();
+            LoadLevel(currentLevelData);
+        }
+
+        private void DestroyCurrentLevelData()
+        {
             var levelInstance = GameObject.Find("TileLevel");
             DestroyImmediate(levelInstance);
-            Start();
         }
 
         //private IEnumerator InterpretCode(Board board)
