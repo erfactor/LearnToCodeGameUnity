@@ -10,6 +10,7 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     private Transform startParent;
     private Vector3 startPosition;
 
+
     public bool IsReplicator { get; set; } = true;
 
     public void Awake()
@@ -56,8 +57,10 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     {
         var mousePos = Input.mousePosition;
         transform.position = mousePos;
-        //var worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //transform.position = worldMousePos;
+        var worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);// * GameObject.Find("Canvas").transform.localScale.x;
+        transform.position = new Vector3(worldMousePos.x, worldMousePos.y, 100);
+
+        Debug.DrawLine(worldMousePos, worldMousePos + new Vector3(100, 100), Color.red, 1f);
     }
 
     public void OnEndDrag(PointerEventData eventData)

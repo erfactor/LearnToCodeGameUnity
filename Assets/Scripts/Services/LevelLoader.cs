@@ -45,8 +45,20 @@ namespace Services
 
         private void Start()
         {
-            var path = Path.Combine(Application.dataPath, "Levels", LevelFileName ?? testFileName);
-            initialBoardState = LoadLevel(path);
+            //var path = Path.Combine(Application.dataPath, "Levels", LevelFileName ?? testFileName);
+            //initialBoardState = LoadLevel(path);
+        }
+
+        private string GetFullPathToLevel(string filename)
+        {
+            return Path.Combine(Application.dataPath, "Levels", filename);
+        }
+
+        public Board PublicLoadLevel(string filename)
+        {
+            Board board = LoadLevel(GetFullPathToLevel(filename));
+            initialBoardState = board;
+            return board;
         }
 
         private Board LoadLevel(string path)
@@ -111,7 +123,8 @@ namespace Services
             }
 
             GameObject.Find("TileLevel").transform.localScale = new Vector3(100, 100);
-            GameObject.Find("TileLevel").transform.position = new Vector3(100, 100);
+            GameObject.Find("TileLevel").transform.position = new Vector3(-600, -300);
+            DontDestroyOnLoad(GameObject.Find("TileLevel"));
             return board;
             //StartCoroutine("InterpretCode", board);
         }

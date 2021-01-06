@@ -141,6 +141,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filename: 
+  LevelLoaderPrefab: {fileID: 6426881190465466009, guid: 6af91195419d33449840095eb44b3b1c,
+    type: 3}
 --- !u!1 &3227283844572259914
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,8 @@ namespace Menu
 
         private Button button;
 
+        public LevelLoader LevelLoaderPrefab;
+
         // Start is called before the first frame update
         private void Start()
         {
@@ -21,9 +23,19 @@ namespace Menu
         private void LoadLevel()
         {
             Debug.Log($"Loading level with name: [{filename}]");
-            LevelLoader.LevelFileName = filename;
+            //LevelLoader.LevelFileName = filename;
+            
+
+            var loader = Instantiate<LevelLoader>(LevelLoaderPrefab);
+            loader.gameObject.name = "LevelLoader";
+            loader.PublicLoadLevel(filename);
+            DontDestroyOnLoad(loader.gameObject);
+
+            SceneManager.LoadScene(1);
             var animator = GameObject.Find("Canvas").GetComponent<Animator>();
             animator.SetTrigger("ChangeScene");
+
+            
         }
     }
 }

@@ -3,12 +3,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 {
 
-    public float SpacingY = 10; // height of the space between two lines
+    public float SpacingY = 40; // height of the space between two lines
     public float SpacingX = 20; // left Margin
+
+    public float MarginTop => 40;
+    public float MarginLeft => 40;
 
     private float lineSizeX = 150;
     private float lineSizeY = 40; //height of the single line
@@ -110,15 +114,34 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     }
 
+    private bool IsMouseInCodePanel()
+    {
+        var absoluteRect = gameObject.GetComponent<RectTransform>().rect; 
+        Rect relativeRect = new Rect(-absoluteRect.width/2, absoluteRect.height/2, absoluteRect.width, absoluteRect.height);
+        Vector2 position = GetMousePositionOnCodePanel();
+        bool isIn = IsInRect(relativeRect, position);
+
+        Debug.Log(position);
+
+        if (isIn)
+        {
+            ;
+        }
+
+        return isIn;
+    }
+
     public void SetPositions()
     {
-        bool isDragged = draggedObject != null && IsInRect(panelRect, Input.mousePosition);
+        bool isAnythingDragged = draggedObject != null && IsMouseInCodePanel();
         //if (isDragged) Debug.Log("Set positions, isDragged");
+
+        Vector2 relativeMousePosition = GetMousePositionOnCodePanel();
 
         for (int i = 0; i < CurrentSolution.Count; i++)
         {
             bool isThisOneDragged = draggedObject == CurrentSolution[i].go;
-            CurrentSolution[i].UpdatePosition(isDragged, isThisOneDragged, scrollY);
+            CurrentSolution[i].UpdatePosition(isAnythingDragged, isThisOneDragged, scrollY, relativeMousePosition);
         }
     }
 
@@ -149,9 +172,44 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         }
     }
 
+    private Vector2 TranslateMousePositionToPanel(Vector2 position)
+    {
+        //Debug.LogWarning("NEW CALCULATION");
+        //Vector2 panelTopLeftCorner = topLeftCorner;
+        //Debug.Log($"topleft: {panelTopLeftCorner}");
+        //var offsetFromTopLeft = position - panelTopLeftCorner;
+        //Debug.Log($"offset: {offsetFromTopLeft}");
+        //var panelRect = gameObject.GetComponent<RectTransform>().rect;
+        //Vector2 middle = new Vector2(panelRect.width / 2, panelRect.height / 2);
+        //Debug.Log($"Middle: {middle}");
+        //Vector2 distanceFromMiddle = offsetFromTopLeft - middle;
+        //var transformed = distanceFromMiddle;
+        //Debug.Log($"transformed: {transformed}");
+        //return transformed;
+
+        var middle = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
+       // Debug.Log($"Middle: {middle}");
+        var transformed = position - middle;
+        //Debug.Log($"transformed: {transformed}");
+        return transformed;
+    }
+
+    private Vector2 GetMousePositionOnCodePanel()
+    {
+        Vector2 absoluteMousePosition = Input.mousePosition;
+        Vector2 worldSpaceCoordinates = Camera.main.ScreenToWorldPoint(absoluteMousePosition);
+        Vector2 afterScrollAdding = worldSpaceCoordinates + new Vector2(0, scrollY);
+        Vector2 mousePositionOnCodePanel = TranslateMousePositionToPanel(afterScrollAdding);
+        return mousePositionOnCodePanel;
+    }
+
     private int GetSlotIndexUnderMousePosition(PointerEventData eventData)
     {
+        eventData.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         eventData.position += new Vector2(0, scrollY);
+        eventData.position = TranslateMousePositionToPanel(eventData.position);
+
+        Debug.Log($"After adjustment {eventData.position}");
 
         if (CurrentSolution.Count == 0) return 0;
 
@@ -268,9 +326,25 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private Vector2 GetAbsoluteDockPositionForIndex(int index)
     {
-        float newY = topLeftCorner.y - index * lineSizeY - (index + 1) * SpacingY - lineSizeY / 2;
-        float newX = topLeftCorner.x + SpacingX + lineSizeX / 2;
-        return new Vector2(newX, newY);
+        var calculatedDockPosition = GetAbsoluteDockPositionForFirstBlock();
+
+        for(int i=0; i<index; i++)
+        {
+            var nextBlockSize = CurrentSolution[i].BlockSize.y;
+            calculatedDockPosition.y -= nextBlockSize;
+        }
+
+        return calculatedDockPosition;
+    }
+
+    private Vector2 GetAbsoluteDockPositionForFirstBlock()
+    {
+        float xPos = MarginLeft;
+        float yPos = MarginTop;
+
+        float panelHeight = gameObject.GetComponent<RectTransform>().rect.height;
+
+        return new Vector2(xPos, panelHeight - yPos);
     }
 
     public void SetRaycastBlockingForAllInstructions(bool blockRaycasts)
@@ -466,18 +540,25 @@ public class CodeLine
 {
     public GameObject go;
     public const float SizeY = 40; //height of the single line
-    public const float SpacingY = 10; // height of the space between two lines
+    public const float SpacingY = 20; // height of the space between two lines
 
     public float lockCageTopY;
     public float lockCageBotY;
 
     public float LockCageSize => SizeY + SpacingY;
 
-    public Vector2 dockPosition;
+    public Vector2 dockPosition { get; set; }
 
     private Vector2 velocity;
 
     private Vector2 shift;
+
+    public Vector2 BlockSize { get
+        {
+            var width = 150;
+            var height = SizeY + SpacingY;
+            return new Vector2(width, height);
+        } }
 
     public Vector2 GetDockPositionWithScroll(Vector2 scrollVector)
     {
@@ -497,6 +578,7 @@ public class CodeLine
 
     public void ChangeDockPosition(Vector2 newDockPosition, int indent = 0)
     {
+        newDockPosition = GetPositionTopDown(newDockPosition.x, newDockPosition.y);
         //RepairShift(dockPosition, newDockPosition);
         this.dockPosition = newDockPosition;
         lockCageTopY = dockPosition.y + LockCageSize;
@@ -515,6 +597,26 @@ public class CodeLine
         lockCageBotY = dockPosition.y - LockCageSize;
     }
 
+    public Vector2 GetPositionTopDown(float x, float y)
+    {
+        var parentRectTransform = go.transform.parent.GetComponent<RectTransform>();
+        var parentWidth = parentRectTransform.rect.width;
+        var parentHeight = parentRectTransform.rect.height;
+
+        var thisRectTransform = go.transform.GetComponent<RectTransform>();
+        var thisWidth = thisRectTransform.rect.width;
+        var thisHeight = thisRectTransform.rect.height;
+
+        Vector2 newPosition = new Vector2(x - parentWidth / 2 + thisWidth / 2, y - parentHeight / 2 - thisHeight / 2);
+        return newPosition;
+    }
+
+    //public void SetPositionTopDown(float x, float y)
+    //{
+    //    var newPosition = GetPositionTopDown(x, y);
+    //    go.GetComponent<RectTransform>().anchoredPosition = newPosition;
+    //}
+
     public const float MinDistanceForRepelForce = 10f;
     public const float MaxDistanceForRepelForce = SizeY + SpacingY; // height of the single element
     public const float ReturnForceScaleFactor = 0.08f;
@@ -528,7 +630,7 @@ public class CodeLine
     {
         Vector2 relativeDock = GetDockPositionWithScroll(scrollVector);
 
-        float yDiff = relativeDock.y - forceSourcePosition.y - scrollVector.y;
+        float yDiff = relativeDock.y - forceSourcePosition.y + scrollVector.y;
 
         yDiff = Mathf.Clamp(yDiff, -MinDistanceForRepelForce, MinDistanceForRepelForce);
 
@@ -565,14 +667,18 @@ public class CodeLine
         }
     }
 
-    public void UpdatePosition(bool isAnythingDragged, bool isThisOneDragged, float scrollY)
+    public void UpdatePosition(bool isAnythingDragged, bool isThisOneDragged, float scrollY, Vector2 relMousePosition)
     {
-        if (isThisOneDragged) return;
+        if (isThisOneDragged)
+        {
+            DrawContour(relMousePosition);
+            return;
+        }
 
         Vector2 sumForce = Vector2.zero;
 
         Vector2 scrollVector = new Vector2(0, scrollY);
-        Vector2 relativeMousePosition = (Vector2)Input.mousePosition - scrollVector;
+        Vector2 relativeMousePosition = relMousePosition;// (Vector2)Input.mousePosition - scrollVector;
 
         if (isAnythingDragged)
         {
@@ -590,10 +696,12 @@ public class CodeLine
         //Vector2 newPosition = new Vector2(go.transform.position.x + velocity.x, go.transform.position.y + velocity.y);
         //Vector2 newPosition = new Vector2(dockPosition.x, scrollY + go.transform.position.y + velocity.y);
         Vector2 newPosition = new Vector2(dockPosition.x, shift.y + GetDockPositionWithScroll(scrollVector).y);
-        go.transform.position = newPosition;
+
+        //go.transform.position = newPosition;
+        go.GetComponent<RectTransform>().anchoredPosition = newPosition;
         //CheckIfOutOfBounds();
 
-        
+        DrawContour();
 
         if (InstructionHelper.IsJumpInstruction(this.go))
         {
@@ -601,6 +709,47 @@ public class CodeLine
             if (this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");
             this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>().UpdateCurve();
         }
+    }
+
+    string guid = null;
+    bool drawContour = false;
+
+    public void DrawContour(Vector2? position = null)
+    {
+        if (!drawContour) return;
+
+        GameObject instance = null;      
+
+        if (guid == null)
+        {
+            System.Random rng = new System.Random();
+            guid = Guid.NewGuid().ToString();
+            var debugRectPrefab = GameObject.Find("DebugRect");
+            instance = GameObject.Instantiate(debugRectPrefab);
+            instance.name = "DebugRect" + guid;
+            instance.transform.SetParent(go.transform.parent);
+
+            instance.GetComponent<Image>().color = new Color((float)rng.NextDouble(), (float)rng.NextDouble(), (float)rng.NextDouble());
+        }
+        else
+        {
+            instance = GameObject.Find("DebugRect" + guid).gameObject;
+        }
+
+        var debugRectTransform = instance.GetComponent<RectTransform>();
+        debugRectTransform.anchoredPosition = position ?? dockPosition;
+        debugRectTransform.sizeDelta = go.GetComponent<RectTransform>().sizeDelta * 1.2f;
+        //Rect r = go.GetComponent<RectTransform>().rect;
+                
+        //Vector3 topleft = new Vector3(r.xMin, r.yMax, 150);
+        //Vector3 topright = new Vector3(r.xMax, r.yMax, 150);
+        //Vector3 downleft = new Vector3(r.xMin, r.yMin, 150);
+        //Vector3 downright = new Vector3(r.xMax, r.yMin, 150);
+
+        //Debug.DrawLine(topleft, topright, Color.red, 1f, false);
+        //Debug.DrawLine(topright, downright, Color.red, 1f, false);
+        //Debug.DrawLine(downright, downleft, Color.red, 1f, false);
+        //Debug.DrawLine(downleft, topleft, Color.red, 1f, false);
     }
 
 }
