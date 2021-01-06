@@ -148,6 +148,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     public void OnDrop(PointerEventData eventData)
     {
         Debug.Log("OnDrop, codepanel");
+        if (eventData.pointerDrag.gameObject.name == "InstructionBank") return;
         if (eventData.pointerDrag != null)
         {
             HandleDrop(eventData);
@@ -155,7 +156,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     }
 
     private void HandleDrop(PointerEventData eventData)
-    {
+    {    
         ShowDirectionIndicatorIfNeeded(eventData);
         RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
 

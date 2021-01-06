@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class JumpInstructionArrow : MonoBehaviour
@@ -55,13 +56,20 @@ public class JumpInstructionArrow : MonoBehaviour
             Destroy(transform.GetChild(i));
         }
 
-        for(int i=0; i<CurveLength; i++)
+        
+
+        for (int i=0; i<CurveLength-1; i++)
         {
             var curveElement = GameObject.Instantiate(GameObject.Find("ArrowPart"));
             curveElement.transform.SetParent(this.transform);
-            Color randomColor = new Color((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
-            curveElement.GetComponent<Image>().color = randomColor;
+           //Color randomColor = new Color((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble());
+            //curveElement.GetComponent<Image>().color = randomColor;
         }
+
+        var curveHead = GameObject.Instantiate(GameObject.Find("ArrowHead"));
+        curveHead.transform.SetParent(this.transform);
+
+
     }
 
     public void UpdateImageCurve()
@@ -91,5 +99,16 @@ public class JumpInstructionArrow : MonoBehaviour
 
             image.position = bezier;
         }
+
+        CalculateHeadRotation();
+    }
+
+    public Transform ArrowHead => transform.GetChild(CurveLength - 1);
+
+    private void CalculateHeadRotation()
+    {
+        Vector2 headingVector = ArrowHead.position - transform.GetChild(CurveLength - 2).position;
+        float angle = Mathf.Atan2(headingVector.y, headingVector.x);
+        ArrowHead.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * angle);
     }
 }
