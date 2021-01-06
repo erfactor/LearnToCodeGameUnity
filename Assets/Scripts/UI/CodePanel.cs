@@ -314,6 +314,10 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             Destroy(go);
             Rearrange();
         }
+        else
+        {
+            Destroy(go);
+        }
     }
 
     private void Rearrange()
