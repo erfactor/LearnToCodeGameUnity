@@ -10,7 +10,7 @@ public class TextDraggedScript : MonoBehaviour
     void Start()
     {
         text = GameObject.Find("DraggedPosition").GetComponent<Text>();
-        var canvasRT = GameObject.Find("Canvas").GetComponent<RectTransform>();
+        var canvasRT = GameObject.Find("LevelCanvas").GetComponent<RectTransform>();
         Debug.Log($"Canvas width: {canvasRT.rect.width}");
         Debug.Log($"Canvas height: {canvasRT.rect.height}");
         float ratio = canvasRT.rect.width / canvasRT.rect.height;

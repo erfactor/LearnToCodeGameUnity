@@ -43,9 +43,9 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
             RaycastManagerScript.SetFocus();
 
             var selectionPanel = Instantiate(directionSelectionWindow);
-            selectionPanel.transform.SetParent(GameObject.Find("Canvas").transform);
+            selectionPanel.transform.SetParent(GameObject.Find("LevelCanvas").transform);
             selectionPanel.transform.localScale = new Vector3(1, 1, 1);
-            selectionPanel.transform.localPosition = new Vector3(0, 0, 0);
+            selectionPanel.transform.localPosition = new Vector3(200, 0, 0);
 
             var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectionWindowScript>();
             selectionPanelScript.changedDirectionIndicator = gameObject;

@@ -123,7 +123,7 @@ namespace Services
             }
 
             GameObject.Find("TileLevel").transform.localScale = new Vector3(100, 100);
-            GameObject.Find("TileLevel").transform.position = new Vector3(-600, -300);
+            GameObject.Find("TileLevel").transform.position = new Vector3(-800, -300);
             DontDestroyOnLoad(GameObject.Find("TileLevel"));
             return board;
             //StartCoroutine("InterpretCode", board);

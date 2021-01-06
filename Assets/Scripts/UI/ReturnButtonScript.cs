@@ -19,8 +19,18 @@ public class ReturnButtonScript : MonoBehaviour, IPointerClickHandler
     {
 
     }
+
+    private void RemoveLevelObjects()
+    {
+        var levelObject = GameObject.Find("LevelLoader");
+        Destroy(levelObject);
+        var tileLevel = GameObject.Find("TileLevel");
+        Destroy(tileLevel);
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
+        RemoveLevelObjects();
         SceneManager.LoadScene("MainMenu");
     }
 }

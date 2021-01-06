@@ -32,7 +32,7 @@ namespace Menu
             DontDestroyOnLoad(loader.gameObject);
 
             SceneManager.LoadScene(1);
-            var animator = GameObject.Find("Canvas").GetComponent<Animator>();
+            var animator = GameObject.Find("LevelCanvas").GetComponent<Animator>();
             animator.SetTrigger("ChangeScene");
 
             

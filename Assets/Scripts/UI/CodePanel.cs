@@ -30,7 +30,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private float scrollY;
 
-    private float CanvasScale => GameObject.Find("Canvas").GetComponent<Canvas>().scaleFactor;
+    private float CanvasScale => GameObject.Find("LevelCanvas").GetComponent<Canvas>().scaleFactor;
 
     private static Vector2 topLeftCorner;
     private static Rect panelRect;

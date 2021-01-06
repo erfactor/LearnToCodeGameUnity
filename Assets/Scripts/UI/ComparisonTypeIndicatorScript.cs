@@ -47,9 +47,9 @@ public class ComparisonTypeIndicatorScript : MonoBehaviour, IPointerClickHandler
             RaycastManagerScript.SetFocus();
 
             var selectionPanel = Instantiate(comparisonTypeWindow);
-            selectionPanel.transform.SetParent(GameObject.Find("Canvas").transform);
+            selectionPanel.transform.SetParent(GameObject.Find("LevelCanvas").transform);
             selectionPanel.transform.localScale = new Vector3(1, 1, 1);
-            selectionPanel.transform.localPosition = new Vector3(0, 0, 0);
+            selectionPanel.transform.localPosition = new Vector3(150, 0, 0);
 
             var selectionPanelScript = selectionPanel.GetComponent<ComparisonTypeSelectionWindowScript>();
             selectionPanelScript.changedComparisonIndicator = gameObject;
