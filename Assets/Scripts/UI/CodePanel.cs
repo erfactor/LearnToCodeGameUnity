@@ -355,6 +355,18 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     public void Remove(GameObject go)
     {
+        if (InstructionHelper.IsIfInstruction(go))
+        {
+            int ifInstructionIndex = GetGameObjectIndexOnList(go);
+            CodeLine ifInstruction = CurrentSolution[ifInstructionIndex];
+            for(int i=ifInstruction.children.Count-1; i>=0; i--)
+            {
+                var child = ifInstruction.children[i];
+                Remove(child.go);
+                child.SetParent(null);
+            }
+        }
+
         if (InstructionHelper.IsJumpInstruction(go))
         {
             GameObject bindedInstruction = go.GetComponent<JumpInstructionScript>().bindedInstruction;
