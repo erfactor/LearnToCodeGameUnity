@@ -9,7 +9,7 @@ public class AnimationPanel : MonoBehaviour
     public static int LoadedSceneIndex = 2;
     void Start()
     {
-        DontDestroyOnLoad(this);
+        DontDestroyOnLoad(this.transform.parent.gameObject);
     }
 
     // Update is called once per frame
