@@ -7,6 +7,8 @@ namespace Menu
 {
     public class LevelButtonScript : MonoBehaviour
     {
+        public int levelIndex;
+
         private Button button;
 
         public LevelLoader LevelLoaderPrefab;
@@ -18,6 +20,12 @@ namespace Menu
         {
             button = GetComponentInChildren<Button>();
             button.onClick.AddListener(LoadLevel);
+            UpdateText();
+        }
+
+        public void UpdateText()
+        {
+            GetComponentInChildren<Text>().text = levelIndex.ToString();
         }
 
         private void LoadLevel()
@@ -30,9 +38,15 @@ namespace Menu
 
             SceneManager.LoadScene(1);
             var animator = GameObject.Find("Canvas").GetComponent<Animator>();
-            animator.SetTrigger("ChangeScene");
+            animator.SetTrigger("ChangeScene");            
+        }
 
-            
+        public void SetButtonColor(Color color)
+        {
+            //var newColors = GetComponentInChildren<Button>().colors;
+            //newColors.normalColor = color;
+            //GetComponentInChildren<Button>().colors = newColors;
+            GetComponentInChildren<Image>().color = color;
         }
     }
 }

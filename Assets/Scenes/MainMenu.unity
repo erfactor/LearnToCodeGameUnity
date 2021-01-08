@@ -133,6 +133,11 @@ PrefabInstance:
       propertyPath: filename
       value: test.lvl
       objectReference: {fileID: 0}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -449,7 +454,7 @@ GameObject:
   - component: {fileID: 282306213}
   - component: {fileID: 282306212}
   m_Layer: 0
-  m_Name: PipeManager
+  m_Name: MainMenuManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -467,6 +472,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62950ba745b74df45aa9098fb22c5b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  completedLevelColor: {r: 0.368325, g: 0.8396226, b: 0.57744384, a: 1}
+  unlockedLevelColor: {r: 0.8857301, g: 0.8867924, b: 0.5981666, a: 1}
+  lockedLevelColor: {r: 0.8773585, g: 0.51731044, b: 0.51731044, a: 1}
 --- !u!4 &282306213
 Transform:
   m_ObjectHideFlags: 0
@@ -492,6 +500,11 @@ PrefabInstance:
         type: 3}
       propertyPath: filename
       value: test_level.lvl
+      objectReference: {fileID: 0}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
@@ -710,6 +723,11 @@ PrefabInstance:
         type: 3}
       propertyPath: filename
       value: xl.lvl
+      objectReference: {fileID: 0}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
@@ -1216,6 +1234,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 643562426}
     m_Modifications:
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -2404,6 +2427,11 @@ PrefabInstance:
       propertyPath: filename
       value: testo.lvl
       objectReference: {fileID: 0}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -2688,6 +2716,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 643562426}
     m_Modifications:
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -3467,6 +3500,16 @@ PrefabInstance:
       propertyPath: levelData
       value: 
       objectReference: {fileID: 4900000, guid: bfdeaeebc3ceadc4f8ee1bfb12f8eaa0, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: m_Text
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3227283844319353712, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3596,6 +3639,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4284019699081036462, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 105
+      objectReference: {fileID: 0}
+    - target: {fileID: 4284019699081036462, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6083e2fd25baf4b42ac33202de2531c8, type: 3}
