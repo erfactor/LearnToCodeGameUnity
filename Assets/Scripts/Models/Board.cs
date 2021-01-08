@@ -51,5 +51,7 @@ namespace Models
         {
             return location.x < 0 || location.x >= Width || location.y < 0 || location.y >= Height;
         }
+        
+        
     }
 }
