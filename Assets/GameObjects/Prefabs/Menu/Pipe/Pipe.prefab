@@ -174,6 +174,7 @@ GameObject:
   - component: {fileID: 7783946685189059343}
   - component: {fileID: 7783946685189059342}
   - component: {fileID: 7783946685189059345}
+  - component: {fileID: 8465412492052384796}
   m_Layer: 0
   m_Name: Pipe
   m_TagString: Untagged
@@ -189,8 +190,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7783946685189059344}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.64, y: 0.02, z: 0}
-  m_LocalScale: {x: 0.35, y: 0.3, z: 1}
+  m_LocalPosition: {x: -5.5843, y: 0.02, z: 0}
+  m_LocalScale: {x: 0.29844525, y: 0.3, z: 1}
   m_Children:
   - {fileID: 7783946684200253919}
   m_Father: {fileID: 0}
@@ -265,3 +266,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8465412492052384796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7783946685189059344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a995b42566a41494b9e3565e986c6054, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LevelFrom: 0
+  LevelTo: 0
