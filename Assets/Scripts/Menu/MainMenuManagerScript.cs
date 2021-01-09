@@ -16,7 +16,7 @@ namespace Menu
         {
             var unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile
                 .UnlockedLevels;
-            StartCoroutine("ExtendPipes", unlockedLevels);
+            EmergeAndExtendPipes(unlockedLevels);
             SetLevelButtonColors(unlockedLevels);
         }
 
@@ -58,7 +58,7 @@ namespace Menu
         }
 
 
-        public IEnumerator ExtendPipes(List<int> unlockedLevels)
+        public void EmergeAndExtendPipes(List<int> unlockedLevels)
         {
             var pipeBasket = GameObject.Find("Pipes").transform;
 
@@ -74,9 +74,7 @@ namespace Menu
                 var childPipeScript = pipeBasket.GetChild(i).GetComponent<PipeScript>();
 
                 if (unlockedLevels.Contains(childPipeScript.LevelTo)) childPipeScript.ExtendAnimation();
-            }
-            
-            yield break;
+            }            
         }
     }
 }
