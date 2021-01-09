@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Profiles;
@@ -13,28 +12,12 @@ namespace Menu
         public Color unlockedLevelColor;
         public Color lockedLevelColor;
 
-
-        // Start is called before the first frame update
         private void Start()
         {
             var unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile
                 .UnlockedLevels;
             StartCoroutine("ExtendPipes", unlockedLevels);
             SetLevelButtonColors(unlockedLevels);
-        }
-
-        // Update is called once per frame
-        private void Update()
-        {
-            var x = 5;
-            switch (x)
-            {
-                case 10:
-                {
-                    Console.WriteLine("xd");
-                    break;
-                }
-            }
         }
 
         public List<LevelButtonScript> GetLevelButtonScripts()
@@ -86,14 +69,14 @@ namespace Menu
                 if (unlockedLevels.Contains(childPipeScript.LevelFrom)) childPipeScript.EmergeAnimation();
             }
 
-            yield return new WaitForSeconds(1f);
-
             for (var i = 0; i < pipeBasket.childCount; i++)
             {
                 var childPipeScript = pipeBasket.GetChild(i).GetComponent<PipeScript>();
 
                 if (unlockedLevels.Contains(childPipeScript.LevelTo)) childPipeScript.ExtendAnimation();
             }
+            
+            yield break;
         }
     }
 }
