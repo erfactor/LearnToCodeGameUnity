@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using Animators;
@@ -18,22 +18,23 @@ namespace Services
         // The instance of the LevelEditor
         public static LevelLoader Instance;
 
-        public string testFileName;
-
         private static readonly Random _random = new Random();
+
+        public string testFileName;
 
         // The list of tiles the user can use to create maps. Public so the user can add all user-created prefabs
         public Tileset Tileset;
 
         // Dictionary as the parent for all the GameObjects per layer
         private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
+        private Board _solution;
 
         // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
         private GameObject _tileLevelParent;
 
         private string currentLevelData;
 
-        public Board initialBoardState;
+        public Board InitialBoard;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
@@ -59,11 +60,10 @@ namespace Services
         public Board LoadLevel(string fileData)
         {
             currentLevelData = fileData;
-            var lines = fileData.Split(new char[] { '\n', '\r'}, System.StringSplitOptions.RemoveEmptyEntries);
+            var lines = fileData.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
             var width = boardParameters[0];
             var height = boardParameters[1];
-            var depth = boardParameters[2];
             var board = new Board(width, height);
 
             for (var y = 0; y < height; y++)
@@ -83,11 +83,12 @@ namespace Services
 
                     if (piecePrefabName != string.Empty)
                     {
-                        int pieceNumber = piecePrefabName != "piece"
-                            ? int.Parse(piecePrefabName.Substring(5))
-                            : _random.Next(100);
+                        var isRandom = piecePrefabName == "piece";
+                        var pieceNumber = isRandom
+                            ? _random.Next(100)
+                            : int.Parse(piecePrefabName.Substring(5));
                         var pieceTransform = CreateGameObject("piece", x, y, 1);
-                        piece = new Piece(new Vector2Int(x, y), pieceNumber, pieceTransform);
+                        piece = new Piece(new Vector2Int(x, y), pieceNumber, pieceTransform, isRandom);
                     }
 
                     if (botPrefabName != string.Empty)
@@ -116,15 +117,57 @@ namespace Services
                     var field = new Field(tileType, bot, piece);
                     board[x, y] = field;
                 }
-
-                initialBoardState = board;
             }
+
+            InitialBoard = board;
 
             GameObject.Find("TileLevel").transform.localScale = new Vector3(100, 100);
             GameObject.Find("TileLevel").transform.position = new Vector3(-800, -300);
             DontDestroyOnLoad(GameObject.Find("TileLevel"));
             return board;
-            //StartCoroutine("InterpretCode", board);
+        }
+
+        public void LoadSolution(string levelSolutionText)
+        {
+            _solution = CreateAcceptingBoard(levelSolutionText);
+        }
+
+        public Board CreateAcceptingBoard(string fileData)
+        {
+            currentLevelData = fileData;
+            var lines = fileData.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
+            var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
+            var width = boardParameters[0];
+            var height = boardParameters[1];
+            var board = new Board(width, height);
+
+            for (var y = 0; y < height; y++)
+            {
+                var line = lines[y + 1].Split(WidthSeparator.ToCharArray());
+                for (var x = 0; x < width; x++)
+                {
+                    var cell = line[x].Split(DepthSeparator.ToCharArray());
+
+                    var piecePrefabName = cell[0];
+                    var botPrefabName = cell[1];
+
+                    Piece piece = null;
+                    Bot bot = null;
+
+                    if (piecePrefabName != string.Empty)
+                    {
+                        var isRandom = piecePrefabName == "piece";
+                        var pieceNumber = isRandom ? -1 : int.Parse(piecePrefabName.Substring(5));
+                        piece = new Piece(new Vector2Int(x, y), pieceNumber, null, isRandom);
+                    }
+
+                    if (botPrefabName != string.Empty) bot = new Bot(new Vector2Int(x, y), null);
+
+                    board[x, y] = new Field(TileType.Normal, bot, piece);
+                }
+            }
+
+            return board;
         }
 
         public void StartExecution(List<ICommand> commands)
@@ -134,19 +177,23 @@ namespace Services
 
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
-            var board = initialBoardState;
+            var board = InitialBoard;
 
             while (true)
             {
                 Debug.unityLogger.Log(board.Bots.Count);
                 foreach (var bot in board.Bots) bot.CommandId = commands[bot.CommandId].Execute(board, bot);
+                if (_solution.AcceptsBoard(board))
+                {
+                    print("O KURWA, JEST, JEST, WYGRAŁ JEBANY");
+                }
                 yield return new WaitForSeconds(1.2f);
             }
         }
 
         public void StopExecution()
         {
-            StopAllCoroutines();            
+            StopAllCoroutines();
         }
 
         public void StopAndReload()
@@ -167,29 +214,6 @@ namespace Services
             var levelInstance = GameObject.Find("TileLevel");
             DestroyImmediate(levelInstance);
         }
-
-        //private IEnumerator InterpretCode(Board board)
-        //{
-        //    var code = new ICommand[]
-        //    {
-        //        new PickCommand(1),
-        //        new MoveCommand(Direction.Right, 2),
-        //        new DecCommand(3),
-        //        new AddCommand(4),
-        //        new MoveCommand(Direction.Right, 5),
-        //        new IncCommand(6),
-        //        new SubCommand(7),
-        //        new MoveCommand(Direction.Right, 8),
-        //        new JumpCommand(0)
-        //    };
-
-        //    while (true)
-        //    {
-        //        Debug.unityLogger.Log(board.Bots.Count);
-        //        foreach (var bot in board.Bots) bot.CommandId = code[bot.CommandId].Execute(board, bot);
-        //        yield return new WaitForSeconds(1.2f);
-        //    }
-        //}
 
         private Transform CreateGameObject(string prefabName, float xPos, float yPos, int zPos,
             Quaternion rotation = new Quaternion())

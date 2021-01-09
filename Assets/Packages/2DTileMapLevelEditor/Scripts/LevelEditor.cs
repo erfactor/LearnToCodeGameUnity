@@ -89,7 +89,7 @@ namespace Packages._2DTileMapLevelEditor.Scripts
         private int _selectedTileIndex = Empty;
 
         // Starting path of the file browser
-        private string _startPath = "";
+        private string _startPath;
 
         // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
         private GameObject _tileLevelParent;
@@ -170,7 +170,7 @@ namespace Packages._2DTileMapLevelEditor.Scripts
         // Set the start path for the save and load functionality
         private void SetStartPath()
         {
-            _startPath = Path.Combine(Application.dataPath, "Levels");
+            _startPath = Path.Combine(Application.dataPath, "Resources/Levels");
         }
 
         // Set variables and creates empty level with the correct size

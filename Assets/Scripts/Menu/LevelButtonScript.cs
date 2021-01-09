@@ -13,7 +13,8 @@ namespace Menu
 
         public LevelLoader LevelLoaderPrefab;
 
-        public TextAsset levelData;
+        public TextAsset level;
+        public TextAsset levelSolution;
 
         // Start is called before the first frame update
         private void Start()
@@ -30,15 +31,14 @@ namespace Menu
 
         private void LoadLevel()
         {
-            var loader = Instantiate<LevelLoader>(LevelLoaderPrefab);
+            var loader = Instantiate(LevelLoaderPrefab);
             loader.gameObject.name = "LevelLoader";
-            loader.LoadLevel(levelData.text);
-
+            loader.LoadSolution(levelSolution.text);
+            loader.LoadLevel(level.text);
             DontDestroyOnLoad(loader.gameObject);
 
-            SceneManager.LoadScene(1);
-            var animator = GameObject.Find("Canvas").GetComponent<Animator>();
-            animator.SetTrigger("ChangeScene");            
+            var animator = GameObject.Find("AnimationPanel").GetComponent<Animator>();
+            animator.SetTrigger("Cover");            
         }
 
         public void SetButtonColor(Color color)

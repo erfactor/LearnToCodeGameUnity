@@ -5,17 +5,19 @@ namespace Models
 {
     public class Piece
     {
-        private int _number;
         public readonly Transform PieceTransform;
-        
-        public Piece(Vector2Int location, int number, Transform pieceTransform)
+        private int _number;
+        public bool isRandom;
+
+        private Vector2Int Location;
+
+        public Piece(Vector2Int location, int number, Transform pieceTransform, bool isRandom)
         {
             Location = location;
             PieceTransform = pieceTransform;
             Number = number;
+            this.isRandom = isRandom;
         }
-
-        private Vector2Int Location;
 
         public int Number
         {
@@ -23,7 +25,7 @@ namespace Models
             set
             {
                 _number = value;
-                PieceTransform.GetComponent<PieceText>().Text = value.ToString();
+                if (PieceTransform != null) PieceTransform.GetComponent<PieceText>().Text = value.ToString();
             }
         }
     }

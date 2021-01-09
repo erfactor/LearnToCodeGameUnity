@@ -51,7 +51,34 @@ namespace Models
         {
             return location.x < 0 || location.x >= Width || location.y < 0 || location.y >= Height;
         }
-        
-        
+
+        public bool AcceptsBoard(Board board)
+        {
+            for (var i = 0; i < Width; i++)
+            for (var j = 0; j < Height; j++)
+            {
+                var solutionField = _fields[i, j];
+                var field = board[i, j];
+                if (solutionField.Bot != null && field.Bot == null)
+                    return false;
+                var solutionPiece = solutionField.Piece;
+                if (solutionPiece != null)
+                {
+                    if (solutionPiece.isRandom)
+                    {
+                        if (field.Piece == null) return false;
+                    }
+                    else
+                    {
+                        if (field.Piece?.Number != solutionPiece.Number)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }
