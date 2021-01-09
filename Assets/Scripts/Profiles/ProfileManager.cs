@@ -122,7 +122,7 @@ namespace Profiles
             if (selectedProfile.UnlockedLevels.Contains(levelToUnlock)) return;
             selectedProfile.UnlockedLevels.Add(levelToUnlock);
             SerializeProfiles();
-            DeserializeProfiles();
+            // DeserializeProfiles();
         }
 
         public void UnlockNextLevel()

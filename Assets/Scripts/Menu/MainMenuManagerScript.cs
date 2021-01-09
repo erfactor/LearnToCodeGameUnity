@@ -1,7 +1,8 @@
-﻿using Profiles;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Profiles;
 using UnityEngine;
 
 namespace Menu
@@ -13,30 +14,35 @@ namespace Menu
         public Color lockedLevelColor;
 
 
-
-
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
-            List<int> unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile.UnlockedLevels;
+            var unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile
+                .UnlockedLevels;
             StartCoroutine("ExtendPipes", unlockedLevels);
             SetLevelButtonColors(unlockedLevels);
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-
+            var x = 5;
+            switch (x)
+            {
+                case 10:
+                {
+                    Console.WriteLine("xd");
+                    break;
+                }
+            }
         }
 
         public List<LevelButtonScript> GetLevelButtonScripts()
         {
-            List<LevelButtonScript> list = new List<LevelButtonScript>();
+            var list = new List<LevelButtonScript>();
             var container = GameObject.Find("Cogs");
-            for(int i=0; i<container.transform.childCount; i++)
-            {
+            for (var i = 0; i < container.transform.childCount; i++)
                 list.Add(container.transform.GetChild(i).GetComponent<LevelButtonScript>());
-            }
 
             return list;
         }
@@ -44,10 +50,7 @@ namespace Menu
         public void SetLevelButtonColors(List<int> unlockedLevels)
         {
             var levels = GetLevelButtonScripts();
-            foreach(var level in levels)
-            {
-                level.SetButtonColor(GetButtonColor(unlockedLevels, level.levelIndex));
-            }
+            foreach (var level in levels) level.SetButtonColor(GetButtonColor(unlockedLevels, level.levelIndex));
         }
 
         public Color GetButtonColor(List<int> unlockedLevels, int levelIndex)
@@ -72,33 +75,25 @@ namespace Menu
         }
 
 
-
         public IEnumerator ExtendPipes(List<int> unlockedLevels)
         {
             var pipeBasket = GameObject.Find("Pipes").transform;
 
-            for (int i = 0; i < pipeBasket.childCount; i++)
+            for (var i = 0; i < pipeBasket.childCount; i++)
             {
                 var childPipeScript = pipeBasket.GetChild(i).GetComponent<PipeScript>();
 
-                if (unlockedLevels.Contains(childPipeScript.LevelFrom))
-                {
-                    childPipeScript.EmergeAnimation();
-                }
+                if (unlockedLevels.Contains(childPipeScript.LevelFrom)) childPipeScript.EmergeAnimation();
             }
 
             yield return new WaitForSeconds(1f);
 
-            for (int i = 0; i < pipeBasket.childCount; i++)
+            for (var i = 0; i < pipeBasket.childCount; i++)
             {
                 var childPipeScript = pipeBasket.GetChild(i).GetComponent<PipeScript>();
 
-                if (unlockedLevels.Contains(childPipeScript.LevelTo))
-                {
-                    childPipeScript.ExtendAnimation();
-                }
+                if (unlockedLevels.Contains(childPipeScript.LevelTo)) childPipeScript.ExtendAnimation();
             }
         }
     }
 }
-

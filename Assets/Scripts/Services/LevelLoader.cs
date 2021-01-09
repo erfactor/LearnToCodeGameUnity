@@ -182,7 +182,10 @@ namespace Services
             while (true)
             {
                 Debug.unityLogger.Log(board.Bots.Count);
-                foreach (var bot in board.Bots) bot.CommandId = commands[bot.CommandId].Execute(board, bot);
+                foreach (var bot in board.Bots)
+                {
+                    bot.CommandId = commands[bot.CommandId].Execute(board, bot);
+                }
                 if (_solution.AcceptsBoard(board))
                 {
                     print("O KURWA, JEST, JEST, WYGRAŁ JEBANY");
