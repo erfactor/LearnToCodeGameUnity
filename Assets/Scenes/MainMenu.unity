@@ -877,6 +877,7 @@ GameObject:
   - component: {fileID: 583908672}
   - component: {fileID: 583908671}
   - component: {fileID: 583908670}
+  - component: {fileID: 583908674}
   m_Layer: 5
   m_Name: AnimationPanel
   m_TagString: Untagged
@@ -974,6 +975,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 583908668}
   m_CullTransparentMesh: 0
+--- !u!225 &583908674
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 583908668}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &624493143
 GameObject:
   m_ObjectHideFlags: 0

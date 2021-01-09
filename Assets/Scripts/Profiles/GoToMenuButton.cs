@@ -11,12 +11,18 @@ public class GoToMenuButton : MonoBehaviour
     {
         var button = GetComponent<Button>();
         var profileManager = GameObject.Find("ProfileManager").GetComponent<ProfileManager>();
-        SceneManager.LoadScene(1);
+        this.GetComponent<Button>().onClick.AddListener(ProceedToMenu);
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void ProceedToMenu()
+    {
+        SceneManager.LoadScene(1);
     }
 }
