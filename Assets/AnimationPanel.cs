@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class AnimationPanel : MonoBehaviour
 {
     public Animator Animator;
-    public static int LoadedSceneIndex = 2;
+    private int LoadedSceneIndex;
     void Start()
     {
         DontDestroyOnLoad(this.transform.parent.gameObject);
@@ -24,6 +24,12 @@ public class AnimationPanel : MonoBehaviour
         {
             Animator.SetTrigger("Uncover");
         }
+    }
+
+    public void ChangeScene(int newSceneIndex)
+    {
+        LoadedSceneIndex = newSceneIndex;
+        Animator.SetTrigger("Cover");
     }
 
     public void LoadNewSceneTest()

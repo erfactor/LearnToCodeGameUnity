@@ -57,7 +57,7 @@ namespace Animators
         {
             var pieceTransform = _piece.PieceTransform;
             var leftArm = GetComponent<Transform>().Find("LeftArmSolver").Find("LeftArmSolver_Target");
-            pieceTransform.parent = _isPickingUp ? leftArm : null;
+            pieceTransform.parent = _isPickingUp ? leftArm : GameObject.Find("Layer 1").transform;
         }
 
         public void Add(Piece piece, Piece heldPiece, bool isAdd)

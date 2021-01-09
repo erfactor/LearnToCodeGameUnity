@@ -114,7 +114,7 @@ namespace Profiles
         {
             int selectedProfileIndex = GetProfileIndex(clickedGameObject);
             SetSelectedProfile(selectedProfileIndex);
-            SceneManager.LoadScene(1);
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
         }
 
         public void UnlockLevel(int levelToUnlock)

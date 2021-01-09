@@ -26,11 +26,12 @@ public class ReturnButtonScript : MonoBehaviour, IPointerClickHandler
         Destroy(levelObject);
         var tileLevel = GameObject.Find("TileLevel");
         Destroy(tileLevel);
+
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         RemoveLevelObjects();
-        SceneManager.LoadScene("MainMenu");
+        GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
     }
 }

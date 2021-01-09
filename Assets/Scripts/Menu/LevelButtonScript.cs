@@ -34,11 +34,10 @@ namespace Menu
             var loader = Instantiate(LevelLoaderPrefab);
             loader.gameObject.name = "LevelLoader";
             loader.LoadSolution(levelSolution.text);
-            loader.LoadLevel(level.text);
+            loader.LoadLevel(level.text, levelIndex);
             DontDestroyOnLoad(loader.gameObject);
 
-            var animator = GameObject.Find("AnimationPanel").GetComponent<Animator>();
-            animator.SetTrigger("Cover");            
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);         
         }
 
         public void SetButtonColor(Color color)

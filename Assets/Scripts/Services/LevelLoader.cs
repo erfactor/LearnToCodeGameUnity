@@ -8,6 +8,7 @@ using Commands;
 using Enumerations;
 using Models;
 using Packages._2DTileMapLevelEditor.Scripts;
+using Profiles;
 using UnityEngine;
 using Random = System.Random;
 
@@ -34,6 +35,8 @@ namespace Services
 
         private string currentLevelData;
 
+        public int levelNumber;
+
         public Board InitialBoard;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
@@ -57,8 +60,9 @@ namespace Services
             return Path.Combine(Application.dataPath, "Resources", "Levels", filename);
         }
 
-        public Board LoadLevel(string fileData)
+        public Board LoadLevel(string fileData, int levelNumber)
         {
+            this.levelNumber = levelNumber;
             currentLevelData = fileData;
             var lines = fileData.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
@@ -191,10 +195,17 @@ namespace Services
                 }
                 if (_solution.AcceptsBoard(board))
                 {
-                    print("Player won the game");
+                    LevelCompleted();
+                    yield break;
                 }
                 yield return new WaitForSeconds(1.2f);
             }
+        }
+
+        public void LevelCompleted()
+        {
+            GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
         }
 
         public void StopExecution()
@@ -212,7 +223,7 @@ namespace Services
         {
             _layerParents.Clear();
             DestroyCurrentLevelData();
-            LoadLevel(currentLevelData);
+            LoadLevel(currentLevelData, levelNumber);
         }
 
         private void DestroyCurrentLevelData()
