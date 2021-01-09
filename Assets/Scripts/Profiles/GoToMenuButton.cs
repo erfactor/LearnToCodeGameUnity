@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class GoToMenuButton : MonoBehaviour
 {
-    public List<int> unlockedLevels;
     void Start()
     {
         var button = GetComponent<Button>();
@@ -23,6 +22,7 @@ public class GoToMenuButton : MonoBehaviour
 
     void ProceedToMenu()
     {
-        SceneManager.LoadScene(1);
+        var profileManager = GameObject.Find("ProfileManager").GetComponent<ProfileManager>();
+        profileManager.GoToMainMenu(transform.parent.gameObject);
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Profiles
@@ -18,11 +19,14 @@ namespace Profiles
         private static GameObject _editPanel;
         private int _createdIndex;
 
+        public Profile selectedProfile;
+
         private void Start()
         {
             _editPanel = GameObject.Find("EditPanel");
             _editPanel.SetActive(false);
             DeserializeProfiles();
+            DontDestroyOnLoad(this);
         }
 
         public void SerializeProfiles()
@@ -89,6 +93,49 @@ namespace Profiles
             Profiles[index] = null;
             SerializeProfiles();
             DeserializeProfiles();
+        }
+
+        private int GetProfileIndex(GameObject profileGameObject)
+        {
+            for(int i=0; i<ProfileGameObjects.Length; i++)
+            {
+                if (profileGameObject == ProfileGameObjects[i]) return i;
+            }
+
+            throw new System.Exception("Could not find a desired profile");
+        }
+
+        private void SetSelectedProfile(int selectedProfileIndex)
+        {
+            selectedProfile = Profiles[selectedProfileIndex];
+        }
+
+        public void GoToMainMenu(GameObject clickedGameObject)
+        {
+            int selectedProfileIndex = GetProfileIndex(clickedGameObject);
+            SetSelectedProfile(selectedProfileIndex);
+            SceneManager.LoadScene(1);
+        }
+
+        public void UnlockLevel(int levelToUnlock)
+        {
+            if (selectedProfile.UnlockedLevels.Contains(levelToUnlock)) return;
+            selectedProfile.UnlockedLevels.Add(levelToUnlock);
+            SerializeProfiles();
+            DeserializeProfiles();
+        }
+
+        public void UnlockNextLevel()
+        {
+            UnlockLevel(selectedProfile.UnlockedLevels.Max() + 1);
+        }
+
+        public void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                UnlockNextLevel();
+            }
         }
     }
 }

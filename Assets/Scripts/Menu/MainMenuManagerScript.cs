@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Profiles;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,10 +13,12 @@ namespace Menu
         public Color lockedLevelColor;
 
 
+
+
         // Start is called before the first frame update
         void Start()
         {
-            List<int> unlockedLevels = new List<int>() { 1, 2, 3 };
+            List<int> unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile.UnlockedLevels;
             StartCoroutine("ExtendPipes", unlockedLevels);
             SetLevelButtonColors(unlockedLevels);
         }
