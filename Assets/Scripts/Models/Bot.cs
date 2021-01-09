@@ -9,6 +9,7 @@ namespace Models
         public int CommandId = 0;
         public Piece Piece { get; set; }
         public BotAnimator Animator { get; }
+        public bool HasFinished { get; set; }
 
         public Bot(Vector2Int boardLocation, BotAnimator animator)
         {

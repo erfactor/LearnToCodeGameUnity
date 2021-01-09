@@ -181,14 +181,17 @@ namespace Services
 
             while (true)
             {
-                Debug.unityLogger.Log(board.Bots.Count);
                 foreach (var bot in board.Bots)
                 {
-                    bot.CommandId = commands[bot.CommandId].Execute(board, bot);
+                    var command = commands[bot.CommandId];
+                    if (!(command is FinishCommand))
+                    {
+                        bot.CommandId = command.Execute(board, bot);
+                    }
                 }
                 if (_solution.AcceptsBoard(board))
                 {
-                    print("O KURWA, JEST, JEST, WYGRAŁ JEBANY");
+                    print("Player won the game");
                 }
                 yield return new WaitForSeconds(1.2f);
             }

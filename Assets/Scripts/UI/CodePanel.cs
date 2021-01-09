@@ -597,7 +597,8 @@ public class CommandHelper
             var command = GetCommand(solution, i);
             commandList.Add(command);
         }
-
+        
+        commandList.Add(new FinishCommand());
         return commandList;
     }
 
