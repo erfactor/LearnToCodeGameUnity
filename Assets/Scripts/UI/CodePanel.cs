@@ -136,16 +136,23 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         return newPosition;
     }
 
+    public Vector2 GetOffsetForGhostInstruction(CodeLine ifLine)
+    {
+        if (ifLine == null) return Vector2.zero;
+        return new Vector2((ifLine.Indent + 1) * ifLine.IndentPixelMultiplifier, 0);
+    }
+
     public void ShowGhostInstruction()
     {
         int ghostBlockIndex = GetSlotIndexUnderMousePosition();
+        CodeLine ifLine = GetIfBlockUnderMousePosition();
         if (LastGhostBlockIndex == ghostBlockIndex) return;
         if (LastGhostBlockIndex >= 0)
         {
 
         }
 
-        var dockPosition = CalculatePositionForGhostInstruction(GetAbsoluteDockPositionForIndex(ghostBlockIndex));
+        var dockPosition = CalculatePositionForGhostInstruction(GetAbsoluteDockPositionForIndex(ghostBlockIndex)) + GetOffsetForGhostInstruction(ifLine);
                 
         ghostInstructionBlock.transform.SetParent(transform);
         ghostInstructionBlock.GetComponent<RectTransform>().anchoredPosition = dockPosition; //plus scroll!
@@ -524,10 +531,56 @@ public class CommandHelper
 
         if (InstructionHelper.IsIfInstruction(line.go))
         {
-            throw new NotImplementedException("If command is not implemented yet");
+            int trueLineNumber = currentLine + 1;
+            int elseLineNumber = currentLine + line.children.Count + 1;
+            return new IfCommand(trueLineNumber, elseLineNumber, GetConditions(line), GetLogicalOperators(line));
         }
 
         throw new System.Exception("Could not generate a command.");
+    }
+
+    public List<Condition> GetConditions(CodeLine ifLine)
+    {
+        var directionIndicator = ifLine.go.transform.Find("DirectionIndicator");
+        var comparisonIndicator = ifLine.go.transform.Find("ComparisonIndicator");
+        var relationIndicator = ifLine.go.transform.Find("Dropdown").Find("Label");
+        var relationIndicatorText = relationIndicator.GetComponent<Text>().text;
+
+        Condition condition = new Condition()
+        {
+            leftSide = directionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection,
+            comparisonSign = ParseComparisonSign(relationIndicatorText),
+            rightSide = GetComparisonObject(comparisonIndicator.gameObject)
+        };
+
+        return new List<Condition>() { condition };
+    }
+
+    public ComparisonObject GetComparisonObject(GameObject comparisonIndicator)
+    {
+        var script = comparisonIndicator.GetComponent<ComparisonTypeIndicatorScript>();
+        ComparisonObject comparisonObject = new ComparisonObject();
+        comparisonObject.comparedType = script.SelectedComparisonType;
+        return comparisonObject;
+    }
+
+    public ComparisonSign ParseComparisonSign(string value)
+    {
+        switch (value)
+        {
+            case "==": return ComparisonSign.Equal;
+            case "!=": return ComparisonSign.NotEqual;
+            case "<=": return ComparisonSign.LesserEqual;
+            case ">=": return ComparisonSign.GreaterEqual;
+            case ">": return ComparisonSign.Greater;
+            case "<": return ComparisonSign.Lesser;
+            default: throw new Exception("Invalid string in comparison sign parsing.");
+        }
+    }
+
+    public List<LogicalOperator> GetLogicalOperators(CodeLine ifLine)
+    {
+        return new List<LogicalOperator>() { };
     }
 
     public int GetJumpLineNumber(List<CodeLine> solution, GameObject go)

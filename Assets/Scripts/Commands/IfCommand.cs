@@ -85,9 +85,9 @@ namespace Commands
             { Direction.DownRight, new Vector2Int(1, -1)}
         };
 
-        Direction leftSide;
-        ComparisonSign comparisonSign;
-        ComparisonObject rightSide;
+        public Direction leftSide;
+        public ComparisonSign comparisonSign;
+        public ComparisonObject rightSide;
 
         public bool Evaluate(Board board, Bot bot)
         {
