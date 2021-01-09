@@ -49,7 +49,7 @@ namespace Models
 
         public bool IsInside(Vector2Int location)
         {
-            return location.x < 0 || location.x >= Width || location.y < 0 || location.y >= Height;
+            return location.x >= 0 && location.x < Width && location.y >= 0 && location.y < Height;
         }
 
         public bool AcceptsBoard(Board board)
