@@ -7,7 +7,9 @@ public class SolutionManagerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        ChangeSolution(3);
+        ChangeSolution(2);
+        ChangeSolution(1);
     }
 
     // Update is called once per frame
@@ -30,7 +32,8 @@ public class SolutionManagerScript : MonoBehaviour
     {
         var solutionGameObject = GameObject.Find("LevelCanvas").transform.Find("Panel").transform.Find("SolutionPanel");
         solutionGameObject.name = $"SolutionPanel{solutionIndex}";
-        solutionGameObject.SetParent(transform);        
+        solutionGameObject.SetParent(transform);
+        solutionGameObject.gameObject.SetActive(false);
     }
 
     private void ShowSolution(int solutionIndex)
@@ -38,5 +41,6 @@ public class SolutionManagerScript : MonoBehaviour
         var solutionGameObject = transform.Find($"SolutionPanel{solutionIndex}");
         solutionGameObject.name = "SolutionPanel";
         solutionGameObject.SetParent(GameObject.Find("LevelCanvas").transform.Find("Panel"));
+        solutionGameObject.gameObject.SetActive(true);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -50,9 +51,16 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         InitializeSolutions();
         InitializePanel();
         InitializeConstants();
+        InitializeGhostInstruction();
 
         draggedObject = null;
         scrollY = 0;
+    }
+
+    public void InitializeGhostInstruction()
+    {
+        ghostInstructionBlock = GameObject.Find("GhostInstruction");
+        ghostInstructionBlock.transform.SetParent(GameObject.Find("NotVisible").transform);
     }
 
     void InitializeConstants()
@@ -115,18 +123,66 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (draggedObject != null && IsInRect(panelRect, Input.mousePosition))
+        if (draggedObject != null && IsMouseInCodePanel())
         {
             HandleDrag();
         }
+        else
+        {
+            RemoveGhostInstruction();
+        }        
 
         UpdateScroll();
         SetPositions();
     }
 
+    int LastGhostBlockIndex { get; set; } = -1;
+
+    GameObject ghostInstructionBlock;
+
     public void HandleDrag()
     {
+        ShowGhostInstruction();        
+    }
 
+    public Vector2 CalculatePositionForGhostInstruction(Vector2 absoluteDockPosition)
+    {
+        float x = absoluteDockPosition.x;
+        float y = absoluteDockPosition.y;
+        var parentRectTransform = GetComponent<RectTransform>();
+        var parentWidth = parentRectTransform.rect.width;
+        var parentHeight = parentRectTransform.rect.height;
+
+        var thisRectTransform = GameObject.Find("GhostInstruction").GetComponent<RectTransform>();
+        var thisWidth = thisRectTransform.rect.width;
+        var thisHeight = thisRectTransform.rect.height;
+
+        Vector2 newPosition = new Vector2(x - parentWidth / 2 + thisWidth / 2, y - parentHeight / 2 - thisHeight / 2);
+        newPosition -= new Vector2(0, scrollY);
+        return newPosition;
+    }
+
+    public void ShowGhostInstruction()
+    {
+        int ghostBlockIndex = GetSlotIndexUnderMousePosition();
+        if (LastGhostBlockIndex == ghostBlockIndex) return;
+        if (LastGhostBlockIndex >= 0)
+        {
+
+        }
+
+        var dockPosition = CalculatePositionForGhostInstruction(GetAbsoluteDockPositionForIndex(ghostBlockIndex));
+                
+        ghostInstructionBlock.transform.SetParent(transform);
+        ghostInstructionBlock.GetComponent<RectTransform>().anchoredPosition = dockPosition; //plus scroll!
+
+        LastGhostBlockIndex = ghostBlockIndex;
+    }
+
+    public void RemoveGhostInstruction()
+    {
+        LastGhostBlockIndex = -1;
+        ghostInstructionBlock.transform.SetParent(GameObject.Find("NotVisible").transform);
     }
 
     public void UpdateScroll()
@@ -177,10 +233,12 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private void HandleDrop(PointerEventData eventData)
     {
+        RemoveGhostInstruction();
+
         ShowDirectionIndicatorIfNeeded(eventData);
         RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
 
-        int index = GetSlotIndexUnderMousePosition(eventData);
+        int index = GetSlotIndexUnderMousePosition();
 
         CodeLine parent = GetIfBlockUnderMousePosition();
 
@@ -193,8 +251,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         for (int i = CurrentSolution.Count - 1; i >= 0; i--)
         {
             if (!InstructionHelper.IsIfInstruction(CurrentSolution[i].go))
-            {
-                Debug.LogWarning("User tried to do impossible nesting.");
+            {                
                 continue;
             }
 
@@ -219,8 +276,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         debugRect.transform.SetParent(GameObject.Find("SolutionPanel").transform);
     }
 
-
-
     private static void ShowDirectionIndicatorIfNeeded(PointerEventData eventData)
     {
         if (eventData.pointerDrag.transform.Find("DirectionIndicator") != null)
@@ -231,19 +286,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private Vector2 TranslateMousePositionToPanel(Vector2 position)
     {
-        //Debug.LogWarning("NEW CALCULATION");
-        //Vector2 panelTopLeftCorner = topLeftCorner;
-        //Debug.Log($"topleft: {panelTopLeftCorner}");
-        //var offsetFromTopLeft = position - panelTopLeftCorner;
-        //Debug.Log($"offset: {offsetFromTopLeft}");
-        //var panelRect = gameObject.GetComponent<RectTransform>().rect;
-        //Vector2 middle = new Vector2(panelRect.width / 2, panelRect.height / 2);
-        //Debug.Log($"Middle: {middle}");
-        //Vector2 distanceFromMiddle = offsetFromTopLeft - middle;
-        //var transformed = distanceFromMiddle;
-        //Debug.Log($"transformed: {transformed}");
-        //return transformed;
-
         var middle = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
         // Debug.Log($"Middle: {middle}");
         var transformed = position - middle;
@@ -260,25 +302,24 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         return mousePositionOnCodePanel;
     }
 
-    private int GetSlotIndexUnderMousePosition(PointerEventData eventData)
+    private int GetSlotIndexUnderMousePosition()
     {
-        eventData.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        eventData.position += new Vector2(0, scrollY);
-        eventData.position = TranslateMousePositionToPanel(eventData.position);
+        var mousePositionOnPanel = GetMousePositionOnCodePanel();
 
-        //Debug.Log($"After adjustment {eventData.position}");
+        //Debug.Log($"After adjustment {mousePositionOnPanel}");
 
         if (CurrentSolution.Count == 0) return 0;
 
         else
         {
-            if (eventData.position.y >= CurrentSolution[0].dockPosition.y) // add at the top
+            if (mousePositionOnPanel.y >= CurrentSolution[0].dockPosition.y) // add at the top
             {
                 return 0;
             }
 
-            else if (eventData.position.y < CurrentSolution[CurrentSolution.Count - 1].dockPosition.y)//add at the bottom
+            else if (mousePositionOnPanel.y < CurrentSolution[CurrentSolution.Count - 1].dockPosition.y)//add at the bottom
             {
+                if (draggedObject == CurrentSolution[CurrentSolution.Count - 1].go) return CurrentSolution.Count - 1;
                 return CurrentSolution.Count;
             }
 
@@ -286,7 +327,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             {
                 for (int i = 0; i < CurrentSolution.Count - 1; i++)
                 {
-                    if (eventData.position.y <= CurrentSolution[i].dockPosition.y && eventData.position.y > CurrentSolution[i + 1].dockPosition.y)
+                    if (mousePositionOnPanel.y <= CurrentSolution[i].dockPosition.y && mousePositionOnPanel.y > CurrentSolution[i + 1].dockPosition.y)
                     {
                         return i + 1;
                     }
@@ -314,7 +355,12 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         if (indexOfPresentLine >= 0)
         {
             CodeLine draggedLine = CurrentSolution[indexOfPresentLine];
-            if (draggedLine.HasChildInHierarchy(parent)) return;
+            if (draggedLine.HasChildInHierarchy(parent))
+            {
+                Debug.LogWarning("User tried to do impossible nesting.");
+                return;
+            }
+
             draggedLine.SetParent(parent);
             CurrentSolution.RemoveAt(indexOfPresentLine);
 
@@ -355,6 +401,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     public void Remove(GameObject go)
     {
+        RemoveGhostInstruction();
+
         if (InstructionHelper.IsIfInstruction(go))
         {
             int ifInstructionIndex = GetGameObjectIndexOnList(go);
