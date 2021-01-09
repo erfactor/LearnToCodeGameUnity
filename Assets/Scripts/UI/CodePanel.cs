@@ -95,32 +95,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         return (pos.x >= r.x && pos.x <= r.x + r.width && pos.y <= r.y && pos.y >= r.y - r.height);
     }
 
-    public void ChangeCurrentSolutionIndex(int newIndex)
-    {
-        if (currentSolutionIndex == newIndex) return;
-        SwapSolutions(currentSolutionIndex, newIndex);
-        currentSolutionIndex = newIndex;
-    }
-
-    public void SwapSolutions(int toStore, int toLoad)
-    {
-        var storeBasket = GameObject.Find("UnusedCommands").transform.Find($"Solution{toStore}");
-        var newDataBasket = GameObject.Find("UnusedCommands").transform.Find($"Solution{toLoad}");
-        var currentSolution = GameObject.Find("SolutionPanel").transform;
-
-        MoveAllChildren(currentSolution, storeBasket);
-        MoveAllChildren(newDataBasket, currentSolution);
-    }
-
-    public void MoveAllChildren(Transform from, Transform to)
-    {
-        for (int i = 0; i < from.childCount;)
-        {
-            from.GetChild(i).SetParent(to);
-        }
-    }
-
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (draggedObject != null && IsMouseInCodePanel())
@@ -196,21 +170,12 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         Rect relativeRect = new Rect(-absoluteRect.width / 2, absoluteRect.height / 2, absoluteRect.width, absoluteRect.height);
         Vector2 position = GetMousePositionOnCodePanel();
         bool isIn = IsInRect(relativeRect, position);
-
-        //Debug.Log(position);
-
-        if (isIn)
-        {
-            ;
-        }
-
         return isIn;
     }
 
     public void SetPositions()
     {
         bool isAnythingDragged = draggedObject != null && IsMouseInCodePanel();
-        //if (isDragged) Debug.Log("Set positions, isDragged");
 
         Vector2 relativeMousePosition = GetMousePositionOnCodePanel();
 
@@ -258,7 +223,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             Rect nest = CurrentSolution[i].Nest;
             if (IsInRect(nest, mousePosition))
             {
-                Debug.Log($"znalazlem nest, to jest index {i}");
                 //SetDebugNestInRect(nest);
                 return CurrentSolution[i];
             }
@@ -287,9 +251,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     private Vector2 TranslateMousePositionToPanel(Vector2 position)
     {
         var middle = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
-        // Debug.Log($"Middle: {middle}");
         var transformed = position - middle;
-        //Debug.Log($"transformed: {transformed}");
         return transformed;
     }
 
@@ -305,8 +267,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     private int GetSlotIndexUnderMousePosition()
     {
         var mousePositionOnPanel = GetMousePositionOnCodePanel();
-
-        //Debug.Log($"After adjustment {mousePositionOnPanel}");
 
         if (CurrentSolution.Count == 0) return 0;
 
@@ -501,7 +461,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     private void ApplyScroll(PointerEventData eventData)
     {
         this.scrollY += eventData.scrollDelta.y * ScrollMultiplier;
-        Debug.Log($"Added {eventData.scrollDelta.y} to scrollY, now scrollY = {scrollY}");
         TrimScroll();
     }
 
@@ -568,7 +527,7 @@ public class CommandHelper
             throw new NotImplementedException("If command is not implemented yet");
         }
 
-        throw new System.Exception("nie udalo sie wygenerowac komendy");
+        throw new System.Exception("Could not generate a command.");
     }
 
     public int GetJumpLineNumber(List<CodeLine> solution, GameObject go)
@@ -974,17 +933,6 @@ public class CodeLine
         var debugRectTransform = instance.GetComponent<RectTransform>();
         debugRectTransform.anchoredPosition = position ?? dockPosition;
         debugRectTransform.sizeDelta = go.GetComponent<RectTransform>().sizeDelta * 1.2f;
-        //Rect r = go.GetComponent<RectTransform>().rect;
-
-        //Vector3 topleft = new Vector3(r.xMin, r.yMax, 150);
-        //Vector3 topright = new Vector3(r.xMax, r.yMax, 150);
-        //Vector3 downleft = new Vector3(r.xMin, r.yMin, 150);
-        //Vector3 downright = new Vector3(r.xMax, r.yMin, 150);
-
-        //Debug.DrawLine(topleft, topright, Color.red, 1f, false);
-        //Debug.DrawLine(topright, downright, Color.red, 1f, false);
-        //Debug.DrawLine(downright, downleft, Color.red, 1f, false);
-        //Debug.DrawLine(downleft, topleft, Color.red, 1f, false);
     }
 
 }
