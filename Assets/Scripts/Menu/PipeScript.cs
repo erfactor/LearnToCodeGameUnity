@@ -8,7 +8,7 @@ public class PipeScript : MonoBehaviour
 
     void Start()
     {
-        
+        gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -17,12 +17,13 @@ public class PipeScript : MonoBehaviour
         
     }
 
-    public void EmergeAnimation()
+    public void Emerge()
     {
+        gameObject.SetActive(true);
         GetComponent<Animator>().SetTrigger("Emerge");
     }
 
-    public void ExtendAnimation()
+    public void Extend()
     {
         GetComponent<Animator>().SetTrigger("Extend");
     }

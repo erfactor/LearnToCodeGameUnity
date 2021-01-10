@@ -78,20 +78,20 @@ namespace Menu
 
         public void EmergeAndExtendPipes(List<int> unlockedLevels)
         {
-            var pipeBasket = GameObject.Find("Pipes").transform;
+            var pipeBasket = GameObject.Find("Pipes").transform;            
 
             for (var i = 0; i < pipeBasket.childCount; i++)
             {
                 var childPipeScript = pipeBasket.GetChild(i).GetComponent<PipeScript>();
 
-                if (unlockedLevels.Contains(childPipeScript.LevelFrom)) childPipeScript.EmergeAnimation();
+                if (unlockedLevels.Contains(childPipeScript.LevelFrom)) childPipeScript.Emerge();
             }
 
             for (var i = 0; i < pipeBasket.childCount; i++)
             {
                 var childPipeScript = pipeBasket.GetChild(i).GetComponent<PipeScript>();
 
-                if (unlockedLevels.Contains(childPipeScript.LevelTo)) childPipeScript.ExtendAnimation();
+                if (unlockedLevels.Contains(childPipeScript.LevelTo)) childPipeScript.Extend();
             }            
         }
     }
