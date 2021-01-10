@@ -15,6 +15,8 @@ namespace Menu
         public TextAsset level;
         public TextAsset levelSolution;
 
+        public Animator animator;
+
         public bool IsUnlocked { get; set; }
 
         // Start is called before the first frame update
@@ -35,6 +37,7 @@ namespace Menu
             if (!IsUnlocked)
             {
                 GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayLockedLevelSound();
+                animator.SetTrigger("Shake");
                 return;
             }
 
