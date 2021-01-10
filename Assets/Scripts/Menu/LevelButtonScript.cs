@@ -33,7 +33,11 @@ namespace Menu
 
         private void LoadLevel()
         {
-            if (!IsUnlocked) return;
+            if (!IsUnlocked)
+            {
+                GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayLockedLevelSound();
+                return;
+            }
 
             DestroyImmediate(GameObject.Find("LevelLoader"));
             var loader = Instantiate(LevelLoaderPrefab);

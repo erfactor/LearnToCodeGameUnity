@@ -28,6 +28,7 @@ public class AnimationPanel : MonoBehaviour
 
     public void ChangeScene(int newSceneIndex)
     {
+        GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayChangeSceneSound();
         LoadedSceneIndex = newSceneIndex;
         Animator.SetTrigger("Cover");
     }
