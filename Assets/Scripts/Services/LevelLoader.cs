@@ -213,7 +213,7 @@ namespace Services
 
             Debug.Log("Level completed!");
             GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
-            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
 
             yield return new WaitForSeconds(1.0f);
 

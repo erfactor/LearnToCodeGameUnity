@@ -27,6 +27,6 @@ public class ReturnButtonScript : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         RemoveLevelObjects();
-        GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
+        GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
     }
 }

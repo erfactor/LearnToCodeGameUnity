@@ -22,10 +22,14 @@ namespace Profiles
 
         private void Start()
         {
+            DontDestroyOnLoad(gameObject);
+        }
+
+        public void LoadProfiles()
+        {
             _editPanel = GameObject.Find("EditPanel");
             _editPanel.SetActive(false);
             DeserializeProfiles();
-            DontDestroyOnLoad(this);
         }
 
         public void SerializeProfiles()
@@ -113,7 +117,7 @@ namespace Profiles
         {
             int selectedProfileIndex = GetProfileIndex(clickedGameObject);
             SetSelectedProfile(selectedProfileIndex);
-            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
         }
 
         public void UnlockLevel(int levelToUnlock)

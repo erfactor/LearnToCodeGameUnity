@@ -17,7 +17,23 @@ namespace Menu
 
         public Animator animator;
 
-        public bool IsUnlocked { get; set; }
+        private bool _isUnlocked = false;
+
+        public bool IsUnlocked
+        {
+            get
+            {
+                return _isUnlocked;
+            }
+            set
+            {
+                _isUnlocked = value;
+                if (value)
+                {
+                    transform.Find("Padlock").gameObject.SetActive(false);
+                }
+            }
+        }
 
         // Start is called before the first frame update
         private void Start()
@@ -48,7 +64,7 @@ namespace Menu
             loader.LoadLevel(level.text, levelIndex);
             DontDestroyOnLoad(loader.gameObject);
 
-            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);         
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(3);         
         }
 
         public void SetButtonColor(Color color)
