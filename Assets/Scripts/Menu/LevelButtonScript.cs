@@ -16,6 +16,8 @@ namespace Menu
         public TextAsset level;
         public TextAsset levelSolution;
 
+        public bool IsUnlocked { get; set; }
+
         // Start is called before the first frame update
         private void Start()
         {
@@ -31,6 +33,9 @@ namespace Menu
 
         private void LoadLevel()
         {
+            if (!IsUnlocked) return;
+
+            DestroyImmediate(GameObject.Find("LevelLoader"));
             var loader = Instantiate(LevelLoaderPrefab);
             loader.gameObject.name = "LevelLoader";
             loader.LoadSolution(levelSolution.text);
@@ -47,5 +52,7 @@ namespace Menu
             //GetComponentInChildren<Button>().colors = newColors;
             GetComponentInChildren<Image>().color = color;
         }
+
+
     }
 }

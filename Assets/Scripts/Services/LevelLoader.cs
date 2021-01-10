@@ -197,17 +197,29 @@ namespace Services
                 }
                 if (_solution.AcceptsBoard(board))
                 {
-                    LevelCompleted();
+                    Debug.Log("Accepted");
+
+                    yield return StartCoroutine(LevelCompleted());
+                    yield return new WaitForSeconds(1.0f);
                     yield break;
                 }
                 yield return new WaitForSeconds(executionTime);
             }
         }
 
-        public void LevelCompleted()
+        public IEnumerator LevelCompleted()
         {
+            yield return new WaitForSeconds(0.5f);
+
+            Debug.Log("Level completed!");
             GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
+
+            yield return new WaitForSeconds(1.0f);
+
+            DestroyCurrentLevelData();
+
+            yield break;
         }
 
         public void StopExecution()
@@ -222,14 +234,14 @@ namespace Services
         }
 
         public void ReloadLevel()
-        {
-            _layerParents.Clear();
+        {            
             DestroyCurrentLevelData();
             LoadLevel(currentLevelData, levelNumber);
         }
 
         private void DestroyCurrentLevelData()
         {
+            _layerParents.Clear();
             var levelInstance = GameObject.Find("TileLevel");
             DestroyImmediate(levelInstance);
         }

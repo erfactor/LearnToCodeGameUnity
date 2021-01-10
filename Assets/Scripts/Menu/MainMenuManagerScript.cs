@@ -12,12 +12,31 @@ namespace Menu
         public Color unlockedLevelColor;
         public Color lockedLevelColor;
 
+        [SerializeField]
+        private bool canPlayLockedLevels;
+
         private void Start()
         {
-            var unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile
-                .UnlockedLevels;
+            var unlockedLevels = GameObject.Find("ProfileManager").GetComponent<ProfileManager>().selectedProfile.UnlockedLevels;
             EmergeAndExtendPipes(unlockedLevels);
+            SetLevelStatuses(unlockedLevels);
             SetLevelButtonColors(unlockedLevels);
+        }
+
+        private void SetLevelStatuses(List<int> unlockedLevels)
+        {
+            var levels = GetLevelButtonScripts();
+            foreach(var level in levels)
+            {
+                if (canPlayLockedLevels)
+                {
+                    level.IsUnlocked = true;
+                }
+                else
+                {
+                    level.IsUnlocked = IsLevelUnlocked(unlockedLevels, level.levelIndex);
+                }                
+            }
         }
 
         public List<LevelButtonScript> GetLevelButtonScripts()
