@@ -7,7 +7,7 @@ public class AnimationPanel : MonoBehaviour
     private int LoadedSceneIndex;
     void Start()
     {
-        DontDestroyOnLoad(this.transform.parent.gameObject);
+        DontDestroyOnLoad(transform.parent.gameObject);
     }
 
     public void ChangeScene(int newSceneIndex)
