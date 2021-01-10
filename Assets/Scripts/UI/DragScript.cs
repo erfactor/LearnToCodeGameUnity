@@ -10,7 +10,6 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     private Transform startParent;
     private Vector3 startPosition;
 
-
     public bool IsReplicator { get; set; } = true;
 
     public void Awake()
@@ -36,6 +35,8 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
             Replicate();
             transform.SetParent(transform.parent.parent);
         }
+
+        GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayInstructionGrabSound();
 
         Debug.Log("OnBeginDrag");
         canvasGroup.blocksRaycasts = false;
@@ -71,5 +72,6 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         canvasGroup.alpha = 1f;
 
         CodePanel.draggedObject = null;
+        GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayInstructionDropSound();
     }
 }
