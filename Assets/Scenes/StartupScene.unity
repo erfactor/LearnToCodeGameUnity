@@ -934,8 +934,9 @@ MonoBehaviour:
   returnClip: {fileID: 0}
   sceneChangeClip: {fileID: 8300000, guid: c1d3be4eda4960b419bb7fd7bb21120e, type: 3}
   instructionGrab: {fileID: 8300000, guid: 3b9d068a70109db4eb8acd02a43b60ec, type: 3}
-  instructionDrop: {fileID: 8300000, guid: da40dcfa1fac8bb46ae3e06e049a552f, type: 3}
+  instructionDrop: {fileID: 8300000, guid: 10ee1048bd074b3459203213af3fe860, type: 3}
   levelCompleted: {fileID: 0}
+  changeSolution: {fileID: 8300000, guid: 286799fe76f615841b4e9cda156040b8, type: 3}
   audioSource1: {fileID: 2073186730}
   audioSource2: {fileID: 2073186734}
   audioSource3: {fileID: 2073186733}

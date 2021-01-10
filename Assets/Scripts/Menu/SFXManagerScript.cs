@@ -15,6 +15,8 @@ public class SFXManagerScript : MonoBehaviour
 
     public AudioClip levelCompleted;
 
+    public AudioClip changeSolution;
+
     public AudioSource audioSource1;
     public AudioSource audioSource2;
     public AudioSource audioSource3;
@@ -58,6 +60,11 @@ public class SFXManagerScript : MonoBehaviour
     public void PlayInstructionDropSound()
     {
         InternalPlaySound(instructionDrop);
+    }
+
+    public void PlaySolutionChangeSound()
+    {
+        InternalPlaySound(changeSolution);
     }
 
     public void MuteSound()

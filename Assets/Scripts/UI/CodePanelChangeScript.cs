@@ -20,8 +20,7 @@ public class CodePanelChangeScript : MonoBehaviour, IPointerClickHandler
 
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {        
         if (solutionIndex == 1)
         {
             UnselectAllSiblings();
@@ -36,6 +35,7 @@ public class CodePanelChangeScript : MonoBehaviour, IPointerClickHandler
         Debug.Log("Clicked code panel button number " + solutionIndex);
         UnselectAllSiblings();
         Select();
+        GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlaySolutionChangeSound();
     }
 
     public void Select()

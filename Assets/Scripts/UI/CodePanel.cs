@@ -885,10 +885,13 @@ public class CodeLine
 
         yDiff = Mathf.Clamp(yDiff, -MinDistanceForRepelForce, MinDistanceForRepelForce);
 
+
         if (yDiff >= 0 && yDiff < MinDistanceForRepelForce) yDiff = MinDistanceForRepelForce;
         if (yDiff <= 0 && yDiff > -MinDistanceForRepelForce) yDiff = -MinDistanceForRepelForce;
 
-        return new Vector2(0, RepelForceScaleFactor / Mathf.Pow(Mathf.Abs(yDiff), 0.6f) * Mathf.Sign(yDiff));
+        if (yDiff > 0) return new Vector2(0, 0); //we do not want to repel the upper blocks
+
+        return new Vector2(0, RepelForceScaleFactor / Mathf.Pow(Mathf.Abs(yDiff), 0.45f) * Mathf.Sign(yDiff));
     }
 
     public Vector2 GetReturnVector(Vector2 scrollVector)
@@ -902,7 +905,7 @@ public class CodeLine
         //Vector2 newForce = new Vector2(0, ReturnForceScaleFactor * yDiff);
         //return newForce;
 
-        return -shift / 10;
+        return -shift / 24;
     }
 
     public void CheckIfOutOfBounds()
