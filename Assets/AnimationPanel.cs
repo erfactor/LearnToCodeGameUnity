@@ -10,20 +10,6 @@ public class AnimationPanel : MonoBehaviour
         DontDestroyOnLoad(this.transform.parent.gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Animator.SetTrigger("Cover");
-        }
-        
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            Animator.SetTrigger("Uncover");
-        }
-    }
-
     public void ChangeScene(int newSceneIndex)
     {
         GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayChangeSceneSound();
