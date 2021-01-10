@@ -58,6 +58,7 @@ namespace Menu
             }
 
             DestroyImmediate(GameObject.Find("LevelLoader"));
+            DestroyImmediate(GameObject.Find("TileLevel"));
             var loader = Instantiate(LevelLoaderPrefab);
             loader.gameObject.name = "LevelLoader";
             loader.LoadSolution(levelSolution.text);

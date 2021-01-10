@@ -17,16 +17,12 @@ public class ReturnButtonScript : MonoBehaviour, IPointerClickHandler
 
     private void RemoveLevelObjects()
     {
-        var levelObject = GameObject.Find("LevelLoader");
-        Destroy(levelObject);
-        var tileLevel = GameObject.Find("TileLevel");
-        Destroy(tileLevel);
+        
 
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        RemoveLevelObjects();
         GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
     }
 }
