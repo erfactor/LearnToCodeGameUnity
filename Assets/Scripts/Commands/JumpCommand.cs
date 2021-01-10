@@ -7,6 +7,8 @@ namespace Commands
         private readonly Direction _direction;
         public int NextCommandId { get; }
 
+        public float ExecutionTime { get; } = 0.0f;
+
         public JumpCommand(int nextCommandId)
         {
             NextCommandId = nextCommandId;

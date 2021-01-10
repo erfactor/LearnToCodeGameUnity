@@ -4,6 +4,10 @@ namespace Commands
 {
     public class IncCommand : ICommand
     {
+        public int NextCommandId { get; }
+
+        public float ExecutionTime { get; } = 1.2f;
+
         public IncCommand(int nextCommandId)
         {
             NextCommandId = nextCommandId;
@@ -18,7 +22,5 @@ namespace Commands
 
             return NextCommandId;
         }
-
-        public int NextCommandId { get; }
     }
 }

@@ -182,12 +182,14 @@ namespace Services
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
             var board = InitialBoard;
+            float executionTime = 0.0f;
 
             while (true)
             {
                 foreach (var bot in board.Bots)
                 {
                     var command = commands[bot.CommandId];
+                    executionTime = command.ExecutionTime;
                     if (!(command is FinishCommand))
                     {
                         bot.CommandId = command.Execute(board, bot);
@@ -198,7 +200,7 @@ namespace Services
                     LevelCompleted();
                     yield break;
                 }
-                yield return new WaitForSeconds(1.2f);
+                yield return new WaitForSeconds(executionTime);
             }
         }
 

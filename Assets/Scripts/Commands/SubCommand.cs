@@ -22,5 +22,7 @@ namespace Commands
         }
 
         public int NextCommandId { get; }
+
+        public float ExecutionTime { get; } = 1.2f;
     }
 }

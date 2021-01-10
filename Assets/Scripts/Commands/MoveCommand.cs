@@ -7,6 +7,7 @@ namespace Commands
 {
     public class MoveCommand : ICommand
     {
+
         private readonly Direction _direction;
 
         private readonly Dictionary<Direction, Vector2Int> _directionVector = new Dictionary<Direction, Vector2Int>
@@ -17,13 +18,15 @@ namespace Commands
             {Direction.Up, Vector2Int.up}
         };
 
+        public int NextCommandId { get; }
+
+        public float ExecutionTime { get; } = 1.2f;
+
         public MoveCommand(Direction direction, int nextCommandId)
         {
             _direction = direction;
             NextCommandId = nextCommandId;
         }
-
-        public int NextCommandId { get; }
 
         public int Execute(Board board, Bot bot)
         {

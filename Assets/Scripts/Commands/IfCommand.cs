@@ -8,9 +8,14 @@ namespace Commands
 {
     public class IfCommand : ICommand
     {
+        public int NextCommandId { get; }
+        public int TrueCommandId { get; set; }
+
+        public float ExecutionTime { get; } = 0.0f;
+
         List<Condition> conditions;
         List<LogicalOperator> logicalOperators;
-        int TrueCommandId { get; set; } 
+        
 
         private readonly Dictionary<Direction, Vector2Int> _directionVector = new Dictionary<Direction, Vector2Int>
         {
@@ -28,7 +33,7 @@ namespace Commands
             this.logicalOperators = logicalOperators;
         }
 
-        public int NextCommandId { get; }
+        
 
         public int Execute(Board board, Bot bot)
         {
