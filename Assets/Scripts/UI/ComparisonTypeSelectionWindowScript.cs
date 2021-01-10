@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Models;
 using Commands;
 
 public class ComparisonTypeSelectionWindowScript : MonoBehaviour

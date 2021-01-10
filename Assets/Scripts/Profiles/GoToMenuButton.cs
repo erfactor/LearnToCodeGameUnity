@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using Profiles;
+﻿using Profiles;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GoToMenuButton : MonoBehaviour

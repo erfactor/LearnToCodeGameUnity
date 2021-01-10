@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using Commands;
-using Models;
 
 public class ComparisonTypeSelectorScript : MonoBehaviour, IPointerClickHandler
 {
