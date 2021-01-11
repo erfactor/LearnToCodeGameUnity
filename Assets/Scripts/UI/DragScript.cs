@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
+public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -83,5 +83,15 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
 
         CodePanel.draggedObject = null;
         GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayInstructionDropSound();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        GetComponent<Animator>().SetTrigger("Hover");
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        GetComponent<Animator>().SetTrigger("Unhover");
     }
 }

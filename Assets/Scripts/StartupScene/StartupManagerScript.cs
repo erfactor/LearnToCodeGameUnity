@@ -31,11 +31,12 @@ public class StartupManagerScript : MonoBehaviour
         yield return wait;
         yield return wait;
 
-        learn.GetComponent<Animator>().SetTrigger("Hide");
-        //yield return wait;
-        to.GetComponent<Animator>().SetTrigger("Hide");
-        //yield return wait;
         code.GetComponent<Animator>().SetTrigger("Hide");
+        yield return new WaitForSeconds(0.1f);
+        to.GetComponent<Animator>().SetTrigger("Hide");
+        yield return new WaitForSeconds(0.1f);
+        learn.GetComponent<Animator>().SetTrigger("Hide");
+        yield return new WaitForSeconds(0.1f);
 
         yield return wait;
         yield return wait;
