@@ -14,7 +14,8 @@ public class StartupManagerScript : MonoBehaviour
 
     IEnumerator Startup()
     {
-        var wait = new WaitForSeconds(0.5f);
+        var wait = new WaitForSeconds(0.3f);
+
         var learn = GameObject.Find("Learn");
         var to = GameObject.Find("To");
         var code = GameObject.Find("Code");
@@ -25,12 +26,18 @@ public class StartupManagerScript : MonoBehaviour
         yield return wait;
         code.GetComponent<Animator>().SetTrigger("Show");
         yield return wait;
+
         yield return wait;
+        yield return wait;
+        yield return wait;
+
         learn.GetComponent<Animator>().SetTrigger("Hide");
         //yield return wait;
         to.GetComponent<Animator>().SetTrigger("Hide");
         //yield return wait;
         code.GetComponent<Animator>().SetTrigger("Hide");
+
+        yield return wait;
         yield return wait;
 
         GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
