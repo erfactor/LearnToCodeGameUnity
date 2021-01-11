@@ -138,6 +138,16 @@ PrefabInstance:
       propertyPath: levelIndex
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: level
+      value: 
+      objectReference: {fileID: 4900000, guid: 6504b435a4d62fa429311f4df933a6dd, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: levelSolution
+      value: 
+      objectReference: {fileID: 4900000, guid: 0e38dd3580e53bf4dab173f0fb048729, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
