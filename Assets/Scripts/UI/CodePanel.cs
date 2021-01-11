@@ -27,7 +27,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     private const int numberOfSolutions = 1;
     private static int currentSolutionIndex = 0;
 
-    private List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
+    public List<CodeLine> CurrentSolution => solutions[currentSolutionIndex];
 
     private float scrollY;
 
@@ -313,6 +313,16 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private void InsertAtSlot(int index, GameObject go, CodeLine parent)
     {
+        if (unpinnedCodeline != null)
+        {
+            Pin(unpinnedCodeline, ref index);
+            UnzipHierarchy(unpinnedCodeline);
+            unpinnedCodeline.SetParent(parent);
+            unpinnedCodeline = null;
+            Rearrange();
+            return;
+        }
+
         int indexOfPresentLine = GetGameObjectIndexOnList(go); //check if the dragged object is already on the code panel
 
         if (indexOfPresentLine >= 0)
@@ -329,7 +339,6 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
             if (index > indexOfPresentLine) index--;
             CurrentSolution.Insert(index, draggedLine);
-
         }
 
         else
@@ -362,45 +371,104 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         go.GetComponent<JumpInstructionScript>().AttachArrow();
     }
 
-    public void Remove(GameObject go)
-    {
+    public void Remove(GameObject go, CodeLine codeLine = null)
+    {        
         RemoveGhostInstruction();
 
-        if (InstructionHelper.IsIfInstruction(go))
+        var lineToRemove = unpinnedCodeline;
+
+        if (lineToRemove != null)
         {
-            int ifInstructionIndex = GetGameObjectIndexOnList(go);
-            CodeLine ifInstruction = CurrentSolution[ifInstructionIndex];
-            for (int i = ifInstruction.children.Count - 1; i >= 0; i--)
+            if (InstructionHelper.IsIfInstruction(go))
             {
-                var child = ifInstruction.children[i];
-                Remove(child.go);
-                child.SetParent(null);
+                CodeLine ifInstruction = codeLine ?? unpinnedCodeline;
+                for (int i = ifInstruction.children.Count - 1; i >= 0; i--)
+                {
+                    var child = ifInstruction.children[i];
+                    Remove(child.go, child);
+                    child.SetParent(null);
+                }
             }
-        }
 
-        if (InstructionHelper.IsJumpInstruction(go))
-        {
-            GameObject bindedInstruction = go.GetComponent<JumpInstructionScript>().bindedInstruction;
-            if (bindedInstruction != null)
+            if (InstructionHelper.IsJumpInstruction(go))
             {
-                go.GetComponent<JumpInstructionScript>().bindedInstruction = null;
-                Remove(bindedInstruction);
+                GameObject bindedInstruction = go.GetComponent<JumpInstructionScript>().bindedInstruction;
+                if (bindedInstruction != null)
+                {
+                    go.GetComponent<JumpInstructionScript>().bindedInstruction = null;                    
+                    CurrentSolution.RemoveAt(GetGameObjectIndexOnList(bindedInstruction));
+                    Destroy(bindedInstruction);
+                }
             }
-        }
 
-        int indexOfLineToRemove = GetGameObjectIndexOnList(go);
-
-        if (indexOfLineToRemove >= 0)
-        {
-            CurrentSolution.RemoveAt(indexOfLineToRemove);
-            Destroy(go);            
-        }
+            CurrentSolution.Remove(lineToRemove);
+            Destroy(go);
+        }  
+        
         else
         {
             Destroy(go);
         }
 
+        unpinnedCodeline = null;
+
         Rearrange();
+    }
+
+    public float BlockSizeY = 60;
+
+    public Vector2 GetDockPositionForFirstChild()
+    {
+        return new Vector2(30, -60);
+    }
+
+
+    public Vector2 GetDockPositionForChild(int index, int indent)
+    {
+        return GetDockPositionForFirstChild() + new Vector2(0, index * BlockSizeY);
+    }
+
+    public void ZipHierarchy(CodeLine parent)
+    {
+        var currentPosition = GetDockPositionForFirstChild();
+        foreach(var child in parent.children)
+        {
+            child.go.transform.SetParent(parent.go.transform);
+            child.go.GetComponent<RectTransform>().anchoredPosition = currentPosition;
+            currentPosition -= new Vector2(0, child.NestSize.y);
+            ZipHierarchy(child);
+        }
+    }
+
+    public void UnzipHierarchy(CodeLine parent)
+    {
+        parent.go.transform.SetParent(transform);
+        foreach(var child in parent.children)
+        {
+            UnzipHierarchy(child);
+        }
+    }
+
+    public void Unpin(CodeLine parent)
+    {
+        CurrentSolution.Remove(parent);
+        foreach(var child in parent.children)
+        {
+            Unpin(child);
+        }
+    }
+
+    public CodeLine unpinnedCodeline = null;
+
+    //returns index of the next location
+    public void Pin(CodeLine parent, ref int index)
+    {
+        CurrentSolution.Insert(index, parent);
+        foreach (var child in parent.children)
+        {
+            index++;
+            Pin(child, ref index);
+        }
     }
 
     private void RearrangeChildren(int parentIndex)
@@ -417,11 +485,10 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             }
             CurrentSolution.Remove(child);
             CurrentSolution.Insert(parentIndex + 1, child);
-
         }
     }
 
-    private void Rearrange()
+    public void Rearrange()
     {
         for (int i = 0; i < CurrentSolution.Count; i++)
         {

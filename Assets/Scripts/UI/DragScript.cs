@@ -48,6 +48,15 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         startPosition = transform.position;
 
         CodePanel.draggedObject = gameObject;
+        var codePanel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
+        var indexOnCodePanel = codePanel.GetGameObjectIndexOnList(gameObject);
+        if (indexOnCodePanel >= 0)
+        {
+            codePanel.unpinnedCodeline = codePanel.CurrentSolution[indexOnCodePanel];
+            codePanel.Unpin(codePanel.unpinnedCodeline);
+            codePanel.ZipHierarchy(codePanel.unpinnedCodeline);
+            codePanel.Rearrange();
+        }
 
         //GameObject.Find("RaycastManager").GetComponent<RaycastManagerScript>().SetRaycastBlockingOnInstructionDragged();
         RaycastManagerScript.SetRaycastBlockingOnInstructionDragged();
