@@ -41,7 +41,7 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         Debug.Log("OnBeginDrag");
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
-        canvasGroup.alpha = 0.1f;
+        canvasGroup.alpha = 0.7f;
 
         //startParent = transform.parent;
         //transform.SetParent(transform.root);
