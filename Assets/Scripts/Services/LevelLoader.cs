@@ -180,19 +180,27 @@ namespace Services
             return board;
         }
 
+        private const float ExecutionTimeInSeconds = 1.2f;
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
             _codeExecutionOn = true;
             var board = InitialBoard;
-            var executionTime = 0.0f;
 
             while (commandsToExecuteCount-- > 0)
             {
                 foreach (var bot in board.Bots)
                 {
                     var command = commands[bot.CommandId];
-                    executionTime = command.ExecutionTime;
-                    if (!(command is FinishCommand)) bot.CommandId = command.Execute(board, bot);
+                    while (command is JumpCommand)
+                    {
+                        command = commands[command.NextCommandId];
+                    }
+
+                    if (!(command is FinishCommand))
+                    {
+                        bot.CommandId = command.Execute(board, bot);
+                        print(commands[bot.CommandId]);
+                    }
                 }
 
                 if (_solution.AcceptsBoard(board))
@@ -203,7 +211,7 @@ namespace Services
                     yield break;
                 }
 
-                yield return new WaitForSeconds(executionTime);
+                yield return new WaitForSeconds(ExecutionTimeInSeconds);
             }
 
             _codeExecutionOn = false;
@@ -228,6 +236,7 @@ namespace Services
 
         public void StopExecution()
         {
+            _codeExecutionOn = false;
             StopAllCoroutines();
         }
 

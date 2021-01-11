@@ -14,12 +14,13 @@ public class AnimationPanel : MonoBehaviour
     {
         GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayChangeSceneSound();
         LoadedSceneIndex = newSceneIndex;
-        Animator.SetTrigger("Cover");
+        // Animator.SetTrigger("Cover");
+        SceneManager.LoadScene(LoadedSceneIndex);
     }
 
     public void LoadNewSceneTest()
     {
-        SceneManager.LoadScene(LoadedSceneIndex);
-        Animator.SetTrigger("Uncover");
+        // SceneManager.LoadScene(LoadedSceneIndex);
+        // Animator.SetTrigger("Uncover");
     }
 }

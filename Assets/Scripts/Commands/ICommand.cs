@@ -6,7 +6,5 @@ namespace Commands
     {
         int Execute(Board board, Bot bot);
         int NextCommandId { get; }
-
-        float ExecutionTime { get; }
     }
 }
