@@ -30,9 +30,8 @@ namespace UI.PanelButtons
                 _stopButton.SetButtonActive();
                 var commands = GameObject.Find("SolutionPanel").GetComponent<CodePanel>().GetCommands();
                 GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StartExecution(commands);
+                _isGameOn = true;
             }
-
-            _isGameOn = !_isGameOn;
         }
 
         public void SetPlayButton()

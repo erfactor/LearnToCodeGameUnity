@@ -8,7 +8,8 @@ namespace UI.PanelButtons
     {
         public void OnPointerClick(PointerEventData eventData)
         {
-            GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StepOnce();
+            var commands = GameObject.Find("SolutionPanel").GetComponent<CodePanel>().GetCommands();
+            GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StepOnce(commands);
         }
     }
 }

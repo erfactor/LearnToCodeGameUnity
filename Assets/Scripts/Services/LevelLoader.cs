@@ -26,16 +26,22 @@ namespace Services
         // The list of tiles the user can use to create maps. Public so the user can add all user-created prefabs
         public Tileset Tileset;
 
+        public int levelNumber;
+
         // Dictionary as the parent for all the GameObjects per layer
         private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
+
+        private bool _codeExecutionOn;
+
+        private Coroutine _gameCoroutine;
         private Board _solution;
 
         // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
         private GameObject _tileLevelParent;
 
-        private string currentLevelData;
+        private int commandsToExecuteCount;
 
-        public int levelNumber;
+        private string currentLevelData;
 
         public Board InitialBoard;
         private List<Transform> Tiles => Tileset.Tiles;
@@ -176,21 +182,19 @@ namespace Services
 
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
+            _codeExecutionOn = true;
             var board = InitialBoard;
-            float executionTime = 0.0f;
+            var executionTime = 0.0f;
 
-            while (true)
+            while (commandsToExecuteCount-- > 0)
             {
-                // if (commandsToExecuteCount-- > 0) TODO
                 foreach (var bot in board.Bots)
                 {
                     var command = commands[bot.CommandId];
                     executionTime = command.ExecutionTime;
-                    if (!(command is FinishCommand))
-                    {
-                        bot.CommandId = command.Execute(board, bot);
-                    }
+                    if (!(command is FinishCommand)) bot.CommandId = command.Execute(board, bot);
                 }
+
                 if (_solution.AcceptsBoard(board))
                 {
                     print("Accepted");
@@ -198,16 +202,11 @@ namespace Services
                     yield return new WaitForSeconds(1.0f);
                     yield break;
                 }
+
                 yield return new WaitForSeconds(executionTime);
             }
-        }
 
-        private int commandsToExecuteCount;
-
-        public void StartExecution(List<ICommand> commands)
-        {
-            commandsToExecuteCount = int.MaxValue;
-            StartCoroutine("InterpretCode", commands);
+            _codeExecutionOn = false;
         }
 
         public void PauseExecution()
@@ -215,9 +214,16 @@ namespace Services
             commandsToExecuteCount = 0;
         }
 
-        public void StepOnce()
+        public void StartExecution(List<ICommand> commands)
+        {
+            commandsToExecuteCount = int.MaxValue;
+            if (!_codeExecutionOn) StartCoroutine("InterpretCode", commands);
+        }
+
+        public void StepOnce(List<ICommand> commands)
         {
             commandsToExecuteCount = 1;
+            if (!_codeExecutionOn) StartCoroutine("InterpretCode", commands);
         }
 
         public void StopExecution()
@@ -232,7 +238,7 @@ namespace Services
         }
 
         public void ReloadLevel()
-        {            
+        {
             DestroyCurrentLevelData();
             LoadLevel(currentLevelData, levelNumber);
         }
@@ -248,8 +254,6 @@ namespace Services
             yield return new WaitForSeconds(1.0f);
 
             DestroyCurrentLevelData();
-
-            yield break;
         }
 
         private void DestroyCurrentLevelData()
