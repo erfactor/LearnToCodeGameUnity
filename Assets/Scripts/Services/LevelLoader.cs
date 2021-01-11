@@ -174,11 +174,6 @@ namespace Services
             return board;
         }
 
-        public void StartExecution(List<ICommand> commands)
-        {
-            StartCoroutine("InterpretCode", commands);
-        }
-
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
             var board = InitialBoard;
@@ -186,6 +181,7 @@ namespace Services
 
             while (true)
             {
+                // if (commandsToExecuteCount-- > 0) TODO
                 foreach (var bot in board.Bots)
                 {
                     var command = commands[bot.CommandId];
@@ -197,8 +193,7 @@ namespace Services
                 }
                 if (_solution.AcceptsBoard(board))
                 {
-                    Debug.Log("Accepted");
-
+                    print("Accepted");
                     yield return StartCoroutine(LevelCompleted());
                     yield return new WaitForSeconds(1.0f);
                     yield break;
@@ -207,19 +202,22 @@ namespace Services
             }
         }
 
-        public IEnumerator LevelCompleted()
+        private int commandsToExecuteCount;
+
+        public void StartExecution(List<ICommand> commands)
         {
-            yield return new WaitForSeconds(0.5f);
+            commandsToExecuteCount = int.MaxValue;
+            StartCoroutine("InterpretCode", commands);
+        }
 
-            Debug.Log("Level completed!");
-            GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
-            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
+        public void PauseExecution()
+        {
+            commandsToExecuteCount = 0;
+        }
 
-            yield return new WaitForSeconds(1.0f);
-
-            DestroyCurrentLevelData();
-
-            yield break;
+        public void StepOnce()
+        {
+            commandsToExecuteCount = 1;
         }
 
         public void StopExecution()
@@ -237,6 +235,21 @@ namespace Services
         {            
             DestroyCurrentLevelData();
             LoadLevel(currentLevelData, levelNumber);
+        }
+
+        public IEnumerator LevelCompleted()
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            Debug.Log("Level completed!");
+            GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
+
+            yield return new WaitForSeconds(1.0f);
+
+            DestroyCurrentLevelData();
+
+            yield break;
         }
 
         private void DestroyCurrentLevelData()
