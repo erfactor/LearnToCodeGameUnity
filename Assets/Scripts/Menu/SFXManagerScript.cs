@@ -12,6 +12,7 @@ public class SFXManagerScript : MonoBehaviour
 
     public AudioClip instructionGrab;
     public AudioClip instructionDrop;
+    public AudioClip instructionDelete;
 
     public AudioClip levelCompleted;
 
@@ -60,6 +61,11 @@ public class SFXManagerScript : MonoBehaviour
     public void PlayInstructionDropSound()
     {
         InternalPlaySound(instructionDrop);
+    }
+
+    public void PlayInstructionDeleteSound()
+    {
+        InternalPlaySound(instructionDelete);
     }
 
     public void PlaySolutionChangeSound()

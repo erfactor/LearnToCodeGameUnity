@@ -48,6 +48,7 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         startPosition = transform.position;
 
         CodePanel.draggedObject = gameObject;
+        CodePanel.draggedObject.transform.SetParent(GameObject.Find("Panel").transform);
         var codePanel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
         var indexOnCodePanel = codePanel.GetGameObjectIndexOnList(gameObject);
         if (indexOnCodePanel >= 0)
