@@ -26,35 +26,17 @@ public class GoToMenuButton : MonoBehaviour
 
     public IEnumerator CoroutineProceedToMenu()
     {
-        yield return CoroutineAscendOtherProfilesAndWait();
+        yield return CoroutineAscendProfile();
         var profileManager = GameObject.Find("ProfileManager").GetComponent<ProfileManager>();
         profileManager.GoToMainMenu(transform.parent.gameObject);
         yield break;
-    }
-
-    public IEnumerator CoroutineAscendOtherProfilesAndWait()
-    {
-        var allButtons = FindObjectsOfType(typeof(GoToMenuButton));
-
-        foreach(var button in allButtons)
-        {
-            if (button == this) continue;
-            ((GoToMenuButton)button).Ascend();
-        }
-
-        yield return new WaitForSeconds(0.5f);
-    }
-
-    public void Ascend()
-    {
-        StartCoroutine(CoroutineAscendProfile());
     }
 
     public IEnumerator CoroutineAscendProfile()
     {
         var rectTransform = transform.parent.GetComponent<RectTransform>();
         var currentPosition = rectTransform.anchoredPosition;
-        Vector2 destination = new Vector2(currentPosition.x, 2000);
+        Vector2 destination = new Vector2(currentPosition.x, -2000);
 
         for (int i = 0; i < 30; i++)
         {
