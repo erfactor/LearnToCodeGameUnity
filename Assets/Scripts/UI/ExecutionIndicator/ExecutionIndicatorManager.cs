@@ -38,7 +38,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
             var indicator = Instantiate(GameObject.Find("ExecutionIndicator"));
             indicator.transform.SetParent(panel.transform);
             indicator.GetComponent<Image>().color = indicatorColors[i];
-            bots[i].Animator.gameObject.transform.Find("Body copy").Find("ColorIndicator").GetComponent<SpriteRenderer>().color = indicatorColors[i];
+            bots[i].Animator.gameObject.transform.Find("bone_1").Find("ColorIndicator").GetComponent<SpriteRenderer>().color = indicatorColors[i];
             indicators.Add(bots[i], indicator);
             indicatorPositions.Add(bots[i], startingPosition);
         }
