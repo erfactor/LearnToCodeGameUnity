@@ -37,6 +37,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
         for (int i=0; i<bots.Count; i++)
         {
+            if (indicators.ContainsKey(bots[i])) continue;
             var indicator = Instantiate(GameObject.Find("ExecutionIndicator"));
             indicator.transform.SetParent(panel.transform);
             indicator.GetComponent<Image>().color = indicatorColors[i];
@@ -48,36 +49,37 @@ public class ExecutionIndicatorManager : MonoBehaviour
     {      
         if (levelLoader.ShouldDisplayExecutionIndicators())
         {
-            InstantiateIndicatorsIfNeeded();
             panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
-
-            //foreach (var indicator in indicators)
-            //{
-            //    var bot = indicator.Key;
-            //    var instruction = panel.CurrentSolution[bot.CommandId];
-            //    MoveTowards(indicators[bot], GetPositionForIndicator(instruction.go));
-            //}
         }
         else
         {
-            ClearIndicators();            
+            //ClearIndicators();            
         }
-    }
-
-    void InstantiateIndicatorsIfNeeded()
-    {
-        if (indicators.Count > 0) return;
-        InstantiateIndicators(levelLoader.InitialBoard.Bots);
     }
 
     public void RemoveIndicatorForBot(Bot bot)
     {
-        Destroy(indicators[bot]);
+        var indicator = indicators[bot];
         indicators.Remove(bot);
+        StartCoroutine(CoroutineMakeIndicatorDissapear(indicator));        
+    }
+
+    public IEnumerator CoroutineMakeIndicatorDissapear(GameObject indicator)
+    {
+        var rectTransform = indicator.GetComponent<RectTransform>();
+        for (int i = 0; i < 30; i++)
+        {
+            rectTransform.sizeDelta = Vector2.Lerp(rectTransform.sizeDelta, Vector2.zero, 0.2f);
+            yield return new WaitForFixedUpdate();
+        }
+
+        Destroy(indicator);
     }
 
     public void ClearIndicators()
     {
+        //StopAllCoroutines();
+
         var bots = new List<Bot>();
         bots.AddRange(indicators.Keys);
 

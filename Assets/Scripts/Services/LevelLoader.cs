@@ -191,6 +191,7 @@ namespace Services
             {
                 if (board.Bots.All(b => commands[b.CommandId] is FinishCommand))
                 {
+                    executionIndicatorManager.ClearIndicators();
                     StopExecution();
                     yield break;
                 }
@@ -233,7 +234,7 @@ namespace Services
             }
 
             _codeExecutionOn = false;
-            executionIndicatorManager.ClearIndicators();
+            //executionIndicatorManager.ClearIndicators();
         }
 
         public bool ShouldDisplayExecutionIndicators()
@@ -260,6 +261,7 @@ namespace Services
 
         public void StopExecution()
         {
+            GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>().ClearIndicators();
             _codeExecutionOn = false;
             StopAllCoroutines();
         }
