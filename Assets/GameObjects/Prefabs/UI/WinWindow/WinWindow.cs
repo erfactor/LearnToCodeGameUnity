@@ -1,18 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class WinWindow : MonoBehaviour
+public class WinWindow : MonoBehaviour, IPointerClickHandler
 {
-    // Start is called before the first frame update
-    void Start()
+    public void OnPointerClick(PointerEventData eventData)
     {
+        GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
         
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            Show();
+        }
+    }
+
+    public void Show()
+    {
+        GetComponent<Animator>().SetTrigger("Show");
     }
 }
