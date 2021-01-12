@@ -188,6 +188,12 @@ namespace Services
 
             while (commandsToExecuteCount-- > 0)
             {
+                if (board.Bots.All(b => commands[b.CommandId] is FinishCommand))
+                {
+                    StopExecution();
+                    yield break;
+                }
+                
                 foreach (var bot in board.Bots)
                 {
                     var command = commands[bot.CommandId];

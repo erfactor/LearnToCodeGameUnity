@@ -59,18 +59,16 @@ namespace Models
             {
                 var solutionField = _fields[i, j];
                 var field = board[i, j];
-                if (solutionField.Bot != null && field.Bot == null)
+                if (solutionField.Bot == null ^ field.Bot == null)
                     return false;
-                var solutionPiece = solutionField.Piece;
-                if (solutionPiece != null)
+                if (solutionField.Piece == null ^ field.Piece == null)
+                    return false;
+                
+                if (solutionField.Piece != null)
                 {
-                    if (solutionPiece.isRandom)
+                    if (!solutionField.Piece.isRandom)
                     {
-                        if (field.Piece == null) return false;
-                    }
-                    else
-                    {
-                        if (field.Piece?.Number != solutionPiece.Number)
+                        if (field.Piece?.Number != solutionField.Piece.Number)
                         {
                             return false;
                         }

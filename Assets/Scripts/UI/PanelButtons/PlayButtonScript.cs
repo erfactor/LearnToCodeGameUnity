@@ -21,7 +21,7 @@ namespace UI.PanelButtons
         {
             if (_isGameOn)
             {
-                SetPlayButton();
+                PauseGame();
                 GameObject.Find("LevelLoader").GetComponent<LevelLoader>().PauseExecution();
             }
             else
@@ -34,7 +34,7 @@ namespace UI.PanelButtons
             }
         }
 
-        public void SetPlayButton()
+        public void PauseGame()
         {
             GetComponent<Image>().overrideSprite = PlayButton;
             _isGameOn = false;
