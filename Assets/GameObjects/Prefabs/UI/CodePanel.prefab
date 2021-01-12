@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3643794225502657125}
   - component: {fileID: 3643794225502657122}
   - component: {fileID: 7418191911301203874}
+  - component: {fileID: -5370494248669467825}
   m_Layer: 5
   m_Name: CodePanel
   m_TagString: Untagged
@@ -106,3 +107,15 @@ MonoBehaviour:
   m_EffectColor: {r: 0.13333334, g: 0.13333334, b: 0.13333334, a: 1}
   m_EffectDistance: {x: 6, y: 6}
   m_UseGraphicAlpha: 1
+--- !u!225 &-5370494248669467825
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3643794225502657120}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

@@ -18,6 +18,7 @@ namespace UI.PanelButtons
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            RaycastManagerScript.SetRaycastBlockingOnCodeExecutionStop();
             _playButton.PauseGame();
             GetComponent<Image>().overrideSprite = StopButtonDisabled;
             GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StopAndReload();
