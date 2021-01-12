@@ -13,6 +13,8 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     public GameObject indicatorPrefab;
 
+    CodePanel panel;
+
     List<Color> indicatorColors = new List<Color>()
     {
         Color.green,
@@ -31,7 +33,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     public void InstantiateIndicators(List<Bot> bots)
     {
-        CodePanel panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
+        panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
 
         for (int i=0; i<bots.Count; i++)
         {
@@ -47,14 +49,14 @@ public class ExecutionIndicatorManager : MonoBehaviour
         if (levelLoader.ShouldDisplayExecutionIndicators())
         {
             InstantiateIndicatorsIfNeeded();
-            CodePanel panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
+            panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
 
-            foreach (var indicator in indicators)
-            {
-                var bot = indicator.Key;
-                var instruction = panel.CurrentSolution[bot.CommandId];
-                MoveTowards(indicators[bot], GetPositionForIndicator(instruction.go));
-            }
+            //foreach (var indicator in indicators)
+            //{
+            //    var bot = indicator.Key;
+            //    var instruction = panel.CurrentSolution[bot.CommandId];
+            //    MoveTowards(indicators[bot], GetPositionForIndicator(instruction.go));
+            //}
         }
         else
         {
@@ -68,13 +70,21 @@ public class ExecutionIndicatorManager : MonoBehaviour
         InstantiateIndicators(levelLoader.InitialBoard.Bots);
     }
 
-    void ClearIndicators()
+    public void RemoveIndicatorForBot(Bot bot)
     {
-        foreach(var v in indicators)
+        Destroy(indicators[bot]);
+        indicators.Remove(bot);
+    }
+
+    public void ClearIndicators()
+    {
+        var bots = new List<Bot>();
+        bots.AddRange(indicators.Keys);
+
+        foreach(var bot in bots)
         {
-            Destroy(v.Value);
+            RemoveIndicatorForBot(bot);
         }
-        indicators.Clear();
     }
 
     Vector2 GetPositionForIndicator(GameObject instruction)
@@ -89,14 +99,22 @@ public class ExecutionIndicatorManager : MonoBehaviour
         var rectTransform = indicator.GetComponent<RectTransform>();
         rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, destination, 0.33f);
     }
-    
-    IEnumerator MoveToPosition(GameObject indicator, Vector2 destination)
+
+    public void UpdateIndicator(Bot bot, int commandId)
     {
-        while(true)
+        var indicatorToUpdate = indicators[bot];
+        var instruction = panel.CurrentSolution[commandId];
+        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(instruction.go)));
+    }
+
+    public IEnumerator CoroutineMoveToPosition(GameObject indicator, Vector2 destination)
+    {
+        for (int i = 0; i < 30; i++)
         {
-            
+            MoveTowards(indicator, destination);
             yield return new WaitForFixedUpdate();
         }
-        
+
+        yield break;
     }
 }

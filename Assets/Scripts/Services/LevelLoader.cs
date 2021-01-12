@@ -184,6 +184,8 @@ namespace Services
         {
             _codeExecutionOn = true;
             var board = InitialBoard;
+            var executionIndicatorManager = GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>();
+            executionIndicatorManager.InstantiateIndicators(board.Bots);
 
             while (commandsToExecuteCount-- > 0)
             {
@@ -203,15 +205,18 @@ namespace Services
                         if (traversedJumpCommands.Contains(command.NextCommandId))
                         {
                             Debug.LogWarning("Bot has fallen into an infinite loop.");
+                            executionIndicatorManager.RemoveIndicatorForBot(bot);
                             bot.HasFinished = true;
                             break;
                         }
                         traversedJumpCommands.Add(command.NextCommandId);
+                        bot.CommandId = command.NextCommandId;
                         command = commands[command.NextCommandId];
                     }
 
                     if (!(command is FinishCommand))
                     {
+                        executionIndicatorManager.UpdateIndicator(bot, bot.CommandId);
                         bot.CommandId = command.Execute(board, bot);
                         print(commands[bot.CommandId]);
                     }
@@ -228,6 +233,7 @@ namespace Services
             }
 
             _codeExecutionOn = false;
+            executionIndicatorManager.ClearIndicators();
         }
 
         public bool ShouldDisplayExecutionIndicators()
