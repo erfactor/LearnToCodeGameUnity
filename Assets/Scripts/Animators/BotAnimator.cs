@@ -95,7 +95,7 @@ namespace Animators
             var rightArm = GetComponent<Transform>().Find("RightArmSolver").Find("RightArmSolver_Target");
             _tempPiece = Instantiate(_heldPiece.PieceTransform.gameObject, rightArm, true);
             var position = _tempPiece.transform.position;
-            position.y += 0.636f;
+            position.y += 0.636f * 100;
             _tempPiece.transform.position = position;
             _tempPiece.GetComponent<PieceText>().Text = _isInc ? "+" : "-";
         }
