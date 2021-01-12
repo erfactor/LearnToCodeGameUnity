@@ -22,7 +22,7 @@ namespace Profiles
 
         private void Start()
         {
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this);
         }
 
         public void LoadProfiles()

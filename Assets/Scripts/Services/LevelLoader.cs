@@ -261,7 +261,8 @@ namespace Services
 
         public void ReloadLevel()
         {
-            DestroyCurrentLevelData();
+            _layerParents.Clear();
+            DestroyImmediate(GameObject.Find("TileLevel"));
             LoadLevel(currentLevelData, levelNumber);
         }
 
@@ -273,13 +274,6 @@ namespace Services
             GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
 
             GameObject.Find("WinWindow").GetComponent<WinWindow>().Show();
-        }
-
-        private void DestroyCurrentLevelData()
-        {
-            _layerParents.Clear();
-            var levelInstance = GameObject.Find("TileLevel");
-            DestroyImmediate(levelInstance);
         }
 
         private Transform CreateGameObject(string prefabName, float xPos, float yPos, int zPos,

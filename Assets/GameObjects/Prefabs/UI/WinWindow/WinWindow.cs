@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UI.PanelButtons;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,7 +15,7 @@ public class WinWindow : MonoBehaviour, IPointerClickHandler
     {
         GetComponent<Animator>().SetTrigger("Hide");
         yield return new WaitForSeconds(Config.Timing.WinWindowSceneChangeDelay);
-        GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
+        GameObject.Find("ReturnButton").GetComponent<ReturnButtonScript>().ReturnToMainMenu();
     }
 
     void Update()
