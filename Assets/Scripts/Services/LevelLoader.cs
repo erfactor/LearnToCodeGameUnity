@@ -196,8 +196,17 @@ namespace Services
                 foreach (var bot in board.Bots)
                 {
                     var command = commands[bot.CommandId];
+                    if (bot.HasFinished) continue;
+                    List<int> traversedJumpCommands = new List<int>();
                     while (command is JumpCommand)
                     {
+                        if (traversedJumpCommands.Contains(command.NextCommandId))
+                        {
+                            Debug.LogWarning("Bot has fallen into an infinite loop.");
+                            bot.HasFinished = true;
+                            break;
+                        }
+                        traversedJumpCommands.Add(command.NextCommandId);
                         command = commands[command.NextCommandId];
                     }
 

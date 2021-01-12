@@ -9,7 +9,6 @@ public class StartupManagerScript : MonoBehaviour
     void Start()
     {
         StartCoroutine(Startup());
-        //GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
     }
 
     IEnumerator Startup()
