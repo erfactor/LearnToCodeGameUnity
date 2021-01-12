@@ -17,14 +17,17 @@ public class AnimationPanel : MonoBehaviour
         if (Config.Debug.SkipSceneChangeAnimation)
         {
             GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayChangeSceneSound();
+            GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayMusicOnCurrentScene(newSceneIndex);
             LoadedSceneIndex = newSceneIndex;
             // Animator.SetTrigger("Cover");
             SceneManager.LoadScene(LoadedSceneIndex);
+            
         }
         
         else
         {   
             GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayChangeSceneSound();
+            GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().LowerMusicVolumeOverTime();
             LoadedSceneIndex = newSceneIndex;
             Animator.SetTrigger("Cover");
         }
@@ -38,8 +41,10 @@ public class AnimationPanel : MonoBehaviour
         }
         else
         {
+            GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().RaiseMusicVolumeOverTime();
             SceneManager.LoadScene(LoadedSceneIndex);
             Animator.SetTrigger("Uncover");
+            GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayMusicOnCurrentScene(LoadedSceneIndex);
         }
 
     }
