@@ -35,6 +35,19 @@ namespace Menu
             }
         }
 
+        public void SpeedUpCog()
+        {
+            if (_isUnlocked)
+            {
+                transform.Find("Cog").GetComponent<CogRotateScript>().SpeedUp();
+            }
+        }
+
+        public void SlowDownCog()
+        {
+            transform.Find("Cog").GetComponent<CogRotateScript>().SlowDown();
+        }
+
         // Start is called before the first frame update
         private void Start()
         {

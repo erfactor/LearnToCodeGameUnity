@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3643794225502657124}
   - component: {fileID: 3643794225502657125}
   - component: {fileID: 3643794225502657122}
+  - component: {fileID: 7418191911301203874}
   m_Layer: 5
   m_Name: CodePanel
   m_TagString: Untagged
@@ -89,3 +90,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpacingY: 20
   SpacingX: 20
+  BlockSizeY: 60
+--- !u!114 &7418191911301203874
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3643794225502657120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.13333334, g: 0.13333334, b: 0.13333334, a: 1}
+  m_EffectDistance: {x: 6, y: 6}
+  m_UseGraphicAlpha: 1

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -79,6 +80,40 @@ namespace Profiles
             _editPanel.SetActive(true);
         }
 
+        public IEnumerator RollProfileIn(int index)
+        {
+            var rectTransform = ProfileGameObjects[index].GetComponent<RectTransform>();
+            var originalScale = rectTransform.sizeDelta;
+            Vector2 currentSize = Vector2.zero;
+
+            for(int i=0; i<30; i++)
+            {
+                currentSize = Vector2.Lerp(currentSize, originalScale, 0.15f);
+                Debug.Log($"currentSize: {currentSize}");
+                rectTransform.sizeDelta = currentSize;
+                yield return new WaitForFixedUpdate();
+            }
+
+            yield break;
+        }
+
+        public IEnumerator ShrinkAndDeleteProfile(int index)
+        {
+            var rectTransform = ProfileGameObjects[index].GetComponent<RectTransform>();
+            Vector2 currentSize = rectTransform.sizeDelta;
+
+            for (int i = 0; i < 30; i++)
+            {
+                currentSize = Vector2.Lerp(currentSize, Vector2.zero, 0.15f);
+                rectTransform.sizeDelta = currentSize;
+                yield return new WaitForFixedUpdate();
+            }
+
+            DeleteProfile(index);
+
+            yield break;
+        }
+
         public void CreateProfile(string profileName)
         {
             Profiles[_createdIndex] = new Profile
@@ -89,6 +124,8 @@ namespace Profiles
             SerializeProfiles();
             DeserializeProfiles();
             _editPanel.SetActive(false);
+
+            StartCoroutine(RollProfileIn(_createdIndex));
         }
         
         public void DeleteProfile(int index)

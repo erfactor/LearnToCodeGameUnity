@@ -2,6 +2,7 @@
 using Services;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,22 +10,18 @@ public class ExecutionIndicatorManager : MonoBehaviour
 {
     LevelLoader levelLoader;
     Dictionary<Bot, GameObject> indicators = new Dictionary<Bot, GameObject>();
+    Dictionary<Bot, int> indicatorPositions = new Dictionary<Bot, int>();
     //List<Bot> bots = new List<Bot>();
 
     public GameObject indicatorPrefab;
 
     CodePanel panel;
 
-    List<Color> indicatorColors = new List<Color>()
-    {
-        Color.green,
-        Color.red,
-        Color.blue,
-        Color.yellow,
-        Color.white,
-        Color.magenta,
-        Color.cyan,
-    };
+    public List<Color> indicatorColors;
+
+    public const int YSpacing = 6;
+
+    public const int startingPosition = 1;
 
     void Start()
     {
@@ -41,7 +38,9 @@ public class ExecutionIndicatorManager : MonoBehaviour
             var indicator = Instantiate(GameObject.Find("ExecutionIndicator"));
             indicator.transform.SetParent(panel.transform);
             indicator.GetComponent<Image>().color = indicatorColors[i];
+            bots[i].Animator.gameObject.transform.Find("Body copy").Find("ColorIndicator").GetComponent<SpriteRenderer>().color = indicatorColors[i];
             indicators.Add(bots[i], indicator);
+            indicatorPositions.Add(bots[i], startingPosition);
         }
     }
     // Update is called once per frame
@@ -50,10 +49,20 @@ public class ExecutionIndicatorManager : MonoBehaviour
         if (levelLoader.ShouldDisplayExecutionIndicators())
         {
             panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
+            SortIndicators();
         }
         else
-        {
+        {            
             //ClearIndicators();            
+        }
+    }
+
+    void SortIndicators()
+    {
+        List<GameObject> sortedIndicators = indicators.Values.OrderBy(x => x.GetComponent<RectTransform>().anchoredPosition.y).ToList();
+        for(int i=0; i<sortedIndicators.Count; i++)
+        {
+            sortedIndicators[i].transform.SetSiblingIndex(panel.transform.childCount - 1 - i);
         }
     }
 
@@ -61,6 +70,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
     {
         var indicator = indicators[bot];
         indicators.Remove(bot);
+        indicatorPositions.Remove(bot);
         StartCoroutine(CoroutineMakeIndicatorDissapear(indicator));        
     }
 
@@ -89,11 +99,11 @@ public class ExecutionIndicatorManager : MonoBehaviour
         }
     }
 
-    Vector2 GetPositionForIndicator(GameObject instruction)
+    Vector2 GetPositionForIndicator(GameObject instruction, int commandId)
     {
         Vector2 indicatorOffset = new Vector2(-instruction.GetComponent<RectTransform>().sizeDelta.x/2 - 10, 0);
         Vector2 instructionPosition = instruction.GetComponent<RectTransform>().anchoredPosition;
-        return instructionPosition + indicatorOffset;
+        return instructionPosition + indicatorOffset + GetIndicatorYOffset(commandId);
     }
 
     void MoveTowards(GameObject indicator, Vector2 destination)
@@ -104,9 +114,11 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     public void UpdateIndicator(Bot bot, int commandId)
     {
+        indicatorPositions[bot] = commandId;
         var indicatorToUpdate = indicators[bot];
         var instruction = panel.CurrentSolution[commandId];
-        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(instruction.go)));
+        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(instruction.go, commandId)));
+        SortIndicators();
     }
 
     public IEnumerator CoroutineMoveToPosition(GameObject indicator, Vector2 destination)
@@ -118,5 +130,23 @@ public class ExecutionIndicatorManager : MonoBehaviour
         }
 
         yield break;
+    }
+
+    public Vector2 GetIndicatorYOffset(int commandId)
+    {
+        int stackSize = indicatorPositions.Where(x => x.Value == commandId).Count() - 1;
+        switch (stackSize)
+        {
+            case 0: return new Vector2(0, 0);
+            case 1: return new Vector2(0, -YSpacing);
+            case 2: return new Vector2(0, +YSpacing);
+            case 3: return new Vector2(0, -2 * YSpacing);
+            case 4: return new Vector2(0, 2 * YSpacing);
+            case 5: return new Vector2(0, -3 * YSpacing);
+            case 6: return new Vector2(0, 3 * YSpacing);
+            case 7: return new Vector2(0, -4 * YSpacing);
+            case 8: return new Vector2(0, 4 * YSpacing);
+            default: return new Vector2(0, 0);
+        }
     }
 }

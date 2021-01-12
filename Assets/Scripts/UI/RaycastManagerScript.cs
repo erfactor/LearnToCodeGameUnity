@@ -18,6 +18,10 @@ public class RaycastManagerScript : MonoBehaviour
     {
         GameObject.Find("Trash").GetComponent<CanvasGroup>().blocksRaycasts = true;
         GameObject.Find("InstructionBank").GetComponent<CanvasGroup>().blocksRaycasts = false;
+        GameObject.Find("ButtonPanel").GetComponent<CanvasGroup>().blocksRaycasts = false;
+        GameObject.Find("SolutionPanelButtons").GetComponent<CanvasGroup>().blocksRaycasts = false;
+
+        
 
         GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(false);
     }
@@ -26,6 +30,8 @@ public class RaycastManagerScript : MonoBehaviour
     {
         GameObject.Find("Trash").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("InstructionBank").GetComponent<CanvasGroup>().blocksRaycasts = true;
+        GameObject.Find("ButtonPanel").GetComponent<CanvasGroup>().blocksRaycasts = true;
+        GameObject.Find("SolutionPanelButtons").GetComponent<CanvasGroup>().blocksRaycasts = true;
 
         GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(true);
     }

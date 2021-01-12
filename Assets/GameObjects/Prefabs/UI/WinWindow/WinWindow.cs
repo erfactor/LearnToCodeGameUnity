@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using Services;
+using System.Collections;
 using System.Collections.Generic;
 using UI.PanelButtons;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class WinWindow : MonoBehaviour, IPointerClickHandler
 {
@@ -28,6 +30,7 @@ public class WinWindow : MonoBehaviour, IPointerClickHandler
 
     public void Show()
     {
+        var text = transform.Find("Number").GetComponent<Text>().text = GameObject.Find("LevelLoader").GetComponent<LevelLoader>().levelNumber.ToString();
         GetComponent<Animator>().SetTrigger("Show");
     }
 }

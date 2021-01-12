@@ -1094,6 +1094,7 @@ GameObject:
   - component: {fileID: 254509136}
   - component: {fileID: 254509135}
   - component: {fileID: 254509134}
+  - component: {fileID: 254509137}
   m_Layer: 5
   m_Name: SolutionPanelButtons
   m_TagString: Untagged
@@ -1120,8 +1121,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 763.00006, y: 499.78003}
-  m_SizeDelta: {x: 300, y: 50}
+  m_AnchoredPosition: {x: 763.00006, y: 503.79}
+  m_SizeDelta: {x: 300, y: 58.014282}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &254509134
 CanvasGroup:
@@ -1148,7 +1149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5566038, g: 0.54217803, b: 0.375445, a: 1}
+  m_Color: {r: 0.5754717, g: 0.5568243, b: 0.36102706, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1172,6 +1173,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254509132}
   m_CullTransparentMesh: 0
+--- !u!114 &254509137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 254509132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.13333334, g: 0.13333334, b: 0.13333334, a: 1}
+  m_EffectDistance: {x: 6, y: 6}
+  m_UseGraphicAlpha: 0
 --- !u!1 &275771548
 GameObject:
   m_ObjectHideFlags: 0
@@ -1736,6 +1752,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicatorPrefab: {fileID: 1388620883}
+  indicatorColors:
+  - {r: 0, g: 1, b: 0, a: 1}
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 0, g: 0, b: 1, a: 1}
+  - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0, b: 1, a: 1}
+  - {r: 0, g: 1, b: 1, a: 1}
 --- !u!4 &438987374
 Transform:
   m_ObjectHideFlags: 0
@@ -1748,7 +1772,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &475527770 stripped
 GameObject:
@@ -2696,6 +2720,7 @@ GameObject:
   - component: {fileID: 844197110}
   - component: {fileID: 844197109}
   - component: {fileID: 844197112}
+  - component: {fileID: 844197113}
   m_Layer: 5
   m_Name: InstructionBank
   m_TagString: Untagged
@@ -2801,6 +2826,21 @@ MonoBehaviour:
     y: 0
     width: 0
     height: 0
+--- !u!114 &844197113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844197107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.13333334, g: 0.13333334, b: 0.13333334, a: 1}
+  m_EffectDistance: {x: 6, y: 6}
+  m_UseGraphicAlpha: 1
 --- !u!1 &891455636 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 913991594226690745, guid: 078e43dc133aabd49a737de2ac92bcd2,
@@ -3094,6 +3134,7 @@ GameObject:
   - component: {fileID: 971765885}
   - component: {fileID: 971765887}
   - component: {fileID: 971765886}
+  - component: {fileID: 971765888}
   m_Layer: 5
   m_Name: ButtonPanel
   m_TagString: Untagged
@@ -3160,6 +3201,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 971765884}
   m_CullTransparentMesh: 0
+--- !u!225 &971765888
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971765884}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1020622940
 GameObject:
   m_ObjectHideFlags: 0
@@ -3824,7 +3877,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3859,7 +3912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.22352941}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4830,7 +4883,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1919806598
 PrefabInstance:
