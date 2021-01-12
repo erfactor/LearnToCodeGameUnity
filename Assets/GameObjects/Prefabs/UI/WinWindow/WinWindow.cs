@@ -7,8 +7,14 @@ public class WinWindow : MonoBehaviour, IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
+        StartCoroutine(GoToMainMenu());        
+    }
+
+    public IEnumerator GoToMainMenu()
+    {
+        GetComponent<Animator>().SetTrigger("Hide");
+        yield return new WaitForSeconds(0.5f);
         GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
-        
     }
 
     void Update()
