@@ -230,6 +230,11 @@ namespace Services
             _codeExecutionOn = false;
         }
 
+        public bool ShouldDisplayExecutionIndicators()
+        {
+            return _codeExecutionOn || commandsToExecuteCount > 0;
+        }
+
         public void PauseExecution()
         {
             commandsToExecuteCount = 0;
