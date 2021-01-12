@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class SFXManagerScript : MonoBehaviour
 {
@@ -23,22 +21,21 @@ public class SFXManagerScript : MonoBehaviour
     public AudioSource audioSource3;
     public AudioSource audioSource4;
 
-    List<AudioSource> audioSources = new List<AudioSource>();
+    private List<AudioSource> audioSources = new List<AudioSource>();
+    public bool SoundMuted { get; private set; } = true;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        audioSources = new List<AudioSource>() { audioSource1, audioSource2, audioSource3, audioSource4 };
+        audioSources = new List<AudioSource> {audioSource1, audioSource2, audioSource3, audioSource4};
         UnmuteSound();
         DontDestroyOnLoad(this);
     }
 
     private AudioSource GetFreeAudioSource()
     {
-        foreach(var v in audioSources)
-        {
-            if (v.isPlaying == false) return v;
-        }
+        foreach (var v in audioSources)
+            if (v.isPlaying == false)
+                return v;
 
         return null;
     }
@@ -75,11 +72,13 @@ public class SFXManagerScript : MonoBehaviour
 
     public void MuteSound()
     {
-        foreach(var v in audioSources) v.volume = 0.0f;
+        SoundMuted = true;
+        foreach (var v in audioSources) v.volume = 0.0f;
     }
 
     public void UnmuteSound()
     {
+        SoundMuted = false;
         foreach (var v in audioSources) v.volume = 1.0f;
     }
 
@@ -90,5 +89,4 @@ public class SFXManagerScript : MonoBehaviour
         audioSource.clip = audioClip;
         audioSource.Play();
     }
-
 }
