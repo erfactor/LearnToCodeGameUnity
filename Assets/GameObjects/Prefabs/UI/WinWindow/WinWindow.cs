@@ -13,7 +13,7 @@ public class WinWindow : MonoBehaviour, IPointerClickHandler
     public IEnumerator GoToMainMenu()
     {
         GetComponent<Animator>().SetTrigger("Hide");
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(Config.Timing.WinWindowSceneChangeDelay);
         GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
     }
 

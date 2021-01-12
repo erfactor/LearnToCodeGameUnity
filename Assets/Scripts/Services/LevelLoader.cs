@@ -180,7 +180,6 @@ namespace Services
             return board;
         }
 
-        private const float ExecutionTimeInSeconds = 1.2f;
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
             _codeExecutionOn = true;
@@ -213,11 +212,10 @@ namespace Services
                 {
                     print("Accepted");
                     yield return StartCoroutine(LevelCompleted());
-                    yield return new WaitForSeconds(1.0f);
                     yield break;
                 }
 
-                yield return new WaitForSeconds(ExecutionTimeInSeconds);
+                yield return new WaitForSeconds(Config.Timing.CommandExecutionTimeInSeconds);
             }
 
             _codeExecutionOn = false;
@@ -260,17 +258,12 @@ namespace Services
 
         public IEnumerator LevelCompleted()
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(Config.Timing.WinWindowOnLevelCompletionDelay);
 
             Debug.Log("Level completed!");
             GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
 
             GameObject.Find("WinWindow").GetComponent<WinWindow>().Show();
-            //GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
-
-            //yield return new WaitForSeconds(1.0f);
-
-            //DestroyCurrentLevelData();
         }
 
         private void DestroyCurrentLevelData()

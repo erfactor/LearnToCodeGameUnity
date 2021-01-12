@@ -9,5 +9,8 @@ namespace Config
     public static class Debug
     {
         public const bool SkipSceneChangeAnimation = false;
+        public const bool CanPlayLockedLevels = false;
+        public const bool SkipWaitingIfPossible = false;
+        public const bool SkipIntroAnimation = false;
     }
 }

@@ -14,32 +14,38 @@ public class StartupManagerScript : MonoBehaviour
 
     IEnumerator Startup()
     {
-        var wait = new WaitForSeconds(0.3f);
+        if (Config.Debug.SkipIntroAnimation)
+        {
+            yield return new WaitForSeconds(0.1f);
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
+        }
+
+        var showInterval = new WaitForSeconds(Config.Timing.StartupWordsShowInterval);
+        var hideInterval = new WaitForSeconds(Config.Timing.StartupWordsHideInterval);
+        var stayDuration = new WaitForSeconds(Config.Timing.StartupWordsStayDuration);
+        var afterHideDuration = new WaitForSeconds(Config.Timing.StartupAfterHideDuration);
 
         var learn = GameObject.Find("Learn");
         var to = GameObject.Find("To");
         var code = GameObject.Find("Code");
 
         learn.GetComponent<Animator>().SetTrigger("Show");
-        yield return wait;
+        yield return showInterval;
         to.GetComponent<Animator>().SetTrigger("Show");
-        yield return wait;
+        yield return showInterval;
         code.GetComponent<Animator>().SetTrigger("Show");
-        yield return wait;
+        yield return showInterval;
 
-        yield return wait;
-        yield return wait;
-        yield return wait;
+        yield return stayDuration;
 
         code.GetComponent<Animator>().SetTrigger("Hide");
-        yield return new WaitForSeconds(0.1f);
+        yield return hideInterval;
         to.GetComponent<Animator>().SetTrigger("Hide");
-        yield return new WaitForSeconds(0.1f);
+        yield return hideInterval;
         learn.GetComponent<Animator>().SetTrigger("Hide");
-        yield return new WaitForSeconds(0.1f);
+        yield return hideInterval;
 
-        yield return wait;
-        yield return wait;
+        yield return afterHideDuration;
 
         GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);
     }

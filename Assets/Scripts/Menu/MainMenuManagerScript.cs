@@ -27,7 +27,7 @@ namespace Menu
             var levels = GetLevelButtonScripts();
             foreach(var level in levels)
             {
-                if (canPlayLockedLevels)
+                if (Config.Debug.CanPlayLockedLevels)
                 {
                     level.IsUnlocked = true;
                 }
