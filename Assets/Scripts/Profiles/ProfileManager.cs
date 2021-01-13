@@ -78,7 +78,7 @@ namespace Profiles
         public void AddProfileClick(int index)
         {
             _createdIndex = index;
-            // TODO _editPanel.transform.Find("InputField").Find("CreatedProfileText").GetComponent<Text>().text = "";
+            _editPanel.GetComponentInChildren<InputField>().text = "";
             _editPanel.SetActive(true);
         }
 
@@ -91,7 +91,6 @@ namespace Profiles
             };
             SerializeProfiles();
             DeserializeProfiles();
-            _editPanel.GetComponentInChildren<InputField>().text = "";
             _editPanel.SetActive(false);
         }
         
@@ -109,7 +108,7 @@ namespace Profiles
                 if (profileGameObject == ProfileGameObjects[i]) return i;
             }
 
-            throw new System.Exception("Could not find a desired profile");
+            throw new Exception("Could not find a desired profile");
         }
 
         private void SetSelectedProfile(int selectedProfileIndex)
