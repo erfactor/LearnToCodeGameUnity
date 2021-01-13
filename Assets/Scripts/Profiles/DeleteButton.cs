@@ -1,34 +1,30 @@
-﻿using Profiles;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DeleteButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public int index;
-    ProfileManager profileManager;
-    Animator animator;
+    private Animator animator;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        profileManager.DeleteProfile(index);
+        var deletePanel = transform.root.Find("DeletePanel");
+        deletePanel.gameObject.SetActive(true);
+        deletePanel.GetComponentInChildren<AcceptProfileDeletionButton>().index = index;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        print("najechane");
         animator.SetBool("MouseOn", true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        print("wyjechane");
         animator.SetBool("MouseOn", false);
-    }
-
-    void Start()
-    {
-        profileManager = GameObject.Find("ProfileManager").GetComponent<ProfileManager>();
-        animator = GetComponent<Animator>();
     }
 }

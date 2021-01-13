@@ -31,6 +31,7 @@ namespace Profiles
         {
             _editPanel = GameObject.Find("EditPanel");
             _editPanel.SetActive(false);
+            GameObject.Find("DeletePanel").SetActive(false);
             DeserializeProfiles();
         }
 
