@@ -320,7 +320,7 @@ PrefabInstance:
     - target: {fileID: 3643794225502657123, guid: 081a3ec003cb6274fbc3d41ff6ef1df4,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 380
       objectReference: {fileID: 0}
     - target: {fileID: 3643794225502657123, guid: 081a3ec003cb6274fbc3d41ff6ef1df4,
         type: 3}
@@ -1247,7 +1247,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 763.00006, y: 503.79}
-  m_SizeDelta: {x: 300, y: 58.014282}
+  m_SizeDelta: {x: 380, y: 58.014282}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &254509134
 CanvasGroup:
@@ -2169,7 +2169,7 @@ PrefabInstance:
     - target: {fileID: 3643794225502657123, guid: 081a3ec003cb6274fbc3d41ff6ef1df4,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 380
       objectReference: {fileID: 0}
     - target: {fileID: 3643794225502657123, guid: 081a3ec003cb6274fbc3d41ff6ef1df4,
         type: 3}
@@ -3092,7 +3092,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 465, y: 210.5}
+  m_AnchoredPosition: {x: 450, y: 210.5}
   m_SizeDelta: {x: 207.37689, y: 637.50555}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &844197109
@@ -3499,7 +3499,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 465.1, y: -209.5}
+  m_AnchoredPosition: {x: 424, y: -194}
   m_SizeDelta: {x: 270, y: 130}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &971765886
@@ -5507,6 +5507,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1914599322 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6031414954989573323, guid: 8767416491bb35b42bbe8b3a74bd6424,
+    type: 3}
+  m_PrefabInstance: {fileID: 448851388734753835}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1914599324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914599322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.13333334, g: 0.13333334, b: 0.13333334, a: 1}
+  m_EffectDistance: {x: 3, y: 3}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &1919806598
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6714,6 +6735,36 @@ PrefabInstance:
       propertyPath: m_Interactable
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7069956021142537288, guid: 8767416491bb35b42bbe8b3a74bd6424,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722441320045478832, guid: 8767416491bb35b42bbe8b3a74bd6424,
+        type: 3}
+      propertyPath: m_EffectDistance.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722441320045478832, guid: 8767416491bb35b42bbe8b3a74bd6424,
+        type: 3}
+      propertyPath: m_EffectDistance.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722441320045478832, guid: 8767416491bb35b42bbe8b3a74bd6424,
+        type: 3}
+      propertyPath: m_EffectColor.r
+      value: 0.41568628
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722441320045478832, guid: 8767416491bb35b42bbe8b3a74bd6424,
+        type: 3}
+      propertyPath: m_EffectColor.g
+      value: 0.003921569
+      objectReference: {fileID: 0}
+    - target: {fileID: 7722441320045478832, guid: 8767416491bb35b42bbe8b3a74bd6424,
+        type: 3}
+      propertyPath: m_EffectColor.b
+      value: 0.34509805
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8767416491bb35b42bbe8b3a74bd6424, type: 3}
 --- !u!1 &448851388734753836 stripped
@@ -7219,7 +7270,7 @@ PrefabInstance:
     - target: {fileID: 3643794225502657123, guid: 081a3ec003cb6274fbc3d41ff6ef1df4,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 380
       objectReference: {fileID: 0}
     - target: {fileID: 3643794225502657123, guid: 081a3ec003cb6274fbc3d41ff6ef1df4,
         type: 3}

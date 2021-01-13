@@ -1252,7 +1252,7 @@ public class CodeLine
         var ifSize = BlockSize;
 
         var newPosition = new Vector2((NestWidth - ifSize.x) / 2, -ifSize.y / 2 + -newBackgroundHeight / 2 / parentScale.y);
-        var newSize = new Vector2(NestWidth, newBackgroundHeight);
+        var newSize = Vector2.zero;// new Vector2(NestWidth, newBackgroundHeight);
         //Debug.Log($"parentScale: {parentScale}");
 
         rectTransform.anchoredPosition = newPosition;
