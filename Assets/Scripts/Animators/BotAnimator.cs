@@ -119,5 +119,16 @@ namespace Animators
         {
             Destroy(_fallingBot);
         }
+
+        public void CreateIfIndicator(Vector2Int location)
+        {
+            print("xdd");
+            print($"{location.x} : {location.y}");
+            var prefab = Resources.Load<Transform>("Bot/IfIndicator/IfIndicator");
+            var ifIndicator = Instantiate(prefab, new Vector3(location.x, location.y, prefab.position.z), Quaternion.identity);
+            ifIndicator.transform.localScale = new Vector3(100, 100);
+            ifIndicator.name = prefab.name;
+            ifIndicator.parent = GameObject.Find("Layer 1").transform;
+        }
     }
 }
