@@ -1736,7 +1736,7 @@ MonoBehaviour:
   changeSolution: {fileID: 8300000, guid: 286799fe76f615841b4e9cda156040b8, type: 3}
   startupMusic: {fileID: 0}
   profileMusic: {fileID: 0}
-  mainMenuMusic: {fileID: 0}
+  mainMenuMusic: {fileID: 8300000, guid: 2180b8a2252bc5549930eff03e24036a, type: 3}
   levelMusic: {fileID: 0}
   audioSource1: {fileID: 2073186730}
   audioSource2: {fileID: 2073186734}

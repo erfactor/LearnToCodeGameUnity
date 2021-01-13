@@ -82,28 +82,32 @@ public class SFXManagerScript : MonoBehaviour
 
     public void MuteSound()
     {
+        StopAllSounds();
         SoundMuted = true;
         foreach (var v in audioSources) v.volume = 0.0f;
-        audioSourceMusic.volume = 0.0f;
+        LowerMusicVolumeOverTime();
     }
 
     public void UnmuteSound()
     {
         SoundMuted = false;
         foreach (var v in audioSources) v.volume = 1.0f;
-        audioSourceMusic.volume = 1.0f;
+        RaiseMusicVolumeOverTime();
     }
 
     public void LowerMusicVolumeOverTime()
     {
+        StopAllCoroutines();
         StartCoroutine(CoroutineLowerMusicVolumeOverTime());
     }
 
     IEnumerator CoroutineLowerMusicVolumeOverTime()
     {
-        for(int i=95; i>=0; i -= 5)
+        for(int i=100; i>=0; i -= 5)
         {
-            audioSourceMusic.volume = i / 100.0f;
+            float newVolume = i / 100.0f;
+            if (newVolume > audioSourceMusic.volume) continue;
+            audioSourceMusic.volume = newVolume;
             yield return new WaitForFixedUpdate();
         }
 
@@ -112,14 +116,17 @@ public class SFXManagerScript : MonoBehaviour
 
     public void RaiseMusicVolumeOverTime()
     {
+        StopAllCoroutines();
         StartCoroutine(CoroutineRaiseMusicVolumeOverTime());
     }
 
     IEnumerator CoroutineRaiseMusicVolumeOverTime()
     {
-        for (int i = 0; i < 100; i += 5)
+        for (int i = 0; i <= 100; i += 5)
         {
-            audioSourceMusic.volume = i / 100.0f;
+            float newVolume = i / 100.0f;
+            if (newVolume < audioSourceMusic.volume) continue;
+            audioSourceMusic.volume = newVolume;
             yield return new WaitForFixedUpdate();
         }
     }
@@ -144,5 +151,10 @@ public class SFXManagerScript : MonoBehaviour
         if (audioSource == null) return;
         audioSource.clip = audioClip;
         audioSource.Play();
+    }
+
+    private void StopAllSounds()
+    {
+        foreach (var v in audioSources) v.Stop();
     }
 }
