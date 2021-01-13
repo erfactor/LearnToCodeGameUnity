@@ -1,5 +1,6 @@
 ﻿using Commands;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -203,7 +204,12 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     {
         RemoveGhostInstruction();
 
+        HandleMoveInstructionDrop(eventData);
+        HandleIfInstructionDrop(eventData);
         ShowDirectionIndicatorIfNeeded(eventData);
+        ShowComparisonTypeIndicatorIfNeeded(eventData);
+        ShowDropDownIfNeeded(eventData);
+
         RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
 
         int index = GetSlotIndexUnderMousePosition();
@@ -212,6 +218,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
         InsertAtSlot(index, eventData.pointerDrag, parent);
     }
+
+    
 
     private CodeLine GetIfBlockUnderMousePosition()
     {
@@ -243,11 +251,65 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         debugRect.transform.SetParent(GameObject.Find("SolutionPanel").transform);
     }
 
-    private static void ShowDirectionIndicatorIfNeeded(PointerEventData eventData)
+    private void HandleMoveInstructionDrop(PointerEventData eventData)
+    {
+        if (!InstructionHelper.IsMoveInstruction(eventData.pointerDrag)) return;
+        ShowDirectionIndicatorIfNeeded(eventData);
+        ExpandDirectionIndicator(eventData, eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>());
+    }
+
+    private void ShowDirectionIndicatorIfNeeded(PointerEventData eventData)
     {
         if (eventData.pointerDrag.transform.Find("DirectionIndicator") != null)
         {
             eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().Show();
+        }
+    }
+
+    private void HandleIfInstructionDrop(PointerEventData eventData)
+    {
+        if (!InstructionHelper.IsIfInstruction(eventData.pointerDrag)) return;
+        ShowDirectionIndicatorIfNeeded(eventData);
+        ShowComparisonTypeIndicatorIfNeeded(eventData);
+        ShowDropDownIfNeeded(eventData);
+        StartCoroutine(CoroutineHandleIfInstructionDrop(eventData, 
+            eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>(),
+            eventData.pointerDrag.transform.Find("ComparisonIndicator").GetComponent<ComparisonTypeIndicatorScript>()
+            ));
+        
+    }
+
+    private IEnumerator CoroutineHandleIfInstructionDrop(PointerEventData eventData, DirectionIndicatorScript directionScript, ComparisonTypeIndicatorScript comparisonScript)
+    {
+        ExpandDirectionIndicator(eventData, directionScript);
+        yield return new WaitUntil(() => directionScript.SelectedDirection != null);
+        yield return new WaitForSeconds(0.2f);
+        ExpandComparisonTypeIndicator(eventData, comparisonScript);
+    }
+
+    private void ExpandDirectionIndicator(PointerEventData eventData, DirectionIndicatorScript directionScript)
+    {
+        directionScript.OnPointerClick(eventData);
+    }
+
+    private void ExpandComparisonTypeIndicator(PointerEventData eventData, ComparisonTypeIndicatorScript comparisonScript)
+    {
+        comparisonScript.OnPointerClick(eventData);
+    }
+
+    private void ShowComparisonTypeIndicatorIfNeeded(PointerEventData eventData)
+    {
+        if (eventData.pointerDrag.transform.Find("ComparisonIndicator") != null)
+        {
+            eventData.pointerDrag.transform.Find("ComparisonIndicator").GetComponent<ComparisonTypeIndicatorScript>().Show();
+        }
+    }
+
+    private void ShowDropDownIfNeeded(PointerEventData eventData)
+    {
+        if (eventData.pointerDrag.transform.Find("Dropdown") != null)
+        {
+            eventData.pointerDrag.transform.Find("Dropdown").gameObject.SetActive(true);
         }
     }
 
@@ -630,7 +692,7 @@ public class CommandHelper
 
         Condition condition = new Condition()
         {
-            leftSide = directionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection,
+            leftSide = directionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection.Value,
             comparisonSign = ParseComparisonSign(relationIndicatorText),
             rightSide = GetComparisonObject(comparisonIndicator.gameObject)
         };
@@ -749,7 +811,7 @@ public class InstructionHelper
 
     public static Direction GetInstructionDirection(GameObject go)
     {
-        Direction direction = go.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().SelectedDirection;
+        Direction direction = go.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().SelectedDirection.Value;
         return direction;
     }
 }
