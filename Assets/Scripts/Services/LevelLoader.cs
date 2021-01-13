@@ -34,6 +34,8 @@ namespace Services
         private Coroutine _gameCoroutine;
         private Board _solution;
         private GameObject _tileLevelParent;
+        private float _animationSpeed = 1;
+        private float _animationTime = 1;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
@@ -175,6 +177,7 @@ namespace Services
             var executionIndicatorManager =
                 GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>();
             executionIndicatorManager.InstantiateIndicators(_board.Bots);
+            ChangeAnimationSpeed();
 
             while (_commandsToExecuteCount-- > 0)
             {
@@ -220,11 +223,30 @@ namespace Services
                     yield break;
                 }
 
-                yield return new WaitForSeconds(Timing.CommandExecutionTimeInSeconds);
+                yield return new WaitForSeconds(_animationTime + 0.1f);
+                ChangeAnimationSpeed();
             }
 
             _codeExecutionOn = false;
             //executionIndicatorManager.ClearIndicators();
+        }
+
+        private void ChangeAnimationSpeed()
+        {
+            _animationTime = 1 / _animationSpeed;
+            _board.Bots.ForEach(b => b.Animator.animator.speed = _animationSpeed);
+        }
+
+        public void SetAnimationSpeed(float speed)
+        {
+            var speedToSpeed = new Dictionary<float, float>()
+            {
+                {1, 0.5f},
+                {2, 1},
+                {3, 2},
+                {4, 4},
+            };
+            _animationSpeed = speedToSpeed[speed];
         }
 
         public bool ShouldDisplayExecutionIndicators()
