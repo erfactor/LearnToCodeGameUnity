@@ -111,6 +111,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         SetPositions();
     }
 
+
+
     int LastGhostBlockIndex { get; set; } = -1;
 
     GameObject ghostInstructionBlock;
@@ -140,7 +142,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     public Vector2 GetOffsetForGhostInstruction(CodeLine ifLine)
     {
         if (ifLine == null) return Vector2.zero;
-        return new Vector2((ifLine.Indent + 1) * ifLine.IndentPixelMultiplifier, 0);
+        return new Vector2((ifLine.Indent + 1) * CodeLine.IndentPixelMultiplifier, 0);
     }
 
     public void ShowGhostInstruction()
@@ -163,10 +165,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         ghostInstructionBlock.transform.SetParent(GameObject.Find("NotVisible").transform);
     }
 
-    public void UpdateScroll()
-    {
-
-    }
+   
 
     private bool IsMouseInCodePanel()
     {
@@ -217,12 +216,12 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         CodeLine parent = GetIfBlockUnderMousePosition();
 
         InsertAtSlot(index, eventData.pointerDrag, parent);
-    }
-
-    
+    }   
 
     private CodeLine GetIfBlockUnderMousePosition()
     {
+        if (draggedObject == null) return null; 
+
         var mousePosition = GetMousePositionOnCodePanel();
         for (int i = CurrentSolution.Count - 1; i >= 0; i--)
         {
@@ -232,10 +231,17 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             }
 
             Rect nest = CurrentSolution[i].Nest;
-            if (IsInRect(nest, mousePosition))
+            Rect nestScrolled = new Rect(nest.position + new Vector2(0, scrollY), nest.size);
+
+            if (IsInRect(nestScrolled, mousePosition))
             {
-                SetDebugNestInRect(nest);
+                CurrentSolution[i].HasTemporaryCodeLine = true;
+                //SetDebugNestInRect(nest);
                 return CurrentSolution[i];
+            }
+            else
+            {
+                CurrentSolution[i].HasTemporaryCodeLine = false;
             }
         }
         return null;
@@ -276,11 +282,28 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         ShowDirectionIndicatorIfNeeded(eventData);
         ShowComparisonTypeIndicatorIfNeeded(eventData);
         ShowDropDownIfNeeded(eventData);
+        //StartCoroutine(CoroutineExpandIfBlockOnFirstDrop(eventData.pointerDrag.GetComponent<RectTransform>()));
         StartCoroutine(CoroutineHandleIfInstructionDrop(eventData, 
             eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>(),
             eventData.pointerDrag.transform.Find("ComparisonIndicator").GetComponent<ComparisonTypeIndicatorScript>()
-            ));
-        
+            ));        
+    }
+
+    private IEnumerator CoroutineExpandIfBlockOnFirstDrop(RectTransform rectTransform)
+    {
+        yield return new WaitForFixedUpdate();
+        var currentWidth = rectTransform.sizeDelta.x;
+        var desiredWidth = currentWidth + 50;
+
+        for (int i=0; i<30; i++)
+        {
+            var oldWidth = currentWidth;
+            currentWidth = Mathf.Lerp(currentWidth, desiredWidth, 0.2f);
+            var newSize = new Vector2(currentWidth, rectTransform.sizeDelta.y);
+            var newPosition = rectTransform.anchoredPosition + new Vector2((currentWidth - oldWidth), 0);
+            rectTransform.anchoredPosition = newPosition;
+            rectTransform.sizeDelta = newSize;
+        }
     }
 
     private IEnumerator CoroutineHandleIfInstructionDrop(PointerEventData eventData, DirectionIndicatorScript directionScript, ComparisonTypeIndicatorScript comparisonScript)
@@ -470,6 +493,14 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             }
 
             CurrentSolution.Remove(lineToRemove);
+            foreach (var line in CurrentSolution)
+            {
+                if (line.children.Contains(lineToRemove))
+                {
+                    line.children.Remove(lineToRemove);
+                    break;
+                }
+        }
             Destroy(go);
         }  
         
@@ -478,6 +509,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
             Destroy(go);
         }
 
+        
+
         unpinnedCodeline = null;
 
         Rearrange();
@@ -485,25 +518,31 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     public float BlockSizeY = 60;
 
-    public Vector2 GetDockPositionForFirstChild()
+    public float GetYPositionForFirstChild()
     {
-        return new Vector2(30, -60);
+        return -60;
     }
 
-
-    public Vector2 GetDockPositionForChild(int index, int indent)
+    public float GetIndentX(Vector2 parentSize, Vector2 childSize)
     {
-        return GetDockPositionForFirstChild() + new Vector2(0, index * BlockSizeY);
+        return -parentSize.x / 2 + CodeLine.IndentPixelMultiplifier + childSize.x / 2;
     }
+
+    //public Vector2 GetDockPositionForChild(Vector2 parentSize, Vector2 childSize, int index)
+    //{
+    //    return GetDockPositionForFirstChild(parentSize, childSize) + new Vector2(0, index * BlockSizeY);
+    //}
 
     public void ZipHierarchy(CodeLine parent)
     {
-        var currentPosition = GetDockPositionForFirstChild();
+        var parentRT = parent.go.GetComponent<RectTransform>();
+        var currentPositionY = GetYPositionForFirstChild();
         foreach(var child in parent.children)
         {
             child.go.transform.SetParent(parent.go.transform);
-            child.go.GetComponent<RectTransform>().anchoredPosition = currentPosition;
-            currentPosition -= new Vector2(0, child.NestSize.y);
+            var childRT = child.go.GetComponent<RectTransform>();
+            childRT.anchoredPosition = new Vector2(GetIndentX(parentRT.sizeDelta, childRT.sizeDelta), currentPositionY);
+            currentPositionY -= child.NestSize.y;
             ZipHierarchy(child);
         }
     }
@@ -562,6 +601,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         {
             CurrentSolution[i].ChangeDockPosition(GetAbsoluteDockPositionForIndex(i));
             CurrentSolution[i].RevalidateChildren();
+            CurrentSolution[i].HasTemporaryCodeLine = false;
         }
     }
 
@@ -617,13 +657,30 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private void ApplyScroll(PointerEventData eventData)
     {
-        this.scrollY += eventData.scrollDelta.y * ScrollMultiplier;
+        scrollVelocity += eventData.scrollDelta.y * ScrollMultiplier;        
+    }
+
+    private const float scrollFrameDecay = 0.15f;
+    private float scrollVelocity = 0.0f;
+    private float maxScrollVelocity = 8.0f;
+
+    public void UpdateScroll()
+    {
+        var scrollVelocitySign = Mathf.Sign(scrollVelocity);
+        scrollVelocity = scrollVelocitySign * Mathf.Max(0, Mathf.Abs(scrollVelocity) - scrollFrameDecay);
+        scrollY += scrollVelocity;
         TrimScroll();
+        TrimScrollVelocity();
     }
 
     private void TrimScroll()
     {
         scrollY = Mathf.Min(0, scrollY);
+    }
+
+    private void TrimScrollVelocity()
+    {
+        scrollVelocity = Mathf.Clamp(scrollVelocity, -maxScrollVelocity, maxScrollVelocity);
     }
 }
 
@@ -841,6 +898,19 @@ public class CodeLine
 
     private Vector2 shift;
 
+    private GameObject nestBackground;
+
+    public bool HasTemporaryCodeLine { get; set; }
+    float backgroundSizeChange => DefaultHeight;
+    private float _desiredBackgroundHeight;
+    private float DesiredBackgroundHeight
+    {
+        get
+        {
+            return _desiredBackgroundHeight + (HasTemporaryCodeLine ? backgroundSizeChange : 0.0f);
+        }
+    }
+
     public Vector2 BlockSpacing
     {
         get
@@ -906,7 +976,7 @@ public class CodeLine
         }
     }
 
-    public int IndentPixelMultiplifier => 30;
+    public const int IndentPixelMultiplifier = 30;
 
     public int Indent
     {
@@ -951,6 +1021,11 @@ public class CodeLine
         go.transform.position = dockPosition;
 
         this.SetParent(parent);
+
+        if (InstructionHelper.IsIfInstruction(go))
+        {
+            CreateNestBackgroundIfNeeded();
+        }
     }
 
     public bool HasChildInHierarchy(CodeLine child)
@@ -982,13 +1057,41 @@ public class CodeLine
         }
     }
 
+    private void CreateNestBackgroundIfNeeded()
+    {
+        if (nestBackground != null) return;
+        nestBackground = GameObject.Instantiate(GameObject.Find("NestBackground"));
+        nestBackground.transform.SetParent(go.transform);
+        _desiredBackgroundHeight = SpacingY/4;
+    }    
+
+    public void ExpandBackground()
+    {
+        CreateNestBackgroundIfNeeded();
+        _desiredBackgroundHeight += backgroundSizeChange;
+    }
+
+    public void ShrinkBackground()
+    {
+        CreateNestBackgroundIfNeeded();
+        _desiredBackgroundHeight -= backgroundSizeChange;
+    }
+
+    public void RepairNestBackground()
+    {
+        _desiredBackgroundHeight = NestHeight;
+    }
+
     public void AddChild(CodeLine child)
     {
+        CreateNestBackgroundIfNeeded();
+        ExpandBackground();
         children.Add(child);
     }
 
     public void RemoveChild(CodeLine child)
     {
+        ShrinkBackground();
         children.Remove(child);
     }
 
@@ -1088,6 +1191,25 @@ public class CodeLine
             if (this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");
             this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>().UpdateCurve();
         }
+
+        UpdateBackgroundNestIfNeeded();
+    }    
+
+    private void UpdateBackgroundNestIfNeeded()
+    {
+        if (nestBackground == null) return;
+        var rectTransform = nestBackground.GetComponent<RectTransform>();
+        var rect = rectTransform.rect;
+
+        var newBackgroundHeight = Mathf.Lerp(rect.height, DesiredBackgroundHeight, 0.2f);
+
+        var ifSize = BlockSize;
+
+        var newPosition = new Vector2(IndentPixelMultiplifier/3, -ifSize.y / 2 + -newBackgroundHeight / 2);
+        var newSize = new Vector2(ifSize.x - IndentPixelMultiplifier, newBackgroundHeight);
+
+        rectTransform.anchoredPosition = newPosition;
+        rectTransform.sizeDelta = newSize;
     }
 
     string guid = null;

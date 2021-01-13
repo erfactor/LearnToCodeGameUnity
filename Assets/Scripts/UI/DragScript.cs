@@ -41,10 +41,8 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         Debug.Log("OnBeginDrag");
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
-        canvasGroup.alpha = 0.7f;
+        canvasGroup.alpha = 0.8f;
 
-        //startParent = transform.parent;
-        //transform.SetParent(transform.root);
         startPosition = transform.position;
 
         CodePanel.draggedObject = gameObject;
@@ -54,6 +52,9 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         if (indexOnCodePanel >= 0)
         {
             codePanel.unpinnedCodeline = codePanel.CurrentSolution[indexOnCodePanel];
+                        
+            codePanel.unpinnedCodeline.SetParent(null);
+
             codePanel.Unpin(codePanel.unpinnedCodeline);
             codePanel.ZipHierarchy(codePanel.unpinnedCodeline);
             codePanel.Rearrange();
