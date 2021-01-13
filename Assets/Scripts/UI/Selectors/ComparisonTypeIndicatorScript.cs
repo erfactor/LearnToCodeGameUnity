@@ -7,7 +7,7 @@ public class ComparisonTypeIndicatorScript : MonoBehaviour, IPointerClickHandler
     GameObject comparisonTypeWindow;
     CanvasGroup canvasGroup;
 
-    public ComparedType SelectedComparisonType { get; set; } = ComparedType.Direction;
+    public ComparedType SelectedComparisonType { get; set; } = ComparedType.Bot;
 
     // Start is called before the first frame update
     void Start()
