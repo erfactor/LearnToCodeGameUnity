@@ -18,7 +18,7 @@ namespace Models
             set
             {
                 _color = value;
-                Animator.transform.Find("bone_1").Find("ColorIndicator").GetComponent<SpriteRenderer>().color = _color;
+                Animator.transform.Find("Body").GetComponent<SpriteRenderer>().color = _color;
             }
         }
 
