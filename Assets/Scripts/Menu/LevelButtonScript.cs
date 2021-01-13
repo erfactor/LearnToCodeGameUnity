@@ -48,7 +48,6 @@ namespace Menu
             transform.Find("Cog").GetComponent<CogRotateScript>().SlowDown();
         }
 
-        // Start is called before the first frame update
         private void Start()
         {
             button = GetComponentInChildren<Button>();
@@ -70,11 +69,12 @@ namespace Menu
                 return;
             }
 
-            var loader = Instantiate(LevelLoaderPrefab);
-            loader.gameObject.name = "LevelLoader";
-            loader.LoadSolution(levelSolution.text);
-            loader.LoadLevel(level.text, levelIndex);
-            DontDestroyOnLoad(loader.gameObject);
+            LevelLoader.Level = new Level
+            {
+                Number = levelIndex,
+                File = level.text,
+                SolutionFile = levelSolution.text
+            };
 
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(3);         
         }

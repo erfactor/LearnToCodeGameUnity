@@ -1,79 +1,52 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Animators;
 using Commands;
+using Config;
 using Enumerations;
 using Models;
 using Packages._2DTileMapLevelEditor.Scripts;
 using Profiles;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Random = System.Random;
 
 namespace Services
 {
     public class LevelLoader : MonoBehaviour
     {
-        // The instance of the LevelEditor
-        public static LevelLoader Instance;
-
-        private static readonly Random _random = new Random();
-
-        public string testFileName;
-
-        // The list of tiles the user can use to create maps. Public so the user can add all user-created prefabs
+        private static readonly Random Random = new Random();
+        public static Level Level;
         public Tileset Tileset;
 
-        public int levelNumber;
+        //Prefab with which the board will be measured in pixels
+        public GameObject referenceSizeTile;
 
         // Dictionary as the parent for all the GameObjects per layer
         private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
 
+        private Board _board;
         private bool _codeExecutionOn;
+        private int _commandsToExecuteCount;
 
         private Coroutine _gameCoroutine;
         private Board _solution;
-
-        // GameObject as the parent for all the layers (to keep the Hierarchy window clean)
         private GameObject _tileLevelParent;
-
-        private int commandsToExecuteCount;
-
-        private string currentLevelData;
-
-        public Board InitialBoard;
-
-        //Prefab with which the board will be measured in pixels
-        public GameObject referenceSizeTile;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
 
-        private void Awake()
-        {
-            if (Instance == null)
-                Instance = this;
-            else if (Instance != this) Destroy(gameObject);
-        }
-
         private void Start()
         {
-            //var path = Path.Combine(Application.dataPath, "Levels", LevelFileName ?? testFileName);
-            //initialBoardState = LoadLevel(path);
+            LoadLevel();
+            LoadSolution();
         }
 
-        private string GetFullPathToLevel(string filename)
+        public void LoadLevel()
         {
-            return Path.Combine(Application.dataPath, "Resources", "Levels", filename);
-        }
-
-        public Board LoadLevel(string fileData, int levelNumber)
-        {
-            this.levelNumber = levelNumber;
-            currentLevelData = fileData;
-            var lines = fileData.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
+            var lines = Level.File.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
             var width = boardParameters[0];
             var height = boardParameters[1];
@@ -98,7 +71,7 @@ namespace Services
                     {
                         var isRandom = piecePrefabName == "piece";
                         var pieceNumber = isRandom
-                            ? _random.Next(100)
+                            ? Random.Next(100)
                             : int.Parse(piecePrefabName.Substring(5));
                         var pieceTransform = CreateGameObject("piece", x, y, 1);
                         piece = new Piece(new Vector2Int(x, y), pieceNumber, pieceTransform, isRandom);
@@ -132,14 +105,13 @@ namespace Services
                 }
             }
 
-            InitialBoard = board;
-
-            ClipLevelObject();
-            DontDestroyOnLoad(GameObject.Find("TileLevel"));
-            return board;
+            _board = board;
+            ClipLevel();
+            GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>()
+                .AssignColorsToBots(_board.Bots);
         }
 
-        public void ClipLevelObject()
+        private void ClipLevel()
         {
             var tileSize = referenceSizeTile.GetComponent<SpriteRenderer>().bounds.size.x;
             var tileLevel = GameObject.Find("TileLevel");
@@ -148,27 +120,21 @@ namespace Services
             var bottomIndicator = GameObject.Find("LevelPositionIndicatorBottom");
             var centerIndicator = GameObject.Find("LevelPositionIndicatorCenter");
 
-            var tileLevelRect = new Rect(0, 0, tileSize * InitialBoard.Width, tileSize * InitialBoard.Height);
+            var tileLevelRect = new Rect(0, 0, tileSize * _board.Width, tileSize * _board.Height);
 
             var finalHeight = topIndicator.transform.position.y - bottomIndicator.transform.position.y;
             var finalScale = finalHeight / tileLevelRect.height;
             var finalWidth = tileLevelRect.width * finalScale;
 
-            Vector3 finalPosition = centerIndicator.transform.position + new Vector3(-finalWidth / 2, -finalHeight / 2, 10);
+            var finalPosition = centerIndicator.transform.position + new Vector3(-finalWidth / 2, -finalHeight / 2, 10);
 
             tileLevel.transform.localScale = new Vector3(finalScale, finalScale, 1);
             tileLevel.transform.position = finalPosition;
         }
 
-        public void LoadSolution(string levelSolutionText)
+        private void LoadSolution()
         {
-            _solution = CreateAcceptingBoard(levelSolutionText);
-        }
-
-        public Board CreateAcceptingBoard(string fileData)
-        {
-            currentLevelData = fileData;
-            var lines = fileData.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
+            var lines = Level.SolutionFile.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
             var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
             var width = boardParameters[0];
             var height = boardParameters[1];
@@ -200,30 +166,30 @@ namespace Services
                 }
             }
 
-            return board;
+            _solution = board;
         }
 
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
             _codeExecutionOn = true;
-            var board = InitialBoard;
-            var executionIndicatorManager = GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>();
-            executionIndicatorManager.InstantiateIndicators(board.Bots);
+            var executionIndicatorManager =
+                GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>();
+            executionIndicatorManager.InstantiateIndicators(_board.Bots);
 
-            while (commandsToExecuteCount-- > 0)
+            while (_commandsToExecuteCount-- > 0)
             {
-                if (board.Bots.All(b => commands[b.CommandId] is FinishCommand))
+                if (_board.Bots.All(b => commands[b.CommandId] is FinishCommand))
                 {
                     executionIndicatorManager.ClearIndicators();
                     StopExecution();
                     yield break;
                 }
-                
-                foreach (var bot in board.Bots)
+
+                foreach (var bot in _board.Bots)
                 {
                     var command = commands[bot.CommandId];
                     if (bot.HasFinished) continue;
-                    List<int> traversedJumpCommands = new List<int>();
+                    var traversedJumpCommands = new List<int>();
                     while (command is JumpCommand)
                     {
                         if (traversedJumpCommands.Contains(command.NextCommandId))
@@ -233,6 +199,7 @@ namespace Services
                             bot.HasFinished = true;
                             break;
                         }
+
                         traversedJumpCommands.Add(command.NextCommandId);
                         bot.CommandId = command.NextCommandId;
                         command = commands[command.NextCommandId];
@@ -241,19 +208,19 @@ namespace Services
                     if (!(command is FinishCommand))
                     {
                         executionIndicatorManager.UpdateIndicator(bot, bot.CommandId);
-                        bot.CommandId = command.Execute(board, bot);
+                        bot.CommandId = command.Execute(_board, bot);
                         print(commands[bot.CommandId]);
                     }
                 }
 
-                if (_solution.AcceptsBoard(board))
+                if (_solution.AcceptsBoard(_board))
                 {
                     print("Accepted");
                     yield return StartCoroutine(LevelCompleted());
                     yield break;
                 }
 
-                yield return new WaitForSeconds(Config.Timing.CommandExecutionTimeInSeconds);
+                yield return new WaitForSeconds(Timing.CommandExecutionTimeInSeconds);
             }
 
             _codeExecutionOn = false;
@@ -262,23 +229,23 @@ namespace Services
 
         public bool ShouldDisplayExecutionIndicators()
         {
-            return _codeExecutionOn || commandsToExecuteCount > 0;
+            return _codeExecutionOn || _commandsToExecuteCount > 0;
         }
 
         public void PauseExecution()
         {
-            commandsToExecuteCount = 0;
+            _commandsToExecuteCount = 0;
         }
 
         public void StartExecution(List<ICommand> commands)
         {
-            commandsToExecuteCount = int.MaxValue;
+            _commandsToExecuteCount = int.MaxValue;
             if (!_codeExecutionOn) StartCoroutine("InterpretCode", commands);
         }
 
         public void StepOnce(List<ICommand> commands)
         {
-            commandsToExecuteCount = 1;
+            _commandsToExecuteCount = 1;
             if (!_codeExecutionOn) StartCoroutine("InterpretCode", commands);
         }
 
@@ -299,16 +266,15 @@ namespace Services
         {
             _layerParents.Clear();
             DestroyImmediate(GameObject.Find("TileLevel"));
-            LoadLevel(currentLevelData, levelNumber);
+            LoadLevel();
         }
 
         public IEnumerator LevelCompleted()
         {
-            yield return new WaitForSeconds(Config.Timing.WinWindowOnLevelCompletionDelay);
+            yield return new WaitForSeconds(Timing.WinWindowOnLevelCompletionDelay);
 
             Debug.Log("Level completed!");
-            GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(levelNumber + 1);
-
+            GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(Level.Number + 1);
             GameObject.Find("WinWindow").GetComponent<WinWindow>().Show();
         }
 

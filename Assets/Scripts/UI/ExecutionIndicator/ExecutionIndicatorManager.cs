@@ -11,7 +11,6 @@ public class ExecutionIndicatorManager : MonoBehaviour
     LevelLoader levelLoader;
     Dictionary<Bot, GameObject> indicators = new Dictionary<Bot, GameObject>();
     Dictionary<Bot, int> indicatorPositions = new Dictionary<Bot, int>();
-    //List<Bot> bots = new List<Bot>();
 
     public GameObject indicatorPrefab;
 
@@ -28,19 +27,25 @@ public class ExecutionIndicatorManager : MonoBehaviour
         levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
     }
 
+    public void AssignColorsToBots(List<Bot> bots)
+    {
+        for (int i = 0; i < bots.Count; i++)
+        {
+            bots[i].Color = indicatorColors[i];
+        }
+    }
+
     public void InstantiateIndicators(List<Bot> bots)
     {
         panel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
 
-        for (int i=0; i<bots.Count; i++)
+        foreach (var bot in bots)
         {
-            if (indicators.ContainsKey(bots[i])) continue;
-            var indicator = Instantiate(GameObject.Find("ExecutionIndicator"));
-            indicator.transform.SetParent(panel.transform);
-            indicator.GetComponent<Image>().color = indicatorColors[i];
-            bots[i].Animator.gameObject.transform.Find("bone_1").Find("ColorIndicator").GetComponent<SpriteRenderer>().color = indicatorColors[i];
-            indicators.Add(bots[i], indicator);
-            indicatorPositions.Add(bots[i], startingPosition);
+            if (indicators.ContainsKey(bot)) continue;
+            var indicator = Instantiate(GameObject.Find("ExecutionIndicator"), panel.transform, true);
+            indicator.GetComponent<Image>().color = bot.Color;
+            indicators.Add(bot, indicator);
+            indicatorPositions.Add(bot, startingPosition);
         }
     }
     // Update is called once per frame

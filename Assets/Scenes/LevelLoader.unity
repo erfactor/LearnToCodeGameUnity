@@ -650,7 +650,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384539012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.407048, y: 1.3363619, z: -0.30227292}
+  m_LocalPosition: {x: -0.69, y: 1.48, z: -0.30227292}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -668,9 +668,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d78e1dae75043e39a113424e06bbd50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testFileName: test.lvl
   Tileset: {fileID: 1598100341489071453, guid: 2c85fd0df67b4df4aaddbb3cc7ecaf1c, type: 3}
-  levelNumber: 0
+  referenceSizeTile: {fileID: 0}
 --- !u!1001 &1455437059
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -917,12 +916,12 @@ PrefabInstance:
     - target: {fileID: 635828608011137343, guid: 0d1916533758d944780fcacc817507ef,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.523
+      value: 7.75
       objectReference: {fileID: 0}
     - target: {fileID: 635828608011137343, guid: 0d1916533758d944780fcacc817507ef,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.507
+      value: 2.01
       objectReference: {fileID: 0}
     - target: {fileID: 635828608011137343, guid: 0d1916533758d944780fcacc817507ef,
         type: 3}
@@ -969,6 +968,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5572589429125343022, guid: 0d1916533758d944780fcacc817507ef,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5572589429125343022, guid: 0d1916533758d944780fcacc817507ef,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5572589429125343022, guid: 0d1916533758d944780fcacc817507ef,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5572589429125343022, guid: 0d1916533758d944780fcacc817507ef,
+        type: 3}
+      propertyPath: m_DrawMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5572589429125343022, guid: 0d1916533758d944780fcacc817507ef,
+        type: 3}
+      propertyPath: m_MaskInteraction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5572589429125343022, guid: 0d1916533758d944780fcacc817507ef,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 91a5c1b691a5845be88f77e3e2b69c80, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0d1916533758d944780fcacc817507ef, type: 3}
 --- !u!1 &847769448764815441 stripped

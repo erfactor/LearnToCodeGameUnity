@@ -8,23 +8,25 @@ namespace UI.PanelButtons
     {
         public Sprite musicOn;
         public Sprite musicOff;
+        private SFXManagerScript _sfxManager;
 
         private void Start()
         {
+            _sfxManager = GameObject.Find("SFXManager").GetComponent<SFXManagerScript>();
+            GetComponent<Image>().overrideSprite = _sfxManager.SoundMuted ? musicOff : musicOn;
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            var sfxManager = GameObject.Find("SFXManager").GetComponent<SFXManagerScript>();
-            if (sfxManager.SoundMuted)
+            if (_sfxManager.SoundMuted)
             {
                 GetComponent<Image>().overrideSprite = musicOn;
-                sfxManager.UnmuteSound();
+                _sfxManager.UnmuteSound();
             }
             else
             {
                 GetComponent<Image>().overrideSprite = musicOff;
-                sfxManager.MuteSound();
+                _sfxManager.MuteSound();
             }
         }
     }

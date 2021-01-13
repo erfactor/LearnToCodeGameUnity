@@ -97,7 +97,7 @@ namespace Commands
         public bool Evaluate(Board board, Bot bot)
         {
             var leftSideLocation = bot.BoardLocation + directionMapping[leftSide];
-            bot.Animator.CreateIfIndicator(leftSideLocation);
+            bot.Animator.CreateIfIndicator(leftSideLocation, bot.Color);
             if (!board.IsInside(leftSideLocation)) return false;
 
             var leftSideField = board[leftSideLocation];

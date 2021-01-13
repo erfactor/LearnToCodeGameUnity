@@ -11,6 +11,17 @@ namespace Models
         public BotAnimator Animator { get; }
         public bool HasFinished { get; set; }
 
+        private Color _color;
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                _color = value;
+                Animator.transform.Find("bone_1").Find("ColorIndicator").GetComponent<SpriteRenderer>().color = _color;
+            }
+        }
+
         public Bot(Vector2Int boardLocation, BotAnimator animator)
         {
             BoardLocation = boardLocation;

@@ -14,8 +14,6 @@ namespace UI.PanelButtons
 
         public void ReturnToMainMenu()
         {
-            Destroy(GameObject.Find("TileLevel"));
-            Destroy(GameObject.Find("LevelLoader"));
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(TargetScene);
         }
     }
