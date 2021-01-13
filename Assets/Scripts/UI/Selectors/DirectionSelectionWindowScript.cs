@@ -25,7 +25,7 @@ public class DirectionSelectionWindowScript : MonoBehaviour
             directionSprites.Add(Direction.Center, Resources.Load<Sprite>("Sprites/UI/Directions/direction_center"));
             directionSprites.Add(Direction.Down, Resources.Load<Sprite>("Sprites/UI/Directions/direction_down"));
             Debug.Log("DirectionSelector initialization done");
-        }        
+        }
     }
 
     // Start is called before the first frame update
@@ -37,7 +37,7 @@ public class DirectionSelectionWindowScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetSelected(Direction direction)
@@ -50,8 +50,13 @@ public class DirectionSelectionWindowScript : MonoBehaviour
         RaycastManagerScript.ReleaseFocus();
     }
 
-    public void Show()
+    public void Show(bool hideCenter)
     {
+        if (hideCenter)
+        {
+            transform.Find("Center").gameObject.SetActive(false);
+        }
+
         animator.SetTrigger("Show");
     }
 

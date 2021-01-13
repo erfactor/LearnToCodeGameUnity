@@ -204,8 +204,8 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     {
         RemoveGhostInstruction();
 
-        HandleMoveInstructionDrop(eventData);
-        HandleIfInstructionDrop(eventData);
+        HandleMoveInstructionFirstDrop(eventData);
+        HandleIfInstructionFirstDrop(eventData);
         ShowDirectionIndicatorIfNeeded(eventData);
         ShowComparisonTypeIndicatorIfNeeded(eventData);
         ShowDropDownIfNeeded(eventData);
@@ -251,11 +251,13 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         debugRect.transform.SetParent(GameObject.Find("SolutionPanel").transform);
     }
 
-    private void HandleMoveInstructionDrop(PointerEventData eventData)
+    private void HandleMoveInstructionFirstDrop(PointerEventData eventData)
     {
         if (!InstructionHelper.IsMoveInstruction(eventData.pointerDrag)) return;
+        if (unpinnedCodeline != null) return;
+
         ShowDirectionIndicatorIfNeeded(eventData);
-        ExpandDirectionIndicator(eventData, eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>());
+        StartCoroutine(CoroutineExpandDirectionIndicator(eventData, eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>()));
     }
 
     private void ShowDirectionIndicatorIfNeeded(PointerEventData eventData)
@@ -266,9 +268,11 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         }
     }
 
-    private void HandleIfInstructionDrop(PointerEventData eventData)
+    private void HandleIfInstructionFirstDrop(PointerEventData eventData)
     {
         if (!InstructionHelper.IsIfInstruction(eventData.pointerDrag)) return;
+        if (unpinnedCodeline != null) return;
+
         ShowDirectionIndicatorIfNeeded(eventData);
         ShowComparisonTypeIndicatorIfNeeded(eventData);
         ShowDropDownIfNeeded(eventData);
@@ -281,14 +285,16 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     private IEnumerator CoroutineHandleIfInstructionDrop(PointerEventData eventData, DirectionIndicatorScript directionScript, ComparisonTypeIndicatorScript comparisonScript)
     {
-        ExpandDirectionIndicator(eventData, directionScript);
+        yield return new WaitForFixedUpdate();
+        yield return CoroutineExpandDirectionIndicator(eventData, directionScript);
         yield return new WaitUntil(() => directionScript.SelectedDirection != null);
         yield return new WaitForSeconds(0.2f);
         ExpandComparisonTypeIndicator(eventData, comparisonScript);
     }
 
-    private void ExpandDirectionIndicator(PointerEventData eventData, DirectionIndicatorScript directionScript)
+    private IEnumerator CoroutineExpandDirectionIndicator(PointerEventData eventData, DirectionIndicatorScript directionScript)
     {
+        yield return new WaitForFixedUpdate();
         directionScript.OnPointerClick(eventData);
     }
 

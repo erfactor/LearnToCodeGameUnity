@@ -45,11 +45,17 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
             var selectionPanel = Instantiate(directionSelectionWindow);
             selectionPanel.transform.SetParent(GameObject.Find("LevelCanvas").transform);
             selectionPanel.transform.localScale = new Vector3(1, 1, 1);
-            selectionPanel.transform.localPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            selectionPanel.transform.position = transform.position;
 
             var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectionWindowScript>();
-            selectionPanelScript.Show();
+            bool isInMoveDirection = IsParentMoveDirection();
+            selectionPanelScript.Show(isInMoveDirection);
             selectionPanelScript.changedDirectionIndicator = gameObject;
         }
+    }
+
+    private bool IsParentMoveDirection()
+    {
+        return transform.parent.Find("ComparisonIndicator") == null;
     }
 }
