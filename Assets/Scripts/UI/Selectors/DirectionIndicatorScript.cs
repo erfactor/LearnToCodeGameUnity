@@ -45,9 +45,10 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
             var selectionPanel = Instantiate(directionSelectionWindow);
             selectionPanel.transform.SetParent(GameObject.Find("LevelCanvas").transform);
             selectionPanel.transform.localScale = new Vector3(1, 1, 1);
-            selectionPanel.transform.localPosition = new Vector3(200, 0, 0);
+            selectionPanel.transform.localPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectionWindowScript>();
+            selectionPanelScript.Show();
             selectionPanelScript.changedDirectionIndicator = gameObject;
         }
     }

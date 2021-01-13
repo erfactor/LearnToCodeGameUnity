@@ -28,6 +28,7 @@ public class ComparisonTypeSelectorScript : MonoBehaviour, IPointerClickHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             parentScript.SetSelected(this.comparedType);
+            parentScript.Hide();
         }
     }
 }

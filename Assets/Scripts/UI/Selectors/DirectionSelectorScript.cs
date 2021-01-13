@@ -26,6 +26,7 @@ public class DirectionSelectorScript : MonoBehaviour, IPointerClickHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             parentScript.SetSelected(this.direction);
+            parentScript.Hide();
         }
     }
 }

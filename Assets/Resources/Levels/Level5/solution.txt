@@ -9,5 +9,5 @@
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
-,,edge;,botHead,tile1;,botHead,tile1;,botHead,tile1;,botHead,tile1;,botHead,tile1;,botHead,tile1;,,edge
+,,edge;,botHead,tile2;,botHead,tile2;,botHead,tile2;,botHead,tile2;,botHead,tile2;,botHead,tile2;,,edge
 ,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner

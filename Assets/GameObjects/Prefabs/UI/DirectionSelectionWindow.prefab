@@ -444,6 +444,7 @@ GameObject:
   - component: {fileID: 8549941697843258939}
   - component: {fileID: 8549941697843258940}
   - component: {fileID: 6516180298066380648}
+  - component: {fileID: 2235045030132752351}
   m_Layer: 5
   m_Name: DirectionSelectionWindow
   m_TagString: Untagged
@@ -529,7 +530,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b0db086ed5d52b449c27037620079b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   changedDirectionIndicator: {fileID: 0}
+--- !u!95 &2235045030132752351
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8549941697843258942}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6c3ac6d9af525f446b780e2d33438f56, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8549941698214442500
 GameObject:
   m_ObjectHideFlags: 0

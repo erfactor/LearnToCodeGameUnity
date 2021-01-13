@@ -276,6 +276,7 @@ GameObject:
   - component: {fileID: 14255362624841356}
   - component: {fileID: 14255362624841357}
   - component: {fileID: 14255362624841359}
+  - component: {fileID: 7118830281956634468}
   m_Layer: 5
   m_Name: ComparisonTypeSelectionWindow
   m_TagString: Untagged
@@ -360,7 +361,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf8aa347b4540f5458bc318c2486bbbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
   changedComparisonIndicator: {fileID: 0}
+--- !u!95 &7118830281956634468
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14255362624841347}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6c3ac6d9af525f446b780e2d33438f56, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &14255362667731967
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class DirectionSelectionWindowScript : MonoBehaviour
 {
+    public Animator animator;
+
     public GameObject changedDirectionIndicator;
 
     static Dictionary<Direction, Sprite> directionSprites;
@@ -44,8 +46,18 @@ public class DirectionSelectionWindowScript : MonoBehaviour
         var newSprite = GetSprite(direction);
         changedDirectionIndicator.GetComponent<Image>().sprite = newSprite;
         changedDirectionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection = direction;
-        Destroy(gameObject);
+        Destroy(gameObject, 0.5f);
         RaycastManagerScript.ReleaseFocus();
+    }
+
+    public void Show()
+    {
+        animator.SetTrigger("Show");
+    }
+
+    public void Hide()
+    {
+        animator.SetTrigger("Hide");
     }
 
     public static Sprite GetSprite(Direction direction)

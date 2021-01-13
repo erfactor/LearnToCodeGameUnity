@@ -5,6 +5,8 @@ using Commands;
 
 public class ComparisonTypeSelectionWindowScript : MonoBehaviour
 {
+    public Animator animator;
+
     public GameObject changedComparisonIndicator;
 
     static Dictionary<ComparedType, Sprite> comparisonSprites;
@@ -38,13 +40,23 @@ public class ComparisonTypeSelectionWindowScript : MonoBehaviour
 
     }
 
+    public void Show()
+    {
+        animator.SetTrigger("Show");
+    }
+
+    public void Hide()
+    {
+        animator.SetTrigger("Hide");
+    }
+
     public void SetSelected(ComparedType type)
     {
         InitializeComparisonSprites();
         var newSprite = GetSprite(type);
         changedComparisonIndicator.GetComponent<Image>().sprite = newSprite;
         changedComparisonIndicator.GetComponent<ComparisonTypeIndicatorScript>().SelectedComparisonType = type;
-        Destroy(gameObject);
+        Destroy(gameObject, 0.5f);
         RaycastManagerScript.ReleaseFocus();
     }
 
