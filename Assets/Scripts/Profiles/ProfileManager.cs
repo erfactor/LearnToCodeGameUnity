@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -77,6 +78,7 @@ namespace Profiles
         public void AddProfileClick(int index)
         {
             _createdIndex = index;
+            // TODO _editPanel.transform.Find("InputField").Find("CreatedProfileText").GetComponent<Text>().text = "";
             _editPanel.SetActive(true);
         }
 
