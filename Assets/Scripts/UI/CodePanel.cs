@@ -235,13 +235,13 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
             if (IsInRect(nestScrolled, mousePosition))
             {
-                CurrentSolution[i].HasTemporaryCodeLine = true;
+                CurrentSolution[i].TemporaryCodeLineNestHeight = unpinnedCodeline?.NestHeight ?? CodeLine.DefaultHeight;
                 //SetDebugNestInRect(nest);
                 return CurrentSolution[i];
             }
             else
             {
-                CurrentSolution[i].HasTemporaryCodeLine = false;
+                CurrentSolution[i].TemporaryCodeLineNestHeight = 0;
             }
         }
         return null;
@@ -520,7 +520,7 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
 
     public float GetYPositionForFirstChild()
     {
-        return -60;
+        return -BlockSizeY;
     }
 
     public float GetIndentX(Vector2 parentSize, Vector2 childSize)
@@ -601,17 +601,29 @@ public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
         {
             CurrentSolution[i].ChangeDockPosition(GetAbsoluteDockPositionForIndex(i));
             CurrentSolution[i].RevalidateChildren();
-            CurrentSolution[i].HasTemporaryCodeLine = false;
+            CurrentSolution[i].TemporaryCodeLineNestHeight = 0;
         }
     }
 
     private Vector2 GetAbsoluteDockPositionForIndex(int index)
     {
         var calculatedDockPosition = GetAbsoluteDockPositionForFirstBlock();
+        //List<int> extraSpacingOn = new List<int>();
 
         for (int i = 0; i < index; i++)
         {
-            var nextBlockSize = CurrentSolution[i].BlockSpacing.y;
+            var current = CurrentSolution[i];
+            var nextBlockSize = current.BlockSpacing.y;
+            int childrenCount = current.GetAllChildrenCount();
+            if (InstructionHelper.IsIfInstruction(current.go))
+            {
+                //Debug.Log($"children: {childrenCount}");
+                //extraSpacingOn.Add(i + childrenCount);
+            }
+
+           // int extraIndents = extraSpacingOn.RemoveAll(x => x == i);
+            //nextBlockSize += extraIndents * 10;
+
             calculatedDockPosition.y -= nextBlockSize;
         }
 
@@ -900,14 +912,18 @@ public class CodeLine
 
     private GameObject nestBackground;
 
-    public bool HasTemporaryCodeLine { get; set; }
-    float backgroundSizeChange => DefaultHeight;
+    public bool HasTemporaryCodeLine => TemporaryCodeLineNestHeight > 0;
+
+    public float TemporaryCodeLineNestHeight { get; set; }
+    public static float DefaultBackgroundSizeChange => DefaultHeight;
     private float _desiredBackgroundHeight;
+
+    public const float MinimalBackgroundNestHeight = 0;
     private float DesiredBackgroundHeight
     {
         get
         {
-            return _desiredBackgroundHeight + (HasTemporaryCodeLine ? backgroundSizeChange : 0.0f);
+            return NestHeight - (SpacingY + SizeY) + TemporaryCodeLineNestHeight;
         }
     }
 
@@ -917,6 +933,8 @@ public class CodeLine
         {
             var width = 150;
             var height = SizeY + SpacingY;
+            //if (IsLastChild() && !InstructionHelper.IsIfInstruction(go)) height += MinimalBackgroundNestHeight;
+            //if (children.Count == 0 && InstructionHelper.IsIfInstruction(go)) height += MinimalBackgroundNestHeight;
             return new Vector2(width, height);
         }
     }
@@ -960,7 +978,7 @@ public class CodeLine
         }
     }
 
-    public float DefaultHeight => SizeY + SpacingY;
+    public const float DefaultHeight = SizeY + SpacingY;
 
     public float ChildrenHeight
     {
@@ -976,7 +994,7 @@ public class CodeLine
         }
     }
 
-    public const int IndentPixelMultiplifier = 30;
+    public const int IndentPixelMultiplifier = 40;
 
     public int Indent
     {
@@ -989,7 +1007,7 @@ public class CodeLine
 
     public int IndentInPixels => Indent * IndentPixelMultiplifier;
 
-    public float NestHeight => DefaultHeight + ChildrenHeight;
+    public float NestHeight => DefaultHeight + ChildrenHeight + IfBonusForNestHeight;
 
     public float NestWidth => 300;
 
@@ -1006,6 +1024,9 @@ public class CodeLine
         }
     }
     public Rect Nest => new Rect(TopLeftWithRepel, NestSize);
+
+    private int ifChildrenCount = 0;
+    public float IfBonusForNestHeight => MinimalBackgroundNestHeight + MinimalBackgroundNestHeight * ifChildrenCount;
 
     public Vector2 GetDockPositionWithScroll(Vector2 scrollVector)
     {
@@ -1057,24 +1078,37 @@ public class CodeLine
         }
     }
 
+    public bool IsLastChild()
+    {
+        if (parent == null) return false;
+        return parent.children.Last() == this; 
+    }
+
     private void CreateNestBackgroundIfNeeded()
     {
         if (nestBackground != null) return;
-        nestBackground = GameObject.Instantiate(GameObject.Find("NestBackground"));
-        nestBackground.transform.SetParent(go.transform);
-        _desiredBackgroundHeight = SpacingY/4;
+        //nestBackground = GameObject.Instantiate(GameObject.Find("NestBackground"));
+        //nestBackground.transform.SetParent(go.transform);
+        nestBackground = go.transform.Find("NestBackground").gameObject;
+        _desiredBackgroundHeight = MinimalBackgroundNestHeight;
     }    
 
-    public void ExpandBackground()
+    public void ExpandBackground(float backgroundSizeChange)
     {
         CreateNestBackgroundIfNeeded();
+        if (parent != null) parent.ExpandBackground(backgroundSizeChange);
         _desiredBackgroundHeight += backgroundSizeChange;
     }
 
-    public void ShrinkBackground()
+    public void ShrinkBackground(float backgroundSizeChange)
     {
         CreateNestBackgroundIfNeeded();
+        if (parent != null) parent.ExpandBackground(backgroundSizeChange);
         _desiredBackgroundHeight -= backgroundSizeChange;
+        if (_desiredBackgroundHeight < MinimalBackgroundNestHeight)
+        {
+            _desiredBackgroundHeight = MinimalBackgroundNestHeight;
+        }
     }
 
     public void RepairNestBackground()
@@ -1085,20 +1119,31 @@ public class CodeLine
     public void AddChild(CodeLine child)
     {
         CreateNestBackgroundIfNeeded();
-        ExpandBackground();
+        ExpandBackground(child.NestHeight);
         children.Add(child);
+        RefreshIfBonus();
     }
 
     public void RemoveChild(CodeLine child)
     {
-        ShrinkBackground();
+        ShrinkBackground(child.NestHeight);
         children.Remove(child);
+        RefreshIfBonus();
+    }
+
+    public int GetAllChildrenCount()
+    {
+        return children.Sum(x => x.GetAllChildrenCount()) + children.Count;
+    }
+
+    private void RefreshIfBonus()
+    {
+        ifChildrenCount = children.Where(x => InstructionHelper.IsIfInstruction(x.go)).Count();
     }
 
     public void ChangeDockPosition(Vector2 newDockPosition, int indent = 0)
     {
         newDockPosition = GetPositionTopDown(newDockPosition.x, newDockPosition.y);
-        //RepairShift(dockPosition, newDockPosition);
         this.dockPosition = newDockPosition;
     }
 
@@ -1200,16 +1245,21 @@ public class CodeLine
         if (nestBackground == null) return;
         var rectTransform = nestBackground.GetComponent<RectTransform>();
         var rect = rectTransform.rect;
+        var parentScale = nestBackground.transform.parent.GetComponent<RectTransform>().localScale;
 
         var newBackgroundHeight = Mathf.Lerp(rect.height, DesiredBackgroundHeight, 0.2f);
 
         var ifSize = BlockSize;
 
-        var newPosition = new Vector2(IndentPixelMultiplifier/3, -ifSize.y / 2 + -newBackgroundHeight / 2);
-        var newSize = new Vector2(ifSize.x - IndentPixelMultiplifier, newBackgroundHeight);
+        var newPosition = new Vector2((NestWidth - ifSize.x) / 2, -ifSize.y / 2 + -newBackgroundHeight / 2 / parentScale.y);
+        var newSize = new Vector2(NestWidth, newBackgroundHeight);
+        //Debug.Log($"parentScale: {parentScale}");
 
         rectTransform.anchoredPosition = newPosition;
         rectTransform.sizeDelta = newSize;
+        rectTransform.localScale = Vector3.one / parentScale.x;
+
+
     }
 
     string guid = null;
@@ -1245,5 +1295,6 @@ public class CodeLine
     internal void RevalidateChildren()
     {
         children = children.Where(x => x.go != null).ToList();
+        RefreshIfBonus();
     }
 }
