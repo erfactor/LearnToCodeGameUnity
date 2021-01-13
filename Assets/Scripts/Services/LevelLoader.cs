@@ -44,6 +44,9 @@ namespace Services
         private string currentLevelData;
 
         public Board InitialBoard;
+
+        //Prefab with which the board will be measured in pixels
+        public GameObject referenceSizeTile;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
         public static string WidthSeparator { get; } = ";";
@@ -131,10 +134,30 @@ namespace Services
 
             InitialBoard = board;
 
-            GameObject.Find("TileLevel").transform.localScale = new Vector3(100, 100);
-            GameObject.Find("TileLevel").transform.position = new Vector3(-800, -300);
+            ClipLevelObject();
             DontDestroyOnLoad(GameObject.Find("TileLevel"));
             return board;
+        }
+
+        public void ClipLevelObject()
+        {
+            var tileSize = referenceSizeTile.GetComponent<SpriteRenderer>().bounds.size.x;
+            var tileLevel = GameObject.Find("TileLevel");
+
+            var topIndicator = GameObject.Find("LevelPositionIndicatorTop");
+            var bottomIndicator = GameObject.Find("LevelPositionIndicatorBottom");
+            var centerIndicator = GameObject.Find("LevelPositionIndicatorCenter");
+
+            var tileLevelRect = new Rect(0, 0, tileSize * InitialBoard.Width, tileSize * InitialBoard.Height);
+
+            var finalHeight = topIndicator.transform.position.y - bottomIndicator.transform.position.y;
+            var finalScale = finalHeight / tileLevelRect.height;
+            var finalWidth = tileLevelRect.width * finalScale;
+
+            Vector3 finalPosition = centerIndicator.transform.position + new Vector3(-finalWidth / 2, -finalHeight / 2, 10);
+
+            tileLevel.transform.localScale = new Vector3(finalScale, finalScale, 1);
+            tileLevel.transform.position = finalPosition;
         }
 
         public void LoadSolution(string levelSolutionText)
