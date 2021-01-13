@@ -91,6 +91,7 @@ namespace Profiles
             };
             SerializeProfiles();
             DeserializeProfiles();
+            _editPanel.GetComponentInChildren<InputField>().text = "";
             _editPanel.SetActive(false);
         }
         
