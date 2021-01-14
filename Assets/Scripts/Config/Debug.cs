@@ -11,6 +11,6 @@ namespace Config
         public const bool SkipSceneChangeAnimation = false;
         public const bool CanPlayLockedLevels = true;
         public const bool SkipWaitingIfPossible = false;
-        public const bool SkipIntroAnimation = true;
+        public const bool SkipIntroAnimation = false;
     }
 }
