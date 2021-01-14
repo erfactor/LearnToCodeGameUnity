@@ -11,6 +11,6 @@ public class CancelProfileCreationButton : MonoBehaviour
 
     void CancelProfileCreation()
     {
-        GameObject.Find("EditPanel").SetActive(false);
+        GameObject.Find("EditPanel").GetComponent<FadingPanel>().Hide();
     }
 }

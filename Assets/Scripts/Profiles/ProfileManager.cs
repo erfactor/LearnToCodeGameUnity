@@ -30,8 +30,8 @@ namespace Profiles
         public void LoadProfiles()
         {
             _editPanel = GameObject.Find("EditPanel");
-            _editPanel.SetActive(false);
-            GameObject.Find("DeletePanel").SetActive(false);
+            //_editPanel.SetActive(false);
+            //GameObject.Find("DeletePanel").SetActive(false);
             DeserializeProfiles();
         }
 
@@ -80,7 +80,7 @@ namespace Profiles
         {
             _createdIndex = index;
             _editPanel.GetComponentInChildren<InputField>().text = "";
-            _editPanel.SetActive(true);
+            _editPanel.GetComponent<FadingPanel>().Show();
         }
 
         public void CreateProfile(string profileName)
@@ -92,7 +92,7 @@ namespace Profiles
             };
             SerializeProfiles();
             DeserializeProfiles();
-            _editPanel.SetActive(false);
+            _editPanel.GetComponent<FadingPanel>().Hide();
         }
         
         public void DeleteProfile(int index)

@@ -14,7 +14,8 @@ public class DeleteButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public void OnPointerClick(PointerEventData eventData)
     {
         var deletePanel = transform.root.Find("DeletePanel");
-        deletePanel.gameObject.SetActive(true);
+        //deletePanel.gameObject.SetActive(true);
+        deletePanel.GetComponent<FadingPanel>().Show();
         deletePanel.GetComponentInChildren<AcceptProfileDeletionButton>().index = index;
     }
 

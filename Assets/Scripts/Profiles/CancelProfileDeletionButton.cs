@@ -11,6 +11,7 @@ public class CancelProfileDeletionButton : MonoBehaviour
 
     void CancelProfileDeletion()
     {
-        GameObject.Find("DeletePanel").SetActive(false);
+        GameObject.Find("DeletePanel").GetComponent<FadingPanel>().Hide(); // GameObject.Find("DeletePanel").SetActive(false);
     }
 }
+

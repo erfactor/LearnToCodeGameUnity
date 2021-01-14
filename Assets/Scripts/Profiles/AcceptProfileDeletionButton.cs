@@ -17,6 +17,6 @@ public class AcceptProfileDeletionButton : MonoBehaviour
     void DeleteProfile()
     {
         profileManager.DeleteProfile(index);
-        GameObject.Find("DeletePanel").SetActive(false);
+        GameObject.Find("DeletePanel").GetComponent<FadingPanel>().Hide();// SetActive(false);
     }
 }
