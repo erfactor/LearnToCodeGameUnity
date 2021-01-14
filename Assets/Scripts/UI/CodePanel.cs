@@ -751,7 +751,7 @@ public class CommandHelper
         if (InstructionHelper.IsIfInstruction(line.go))
         {
             int trueLineNumber = currentLine + 1;
-            int elseLineNumber = currentLine + line.children.Count + 1;
+            int elseLineNumber = currentLine + line.GetAllChildrenCount() + 1;
             return new IfCommand(trueLineNumber, elseLineNumber, GetConditions(line), GetLogicalOperators(line));
         }
 

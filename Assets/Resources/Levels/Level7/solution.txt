@@ -1,0 +1,11 @@
+10,10,3
+,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge
+,,edge;,,tile1;,,tile1;,botHead,tile1;,,hole;,,hole;,botHead,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,hole;,,hole;,,edge
+,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,tile1;,,tile1;,,edge
+,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge

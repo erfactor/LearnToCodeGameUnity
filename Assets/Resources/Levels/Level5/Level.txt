@@ -5,7 +5,7 @@
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,edge
-,,edge;,,tile1;,,hole;,,hole;,,hole;,,hole;,,tile1;,,edge
+,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge
 ,,edge;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,edge

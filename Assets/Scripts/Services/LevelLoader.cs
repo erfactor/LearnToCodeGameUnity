@@ -162,7 +162,10 @@ namespace Services
                         piece = new Piece(new Vector2Int(x, y), pieceNumber, null, isRandom);
                     }
 
-                    if (botPrefabName != string.Empty) bot = new Bot(new Vector2Int(x, y), null);
+                    if (botPrefabName != string.Empty)
+                    {
+                        bot = new Bot(new Vector2Int(x, y), null);
+                    }
 
                     board[x, y] = new Field(TileType.Normal, bot, piece);
                 }
