@@ -26,6 +26,7 @@ namespace Services
 
         // Dictionary as the parent for all the GameObjects per layer
         private readonly Dictionary<int, GameObject> _layerParents = new Dictionary<int, GameObject>();
+        private readonly Dictionary<int, GameObject> _layerParentsSolution = new Dictionary<int, GameObject>();
 
         private Board _board;
         private bool _codeExecutionOn;
@@ -43,6 +44,7 @@ namespace Services
         private void Start()
         {
             LoadLevel();
+            LoadSolutionToSolutionWindow();
             LoadSolution();
         }
 
@@ -134,6 +136,107 @@ namespace Services
             tileLevel.transform.position = finalPosition;
         }
 
+        private void LoadSolutionToSolutionWindow()
+        {
+            var lines = Level.SolutionFile.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            var boardParameters = lines.First().Split(',').Select(int.Parse).ToList();
+            var width = boardParameters[0];
+            var height = boardParameters[1];
+            var board = new Board(width, height);
+
+            for (var y = 0; y < height; y++)
+            {
+                var line = lines[y + 1].Split(WidthSeparator.ToCharArray());
+                for (var x = 0; x < width; x++)
+                {
+                    var cell = line[x].Split(DepthSeparator.ToCharArray());
+
+                    var piecePrefabName = cell[0];
+                    var botPrefabName = cell[1];
+                    var tilePrefabName = cell[2];
+
+                    Piece piece = null;
+                    Bot bot = null;
+                    var tileType = TileType.Hole;
+
+                    if (piecePrefabName != string.Empty)
+                    {
+                        var isRandom = piecePrefabName == "piece";
+                        var pieceNumber = isRandom
+                            ? Random.Next(100)
+                            : int.Parse(piecePrefabName.Substring(5));
+                        var pieceTransform = CreateGameObjectInSolution("piece", x, y, 1);
+                        piece = new Piece(new Vector2Int(x, y), pieceNumber, pieceTransform, isRandom);
+                    }
+
+                    if (botPrefabName != string.Empty)
+                    {
+                        var botTransform = CreateGameObjectInSolution(botPrefabName, x, y, 1);
+                        var botAnimator = botTransform.GetComponent<BotAnimator>();
+                        bot = new Bot(new Vector2Int(x, y), botAnimator);
+                        botAnimator.Bot = bot;
+                    }
+
+                    if (tilePrefabName != string.Empty)
+                    {
+                        var rotation = Quaternion.identity;
+                        if (y == 0 || y == height - 1)
+                        {
+                            rotation = Quaternion.AngleAxis(90, Vector3.forward);
+                            if (x == 0 && y == 0) rotation = Quaternion.AngleAxis(90, Vector3.back);
+                            if (x == 0 && y == height - 1) rotation = Quaternion.AngleAxis(180, Vector3.forward);
+                            if (x == width - 1 && y == 0) rotation = Quaternion.AngleAxis(0, Vector3.forward);
+                        }
+
+                        var tile = CreateGameObjectInSolution(tilePrefabName, x, y, 2, rotation).GetComponent<Tile>();
+                        tileType = tile.TileType;
+                    }
+
+                    var field = new Field(tileType, bot, piece);
+                    board[x, y] = field;
+                }
+            }
+
+            GameObject.Find("TileLevelSolution").transform.localScale = new Vector3(100, 100, 100);
+            GameObject.Find("TileLevelSolution").transform.position = new Vector3(100, 100, 100);
+            IncreaseVisibility(GameObject.Find("TileLevelSolution").transform);
+            ClipLevelSolution();
+        }
+
+        private void IncreaseVisibility(Transform t)
+        {
+            var sr = t.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sortingOrder += 20;
+            }
+            for(int i=0; i<t.childCount; i++)
+            {
+                IncreaseVisibility(t.GetChild(i));
+            }
+        }
+
+        private void ClipLevelSolution()
+        {
+            var tileSize = referenceSizeTile.GetComponent<SpriteRenderer>().bounds.size.x;
+            var tileLevel = GameObject.Find("TileLevelSolution");
+
+            var solutionHeight = 700;
+
+            var tileLevelRect = new Rect(0, 0, tileSize * _board.Width, tileSize * _board.Height);
+
+            var finalHeight = solutionHeight;
+            var finalScale = finalHeight / tileLevelRect.height;
+            var finalWidth = tileLevelRect.width * finalScale;
+
+            var center = new Vector3(0, 0);
+
+            var finalPosition = center + new Vector3(-finalWidth / 2 + tileSize/2, -finalHeight / 2, 10);
+
+            tileLevel.transform.localScale = new Vector3(finalScale, finalScale, 1);
+            tileLevel.transform.position = finalPosition;
+        }
+
         private void LoadSolution()
         {
             var lines = Level.SolutionFile.Split(new[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries);
@@ -173,6 +276,8 @@ namespace Services
 
             _solution = board;
         }
+
+        
 
         public IEnumerator InterpretCode(List<ICommand> commands)
         {
@@ -325,6 +430,28 @@ namespace Services
             return newObject;
         }
 
+        private Transform CreateGameObjectInSolution(string prefabName, float xPos, float yPos, int zPos,
+            Quaternion rotation = new Quaternion())
+        {
+            var prefab = Tiles.First(t => t.name == prefabName);
+            var parent = GetLayerParentInSolution(zPos).transform;
+            if (prefab.name == "botHead")
+            {
+                prefab = Resources.Load<Transform>("Bot/Bot");
+                yPos -= 0.472f;
+            }
+            else if (prefab.name == "piece")
+            {
+                yPos -= 0.255f;
+            }
+
+            var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), rotation);
+            newObject.name = prefab.name;
+            newObject.parent = parent;
+
+            return newObject;
+        }
+
         private GameObject GetLayerParent(int layer)
         {
             if (_layerParents.ContainsKey(layer))
@@ -334,6 +461,18 @@ namespace Services
             layerParent.transform.parent = _tileLevelParent.transform;
             _layerParents.Add(layer, layerParent);
             return _layerParents[layer];
+        }
+
+        private GameObject GetLayerParentInSolution(int layer)
+        {
+            if (_layerParentsSolution.ContainsKey(layer))
+                return _layerParentsSolution[layer];
+            var layerParent = new GameObject("Layer " + layer);
+            _tileLevelParent = GameObject.Find("TileLevelSolution") ?? new GameObject("TileLevelSolution");
+            _tileLevelParent.transform.SetParent(GameObject.Find("SolutionWindow").transform);
+            layerParent.transform.parent = _tileLevelParent.transform;
+            _layerParentsSolution.Add(layer, layerParent);
+            return _layerParentsSolution[layer];
         }
     }
 }
