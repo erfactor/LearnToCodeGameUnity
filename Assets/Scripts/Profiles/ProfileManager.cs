@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -14,7 +15,7 @@ namespace Profiles
     {
         public static Profile[] Profiles = new Profile[3];
         public GameObject[] ProfileGameObjects = new GameObject[3];
-        const string filename = "profiles.xml";
+        const string fileName = "profiles.xml";
         public GameObject profilePrefab;
         public GameObject noProfilePrefab;
         private static GameObject _editPanel;
@@ -38,15 +39,19 @@ namespace Profiles
         public void SerializeProfiles()
         {
             var serializer = new XmlSerializer(Profiles.GetType());
-            var textWriter = new XmlTextWriter(filename, Encoding.Default);
+            var textWriter = new XmlTextWriter(fileName, Encoding.Default);
             serializer.Serialize(textWriter, Profiles);
             textWriter.Close();
         }
         
         public void DeserializeProfiles()
         {
+            if (!File.Exists(fileName))
+            {
+                SerializeProfiles();
+            }
             var serializer = new XmlSerializer(Profiles.GetType());
-            var textReader = new XmlTextReader(filename);
+            var textReader = new XmlTextReader(fileName);
             Profiles = (Profile[])serializer.Deserialize(textReader);
             textReader.Close();
             
