@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UI;
 
 public class TrashScript : MonoBehaviour, IDropHandler
 {
