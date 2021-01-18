@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using Services;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StartupManagerScript : MonoBehaviour
 {
+    public TextAsset defaultLevel;
+    public TextAsset defaultLevelSolution;
 
     // Start is called before the first frame update
     void Start()
@@ -13,7 +16,21 @@ public class StartupManagerScript : MonoBehaviour
 
     IEnumerator Startup()
     {
-        if (Config.Debug.SkipIntroAnimation)
+        if (Config.Debug.SkipToLevelScene)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            LevelLoader.Level = new Level()
+            {
+                Number = 1,
+                File = defaultLevel.text,
+                SolutionFile = defaultLevelSolution.text
+            };
+
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(3);
+        }
+
+        else if (Config.Debug.SkipIntroAnimation)
         {
             yield return new WaitForSeconds(0.1f);
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(1);

@@ -120,11 +120,11 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     public void UpdateIndicator(Bot bot, int commandId)
     {
-        indicatorPositions[bot] = commandId;
-        var indicatorToUpdate = indicators[bot];
-        var instruction = panel.CurrentSolution[commandId];
-        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(instruction.go, commandId)));
-        SortIndicators();
+        //indicatorPositions[bot] = commandId;
+        //var indicatorToUpdate = indicators[bot];
+        //var codeLine = panel.Solution[commandId];
+        //StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(codeLine.instruction, commandId)));
+        //SortIndicators();
     }
 
     public IEnumerator CoroutineMoveToPosition(GameObject indicator, Vector2 destination)

@@ -22,7 +22,7 @@ public class RaycastManagerScript : MonoBehaviour
         GameObject.Find("ButtonPanel").GetComponent<CanvasGroup>().blocksRaycasts = false;
         GameObject.Find("SolutionPanelButtons").GetComponent<CanvasGroup>().blocksRaycasts = false;        
 
-        GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(false);
+        //GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(false);
     }
 
     public static void SetRaycastBlockingAfterInstructionReleased()
@@ -32,7 +32,7 @@ public class RaycastManagerScript : MonoBehaviour
         GameObject.Find("ButtonPanel").GetComponent<CanvasGroup>().blocksRaycasts = true;
         GameObject.Find("SolutionPanelButtons").GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-        GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(true);
+        //GameObject.Find("SolutionPanel").GetComponent<CodePanel>().SetRaycastBlockingForAllInstructions(true);
     }
 
     public static void SetRaycastBlockingOnCodeExecutionStart()
@@ -53,11 +53,11 @@ public class RaycastManagerScript : MonoBehaviour
 
     public static void SetFocus()
     {
-        GameObject.Find("Panel").GetComponent<CanvasGroup>().blocksRaycasts = false;
+        GameObject.Find("UIPanel").GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     public static void ReleaseFocus()
     {
-        GameObject.Find("Panel").GetComponent<CanvasGroup>().blocksRaycasts = true;
+        GameObject.Find("UIPanel").GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 }

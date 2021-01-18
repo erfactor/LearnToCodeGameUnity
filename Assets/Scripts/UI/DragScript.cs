@@ -47,18 +47,20 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         startPosition = transform.position;
 
         CodePanel.draggedObject = gameObject;
-        CodePanel.draggedObject.transform.SetParent(GameObject.Find("Panel").transform);
+        CodePanel.draggedObject.transform.SetParent(GameObject.Find("UIPanel").transform);
         var codePanel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
-        var indexOnCodePanel = codePanel.GetGameObjectIndexOnList(gameObject);
-        if (indexOnCodePanel >= 0)
+        var codeLineOnCodePanel = codePanel.GetCorrespondingCodeLine(gameObject);
+        if (codeLineOnCodePanel != null)
         {
-            codePanel.unpinnedCodeline = codePanel.CurrentSolution[indexOnCodePanel];
+            codePanel.Unpin(codeLineOnCodePanel);
+            eventData.pointerDrag = codeLineOnCodePanel.container;
+            //codePanel.unpinnedCodeline = codePanel.Solution[indexOnCodePanel];
                         
-            codePanel.unpinnedCodeline.SetParent(null);
+            //codePanel.unpinnedCodeline.SetParent(null);
 
-            codePanel.Unpin(codePanel.unpinnedCodeline);
-            codePanel.ZipHierarchy(codePanel.unpinnedCodeline);
-            codePanel.Rearrange();
+            //codePanel.Unpin(codePanel.unpinnedCodeline);
+            //codePanel.ZipHierarchy(codePanel.unpinnedCodeline);
+            //codePanel.Rearrange();
         }
 
         //GameObject.Find("RaycastManager").GetComponent<RaycastManagerScript>().SetRaycastBlockingOnInstructionDragged();
@@ -70,10 +72,11 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
     {
         var mousePos = Input.mousePosition;
         transform.position = mousePos;
-        var worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);// * GameObject.Find("Canvas").transform.localScale.x;
-        transform.position = new Vector3(worldMousePos.x, worldMousePos.y, 100);
-
-        Debug.DrawLine(worldMousePos, worldMousePos + new Vector3(100, 100), Color.red, 1f);
+        var worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var codePanelScript = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
+        var offset = codePanelScript.CalculateOffsetForHeldContainer(eventData.pointerDrag);
+        //Debug.Log($"offset: {offset}, name: {eventData.pointerDrag.name}", eventData.pointerDrag);
+        transform.position = new Vector3(worldMousePos.x, worldMousePos.y, 100) - offset;
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -85,15 +88,16 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
 
         CodePanel.draggedObject = null;
         GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayInstructionDropSound();
+        RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        GetComponent<Animator>().SetTrigger("Hover");
+        //GetComponent<Animator>().SetTrigger("Hover");
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        GetComponent<Animator>().SetTrigger("Unhover");
+        //GetComponent<Animator>().SetTrigger("Unhover");
     }
 }

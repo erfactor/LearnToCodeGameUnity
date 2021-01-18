@@ -28,7 +28,7 @@ public class SolutionManagerScript : MonoBehaviour
 
     private void HideSolution(int solutionIndex)
     {
-        var solutionGameObject = GameObject.Find("LevelCanvas").transform.Find("Panel").transform.Find("SolutionPanel");
+        var solutionGameObject = GameObject.Find("LevelCanvas").transform.Find("UIPanel").transform.Find("SolutionPanel");
         solutionGameObject.name = $"SolutionPanel{solutionIndex}";
         solutionGameObject.SetParent(transform);
         solutionGameObject.gameObject.SetActive(false);
@@ -38,7 +38,7 @@ public class SolutionManagerScript : MonoBehaviour
     {
         var solutionGameObject = transform.Find($"SolutionPanel{solutionIndex}");
         solutionGameObject.name = "SolutionPanel";
-        solutionGameObject.SetParent(GameObject.Find("LevelCanvas").transform.Find("Panel"));
+        solutionGameObject.SetParent(GameObject.Find("LevelCanvas").transform.Find("UIPanel"));
         solutionGameObject.gameObject.SetActive(true);
     }
 }

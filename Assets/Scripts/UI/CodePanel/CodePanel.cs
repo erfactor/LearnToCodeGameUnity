@@ -11,33 +11,47 @@ namespace UI
 {
     public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
     {
-        public float MarginTop => 40;
-        public float MarginLeft => 40;
-
         private float ScrollMultiplier = 5;
 
         public static GameObject draggedObject;
+        public CodeLine unpinnedCodeline;
+        public CodeLine fakeSingleLine;
 
-        public List<CodeLine> CurrentSolution { get; private set; }
+        public List<CodeLine> Solution { get; private set; }
+
+        public List<CodeLine> AllCodeLines
+        {
+            get
+            {
+                List<CodeLine> allLines = new List<CodeLine>();
+                
+                for(int i=0; i<Solution.Count; i++)
+                {
+                    allLines.Add(Solution[i]);
+                    allLines.AddRange(Solution[i].AllChildrenInHierarchy);
+                }
+
+                return allLines;
+            }
+        }
 
         private float scrollY;
 
-        private float CanvasScale => GameObject.Find("LevelCanvas").GetComponent<Canvas>().scaleFactor;
-
         private void InitializeSolutions()
         {
-            CurrentSolution = new List<CodeLine>();
+            Solution = new List<CodeLine>();
         }
 
         // Start is called before the first frame update
         void Start()
         {
             InitializeSolutions();
-            InitializePanel();
-            InitializeConstants();
             InitializeGhostInstruction();
 
             draggedObject = null;
+
+            fakeSingleLine = CodeLineFactory.GetStandardCodeLine(GameObject.Instantiate(GameObject.Find("MoveInstruction")));
+
             scrollY = 0;
         }
 
@@ -47,15 +61,6 @@ namespace UI
             ghostInstructionBlock.transform.SetParent(GameObject.Find("NotVisible").transform);
         }
 
-        void InitializeConstants()
-        {
-
-        }
-
-        void InitializePanel()
-        {
-
-        }
 
         public static bool IsInRect(Rect r, Vector2 pos)
         {
@@ -63,25 +68,95 @@ namespace UI
         }
 
         void FixedUpdate()
-        {
-            if (draggedObject != null && IsMouseInCodePanel())
+        {            
+            var isMouseInCodePanel = IsMouseInCodePanel();
+
+            if (draggedObject != null && isMouseInCodePanel)
             {
                 HandleDrag();
             }
             else
             {
-                RemoveGhostInstruction();
+                //RemoveGhostInstruction();
             }
 
             UpdateScroll();
-            SetPositions();
+            UpdatePositions();
+        }
+
+        private void UpdatePositions()
+        {
+            var isMouseInCodePanel = IsMouseInCodePanel();
+            var isAnythingDragged = draggedObject != null;
+            var applyRepelForce = isMouseInCodePanel && isAnythingDragged;
+            var allCodeLines = AllCodeLines;
+
+            var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            var allContainers = GetAllCodeLineContainersSorted();
+
+            var parentLine = GetParentBlockUnderMousePosition(allContainers);
+
+            for(int i=0; i<allCodeLines.Count; i++)
+            {
+                var currentLine = allCodeLines[i];
+                currentLine.BaseUpdate();
+            }
+
+            var linesToCalculateRepel = GetCodeLinesToUpdatePhysics(parentLine);
+
+            if (isMouseInCodePanel)
+            {
+                for (int i = 0; i < linesToCalculateRepel.Count; i++)
+                {
+                    var currentLine = linesToCalculateRepel[i];
+                    if (IsThisOneDragged(currentLine)) continue;
+                    currentLine.RepelUpdate(mousePosition);
+                }
+            }            
+
+            UpdateFiller();
+        }
+
+        private List<CodeLine> GetCodeLinesToUpdatePhysics(CodeLine codeLine)
+        {
+            if (draggedObject == null) return new List<CodeLine>();
+            return GetCodeLineListBasedOnParent(codeLine);
+        }
+
+        public Vector3 CalculateOffsetForHeldContainer(GameObject container)
+        {
+            if (container.tag != "Container") return Vector2.zero;
+            return unpinnedCodeline.instruction.transform.position - unpinnedCodeline.container.transform.position;
+        }
+
+        public void UpdateFiller()
+        {
+            var filler = GameObject.Find("FillerContainer");
+            var root = RootContainer;
+            if (root.transform.childCount == 1) return;
+
+            var lowestChild = RootContainer.transform.GetChild(root.transform.childCount - 2);
+            var childRT = lowestChild.GetComponent<RectTransform>();
+            var bottomY = childRT.anchoredPosition.y - childRT.sizeDelta.y / 2;
+
+            var fillerRT = filler.GetComponent<RectTransform>();
+            var size = fillerRT.sizeDelta;            
+
+            var newPosition = new Vector2(fillerRT.anchoredPosition.x, bottomY - size.y / 2);
+            fillerRT.anchoredPosition = newPosition;
+        }
+
+        private bool IsThisOneDragged(CodeLine codeLine)
+        {
+            return codeLine == unpinnedCodeline;
         }
 
         GameObject ghostInstructionBlock;
 
         public void HandleDrag()
         {
-            ShowGhostInstruction();
+            //ShowGhostInstruction();
         }
 
         public Vector2 CalculatePositionForGhostInstruction(Vector2 absoluteDockPosition)
@@ -100,30 +175,6 @@ namespace UI
             newPosition -= new Vector2(0, scrollY);
             return newPosition;
         }
-
-        public Vector2 GetOffsetForGhostInstruction(CodeLine ifLine)
-        {
-            if (ifLine == null) return Vector2.zero;
-            return new Vector2((ifLine.Indent + 1) * CodeLine.IndentPixelMultiplifier, 0);
-        }
-
-        public void ShowGhostInstruction()
-        {
-            int ghostBlockIndex = GetSlotIndexUnderMousePosition();
-            CodeLine ifLine = GetIfBlockUnderMousePosition();
-            //if (LastGhostBlockIndex == ghostBlockIndex) return;
-
-            var dockPosition = CalculatePositionForGhostInstruction(GetAbsoluteDockPositionForIndex(ghostBlockIndex)) + GetOffsetForGhostInstruction(ifLine);
-
-            ghostInstructionBlock.transform.SetParent(transform);
-            ghostInstructionBlock.GetComponent<RectTransform>().anchoredPosition = dockPosition; //plus scroll!
-        }
-
-        public void RemoveGhostInstruction()
-        {
-            ghostInstructionBlock.transform.SetParent(GameObject.Find("NotVisible").transform);
-        }
-
         private bool IsMouseInCodePanel()
         {
             var absoluteRect = gameObject.GetComponent<RectTransform>().rect;
@@ -131,88 +182,7 @@ namespace UI
             Vector2 position = GetMousePositionOnCodePanel();
             bool isIn = IsInRect(relativeRect, position);
             return isIn;
-        }
-
-        public void SetPositions()
-        {
-            bool isAnythingDragged = draggedObject != null && IsMouseInCodePanel();
-
-            Vector2 relativeMousePosition = GetMousePositionOnCodePanel();
-
-            for (int i = 0; i < CurrentSolution.Count; i++)
-            {
-                bool isThisOneDragged = draggedObject == CurrentSolution[i].go;
-                CurrentSolution[i].UpdatePosition(isAnythingDragged, isThisOneDragged, scrollY, relativeMousePosition);
-            }
-        }
-
-        public void OnDrop(PointerEventData eventData)
-        {
-            Debug.Log("OnDrop, codepanel");
-            if (eventData.pointerDrag.gameObject.name == "InstructionBank") return;
-            if (eventData.pointerDrag != null)
-            {
-                HandleDrop(eventData);
-            }
-        }
-
-        private void HandleDrop(PointerEventData eventData)
-        {
-            RemoveGhostInstruction();
-
-            HandleMoveInstructionFirstDrop(eventData);
-            HandleIfInstructionFirstDrop(eventData);
-            ShowDirectionIndicatorIfNeeded(eventData);
-            ShowComparisonTypeIndicatorIfNeeded(eventData);
-            ShowDropDownIfNeeded(eventData);
-
-            RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
-
-            int index = GetSlotIndexUnderMousePosition();
-
-            CodeLine parent = GetIfBlockUnderMousePosition();
-
-            InsertAtSlot(index, eventData.pointerDrag, parent);
-        }
-
-        private CodeLine GetIfBlockUnderMousePosition()
-        {
-            if (draggedObject == null) return null;
-
-            var mousePosition = GetMousePositionOnCodePanel();
-            for (int i = CurrentSolution.Count - 1; i >= 0; i--)
-            {
-                if (!InstructionHelper.IsIfInstruction(CurrentSolution[i].go))
-                {
-                    continue;
-                }
-
-                Rect nest = CurrentSolution[i].Nest;
-                Rect nestScrolled = new Rect(nest.position + new Vector2(0, scrollY), nest.size);
-
-                if (IsInRect(nestScrolled, mousePosition))
-                {
-                    CurrentSolution[i].TemporaryCodeLineNestHeight = unpinnedCodeline?.NestHeight ?? CodeLine.DefaultHeight;
-                    //SetDebugNestInRect(nest);
-                    return CurrentSolution[i];
-                }
-                else
-                {
-                    CurrentSolution[i].TemporaryCodeLineNestHeight = 0;
-                }
-            }
-            return null;
-        }
-
-        private void SetDebugNestInRect(Rect rect)
-        {
-            var debugRect = GameObject.Find("DebugRect");
-            var debugRectTransform = debugRect.GetComponent<RectTransform>();
-            debugRectTransform.anchoredPosition = rect.center + new Vector2(0, -rect.height); //y flip
-            debugRectTransform.sizeDelta = rect.size * 1.0f;
-            debugRect.transform.SetParent(transform.root);
-            debugRect.transform.SetParent(GameObject.Find("SolutionPanel").transform);
-        }
+        }       
 
         private void HandleMoveInstructionFirstDrop(PointerEventData eventData)
         {
@@ -239,7 +209,6 @@ namespace UI
             ShowDirectionIndicatorIfNeeded(eventData);
             ShowComparisonTypeIndicatorIfNeeded(eventData);
             ShowDropDownIfNeeded(eventData);
-            //StartCoroutine(CoroutineExpandIfBlockOnFirstDrop(eventData.pointerDrag.GetComponent<RectTransform>()));
             StartCoroutine(CoroutineHandleIfInstructionDrop(eventData,
                 eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>(),
                 eventData.pointerDrag.transform.Find("ComparisonIndicator").GetComponent<ComparisonTypeIndicatorScript>()
@@ -281,7 +250,6 @@ namespace UI
                 eventData.pointerDrag.transform.Find("Dropdown").gameObject.SetActive(true);
             }
         }
-
         private Vector2 TranslateMousePositionToPanel(Vector2 position)
         {
             var middle = new Vector2(gameObject.transform.position.x, gameObject.transform.position.y);
@@ -293,282 +261,9 @@ namespace UI
         {
             Vector2 absoluteMousePosition = Input.mousePosition;
             Vector2 worldSpaceCoordinates = Camera.main.ScreenToWorldPoint(absoluteMousePosition);
-            Vector2 afterScrollAdding = worldSpaceCoordinates + new Vector2(0, scrollY);
+            Vector2 afterScrollAdding = worldSpaceCoordinates;// + new Vector2(0, scrollY);
             Vector2 mousePositionOnCodePanel = TranslateMousePositionToPanel(afterScrollAdding);
             return mousePositionOnCodePanel;
-        }
-
-        private int GetSlotIndexUnderMousePosition()
-        {
-            var mousePositionOnPanel = GetMousePositionOnCodePanel();
-
-            if (CurrentSolution.Count == 0) return 0;
-
-            else
-            {
-                if (mousePositionOnPanel.y >= CurrentSolution[0].dockPosition.y) // add at the top
-                {
-                    return 0;
-                }
-
-                else if (mousePositionOnPanel.y < CurrentSolution[CurrentSolution.Count - 1].dockPosition.y)//add at the bottom
-                {
-                    if (draggedObject == CurrentSolution[CurrentSolution.Count - 1].go) return CurrentSolution.Count - 1;
-                    return CurrentSolution.Count;
-                }
-
-                else
-                {
-                    for (int i = 0; i < CurrentSolution.Count - 1; i++)
-                    {
-                        if (mousePositionOnPanel.y <= CurrentSolution[i].dockPosition.y && mousePositionOnPanel.y > CurrentSolution[i + 1].dockPosition.y)
-                        {
-                            return i + 1;
-                        }
-                    }
-                }
-            }
-
-            throw new System.Exception("Could not find a slot to fill.");
-        }
-
-        public int GetGameObjectIndexOnList(GameObject go)
-        {
-            for (int i = 0; i < CurrentSolution.Count; i++)
-            {
-                if (CurrentSolution[i].go == go) return i;
-            }
-
-            return -1;
-        }
-
-        private void InsertAtSlot(int index, GameObject go, CodeLine parent)
-        {
-            if (unpinnedCodeline != null)
-            {
-                Pin(unpinnedCodeline, ref index);
-                UnzipHierarchy(unpinnedCodeline);
-                unpinnedCodeline.SetParent(parent);
-                unpinnedCodeline = null;
-                Rearrange();
-                return;
-            }
-
-            int indexOfPresentLine = GetGameObjectIndexOnList(go); //check if the dragged object is already on the code panel
-
-            if (indexOfPresentLine >= 0)
-            {
-                CodeLine draggedLine = CurrentSolution[indexOfPresentLine];
-                if (parent != draggedLine && draggedLine.HasChildInHierarchy(parent))
-                {
-                    Debug.LogWarning("User tried to do impossible nesting.");
-                    return;
-                }
-
-                draggedLine.SetParent(parent);
-                CurrentSolution.RemoveAt(indexOfPresentLine);
-
-                if (index > indexOfPresentLine) index--;
-                CurrentSolution.Insert(index, draggedLine);
-            }
-
-            else
-            {
-                InsertNormalInstruction(index, go, parent);
-            }
-
-            if (InstructionHelper.IsJumpInstruction(go) && indexOfPresentLine < 0)
-            {
-                InsertJumpInstruction(index, go, parent);
-            }
-
-            Rearrange();
-        }
-
-        public void InsertNormalInstruction(int index, GameObject go, CodeLine parent)
-        {
-            Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-            CodeLine newCodeLine = new CodeLine(go, newDockPosition, parent);
-            CurrentSolution.Insert(index, newCodeLine);
-            go.transform.SetParent(transform);
-        }
-
-        public void InsertJumpInstruction(int index, GameObject go, CodeLine parent)
-        {
-            GameObject jumpInstructionLabel = GetJumpInstructionLabel(go);
-            Vector2 newDockPosition = GetAbsoluteDockPositionForIndex(index);
-            CodeLine newCodeLine = new CodeLine(jumpInstructionLabel, newDockPosition, parent);
-            CurrentSolution.Insert(index, newCodeLine);
-            go.GetComponent<JumpInstructionScript>().AttachArrow();
-        }
-
-        public void Remove(GameObject go, CodeLine codeLine = null)
-        {
-            RemoveGhostInstruction();
-
-            var lineToRemove = unpinnedCodeline;
-
-            if (lineToRemove != null)
-            {
-                if (InstructionHelper.IsIfInstruction(go))
-                {
-                    CodeLine ifInstruction = codeLine ?? unpinnedCodeline;
-                    for (int i = ifInstruction.children.Count - 1; i >= 0; i--)
-                    {
-                        var child = ifInstruction.children[i];
-                        Remove(child.go, child);
-                        child.SetParent(null);
-                    }
-                }
-
-                if (InstructionHelper.IsJumpInstruction(go))
-                {
-                    GameObject bindedInstruction = go.GetComponent<JumpInstructionScript>().bindedInstruction;
-                    if (bindedInstruction != null)
-                    {
-                        go.GetComponent<JumpInstructionScript>().bindedInstruction = null;
-                        CurrentSolution.RemoveAt(GetGameObjectIndexOnList(bindedInstruction));
-                        Destroy(bindedInstruction);
-                    }
-                }
-
-                CurrentSolution.Remove(lineToRemove);
-                foreach (var line in CurrentSolution)
-                {
-                    if (line.children.Contains(lineToRemove))
-                    {
-                        line.children.Remove(lineToRemove);
-                        break;
-                    }
-                }
-                Destroy(go);
-            }
-
-            else
-            {
-                Destroy(go);
-            }
-
-
-
-            unpinnedCodeline = null;
-
-            Rearrange();
-        }
-
-        public float BlockSizeY = 60;
-
-        public float GetYPositionForFirstChild()
-        {
-            return -BlockSizeY;
-        }
-
-        public float GetIndentX(Vector2 parentSize, Vector2 childSize)
-        {
-            return -parentSize.x / 2 + CodeLine.IndentPixelMultiplifier + childSize.x / 2;
-        }
-
-        public void ZipHierarchy(CodeLine parent)
-        {
-            var parentRT = parent.go.GetComponent<RectTransform>();
-            var currentPositionY = GetYPositionForFirstChild();
-            foreach (var child in parent.children)
-            {
-                child.go.transform.SetParent(parent.go.transform);
-                var childRT = child.go.GetComponent<RectTransform>();
-                childRT.anchoredPosition = new Vector2(GetIndentX(parentRT.sizeDelta, childRT.sizeDelta), currentPositionY);
-                currentPositionY -= child.NestSize.y;
-                ZipHierarchy(child);
-            }
-        }
-
-        public void UnzipHierarchy(CodeLine parent)
-        {
-            parent.go.transform.SetParent(transform);
-            foreach (var child in parent.children)
-            {
-                UnzipHierarchy(child);
-            }
-        }
-
-        public void Unpin(CodeLine parent)
-        {
-            CurrentSolution.Remove(parent);
-            foreach (var child in parent.children)
-            {
-                Unpin(child);
-            }
-        }
-
-        public CodeLine unpinnedCodeline = null;
-
-        public void Pin(CodeLine parent, ref int index)
-        {
-            CurrentSolution.Insert(index, parent);
-            foreach (var child in parent.children)
-            {
-                index++;
-                Pin(child, ref index);
-            }
-        }
-
-        private void RearrangeChildren(int parentIndex)
-        {
-            var parentCodeLine = CurrentSolution[parentIndex];
-
-            for (int i = parentCodeLine.children.Count - 1; i >= 0; i--)
-            {
-                var child = parentCodeLine.children[i];
-                var childIndex = GetGameObjectIndexOnList(parentCodeLine.children[i].go);
-                if (InstructionHelper.IsIfInstruction(child.go))
-                {
-                    RearrangeChildren(childIndex);
-                }
-                CurrentSolution.Remove(child);
-                CurrentSolution.Insert(parentIndex + 1, child);
-            }
-        }
-
-        public void Rearrange()
-        {
-            for (int i = 0; i < CurrentSolution.Count; i++)
-            {
-                CurrentSolution[i].ChangeDockPosition(GetAbsoluteDockPositionForIndex(i));
-                CurrentSolution[i].RevalidateChildren();
-                CurrentSolution[i].TemporaryCodeLineNestHeight = 0;
-            }
-        }
-
-        private Vector2 GetAbsoluteDockPositionForIndex(int index)
-        {
-            var calculatedDockPosition = GetAbsoluteDockPositionForFirstBlock();
-
-            for (int i = 0; i < index; i++)
-            {
-                var current = CurrentSolution[i];
-                var nextBlockSize = current.BlockSpacing.y;
-                calculatedDockPosition.y -= nextBlockSize;
-            }
-
-            return calculatedDockPosition;
-        }
-
-        private Vector2 GetAbsoluteDockPositionForFirstBlock()
-        {
-            float xPos = MarginLeft;
-            float yPos = MarginTop;
-
-            float panelHeight = gameObject.GetComponent<RectTransform>().rect.height;
-
-            return new Vector2(xPos, panelHeight - yPos);
-        }
-
-        public void SetRaycastBlockingForAllInstructions(bool blockRaycasts)
-        {
-            foreach (var instruction in CurrentSolution)
-            {
-                instruction.go.GetComponent<CanvasGroup>().blocksRaycasts = blockRaycasts;
-            }
         }
 
         public GameObject GetJumpInstructionLabel(GameObject jumpInstruction)
@@ -582,7 +277,7 @@ namespace UI
         public List<ICommand> GetCommands()
         {
             var commandHelper = new CommandHelper();
-            return commandHelper.GetCommands(CurrentSolution);
+            return commandHelper.GetCommands(AllCodeLines);
         }
 
         public void OnScroll(PointerEventData eventData)
@@ -592,7 +287,7 @@ namespace UI
 
         private void ApplyScroll(PointerEventData eventData)
         {
-            scrollVelocity += eventData.scrollDelta.y * ScrollMultiplier;
+            scrollVelocity += -eventData.scrollDelta.y * ScrollMultiplier;
         }
 
         private const float scrollFrameDecay = 0.15f;
@@ -606,6 +301,8 @@ namespace UI
             scrollY += scrollVelocity;
             TrimScroll();
             TrimScrollVelocity();
+            var rootRT = RootContainer.GetComponent<RectTransform>();
+            rootRT.anchoredPosition = new Vector2(0, scrollY);
         }
 
         private void TrimScroll()
@@ -617,401 +314,416 @@ namespace UI
         {
             scrollVelocity = Mathf.Clamp(scrollVelocity, -maxScrollVelocity, maxScrollVelocity);
         }
-    }
 
-    public class CodeLine
-    {
-        public GameObject go;
-
-        public List<CodeLine> children = new List<CodeLine>();
-        public CodeLine parent = null; //null means not being in an if block
-
-        public const float SizeY = 40; //height of the single line
-        public const float SpacingY = 20; // height of the space between two lines
-
-        public float LockCageSize => SizeY + SpacingY;
-
-        public Vector2 dockPosition { get; set; }
-
-        private Vector2 velocity;
-
-        private Vector2 shift;
-
-        private GameObject nestBackground;
-
-        public bool HasTemporaryCodeLine => TemporaryCodeLineNestHeight > 0;
-
-        public float TemporaryCodeLineNestHeight { get; set; }
-        public static float DefaultBackgroundSizeChange => DefaultHeight;
-        private float _desiredBackgroundHeight;
-
-        public const float MinimalBackgroundNestHeight = 0;
-        private float DesiredBackgroundHeight
+        public List<GameObject> GetAllCodeLineContainers()
         {
-            get
-            {
-                return NestHeight - (SpacingY + SizeY) + TemporaryCodeLineNestHeight;
-            }
+            return GameObject.FindGameObjectsWithTag("Container").ToList();
         }
 
-        public Vector2 BlockSpacing
+        public List<GameObject> GetAllCodeLineContainersSorted()
         {
-            get
-            {
-                var width = 150;
-                var height = SizeY + SpacingY;
-                return new Vector2(width, height);
-            }
+            return GameObject.FindGameObjectsWithTag("Container").OrderByDescending(x => x.transform.position.y).ToList();
         }
 
-        public Vector2 BlockSize
+        public CodeLine GetCorrespondingCodeLine(GameObject containerOrInstruction)
         {
-            get
-            {
-                var rect = go.GetComponent<RectTransform>().rect;
-                return new Vector2(rect.width, rect.height);
-            }
+            var fit = AllCodeLines.Where(x => x.container == containerOrInstruction || x.instruction == containerOrInstruction).ToList();
+            if (fit.Any()) return fit.First();
+            return null;
         }
 
-        public Vector2 TopLeft
+        public GameObject FillerContainer => GameObject.Find("FillerContainer");
+
+        public Rect GetContainerRect(GameObject container)
         {
-            get
-            {
-                Vector2 size = BlockSize;
-                Vector2 topLeft = dockPosition + new Vector2(-size.x / 2, size.y / 2);
-                return topLeft;
-            }
+            var realPosition = container.transform.position;
+            var containerSize = container.GetComponent<RectTransform>().rect.size;
+            Vector2 topLeft = new Vector2(realPosition.x - containerSize.x / 2, realPosition.y + containerSize.y / 2);
+            return new Rect(topLeft, containerSize);
         }
 
-        public Vector2 DownLeft
+        public int GetIndexToInsertUnderMousePosition(List<GameObject> childInstructions)
         {
-            get
-            {
-                Vector2 size = BlockSize;
-                Vector2 downLeft = dockPosition + new Vector2(-size.x / 2, -size.y / 2);
-                return downLeft;
-            }
-        }
+            var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        public Rect Inside
-        {
-            get
-            {
-                Vector2 size = BlockSize;
-                Vector2 downLeft = dockPosition - new Vector2(size.x / 2, -size.y / 2);
-                return new Rect(downLeft, size);
-            }
-        }
+            childInstructions = childInstructions.OrderByDescending(x => x.transform.position.y).ToList();
 
-        public const float DefaultHeight = SizeY + SpacingY;
-
-        public float ChildrenHeight
-        {
-            get
+            for (int i = childInstructions.Count-1; i>=0; i--)
             {
-                float sumHeight = 0;
-                foreach (var child in children)
+                var current = childInstructions[i];
+                if (mousePosition.y < current.transform.position.y)
                 {
-                    sumHeight += child.NestHeight;
+                    return i+1;
                 }
+            }
 
-                return sumHeight;
+            return 0;
+        }
+
+        private bool IsContainerUnpinned(GameObject container)
+        {
+            return container.transform.parent == UnpinnedCodeLineParentTransform;
+        }   
+        
+        private void ClearTemporaryInstructionFlag(List<GameObject> allContainers)
+        {
+            for(int i=0; i<allContainers.Count; i++)
+            {
+                GameObject container = allContainers[i];
+                var correspondingCodeLine = GetCorrespondingCodeLine(container);
+                if (correspondingCodeLine == null) continue;
+                correspondingCodeLine.TemporaryCodeLine = null;
             }
         }
 
-        public const int IndentPixelMultiplifier = 40;
-
-        public int Indent
+        public CodeLine GetParentBlockUnderMousePosition(List<GameObject> allContainers)
         {
-            get
+            ClearTemporaryInstructionFlag(allContainers);
+            var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            for (int i = allContainers.Count - 1; i >= 0; i--)
             {
-                if (parent == null) return 0;
-                return parent.Indent + 1;
-            }
-        }
+                GameObject container = allContainers[i];
+                if (IsContainerUnpinned(container)) continue; //
+                var correspondingCodeLine = GetCorrespondingCodeLine(container);
+                if (correspondingCodeLine == null) continue;
+                if (!InstructionHelper.IsGroupInstruction(correspondingCodeLine.instruction)) continue;
 
-        public int IndentInPixels => Indent * IndentPixelMultiplifier;
-
-        public float NestHeight => DefaultHeight + ChildrenHeight + IfBonusForNestHeight;
-
-        public float NestWidth => 300;
-
-        public Vector2 NestSize => new Vector2(NestWidth, NestHeight);
-
-        public Vector2 TopLeftWithRepel
-        {
-            get
-            {
-                Vector2 middle = go.GetComponent<RectTransform>().anchoredPosition;
-                Vector2 size = BlockSize;
-                Vector2 topLeft = middle + new Vector2(-size.x / 2, size.y / 2);
-                return topLeft;
-            }
-        }
-        public Rect Nest => new Rect(TopLeftWithRepel, NestSize);
-
-        private int ifChildrenCount = 0;
-        public float IfBonusForNestHeight => MinimalBackgroundNestHeight + MinimalBackgroundNestHeight * ifChildrenCount;
-
-        public Vector2 GetDockPositionWithScroll(Vector2 scrollVector)
-        {
-            return dockPosition - scrollVector;
-        }
-
-        public CodeLine(GameObject go, Vector2 dockPosition, CodeLine parent)
-        {
-            this.velocity = Vector2.zero;
-
-            this.go = go;
-            this.dockPosition = dockPosition;
-            go.transform.position = dockPosition;
-
-            this.SetParent(parent);
-
-            if (InstructionHelper.IsIfInstruction(go))
-            {
-                CreateNestBackgroundIfNeeded();
-            }
-        }
-
-        public bool HasChildInHierarchy(CodeLine child)
-        {
-            if (child == this) return true;
-
-            foreach (var v in children)
-            {
-                if (v.HasChildInHierarchy(child)) return true;
+                if (correspondingCodeLine.IsInsideNest(mousePosition))
+                {
+                    if (draggedObject != null)
+                    {
+                        correspondingCodeLine.TemporaryCodeLine = unpinnedCodeline ?? fakeSingleLine;
+                    }
+                    return correspondingCodeLine;
+                }
             }
 
-            return false;
+            return null;
         }
 
-        public void SetParent(CodeLine newParent)
+        public bool HasDraggedObjectAValidTag(PointerEventData eventData)
         {
-            if (newParent == this) return;
+            List<string> validTags = new List<string>() { "Instruction", "Container" };
+            return (validTags.Contains(eventData.pointerDrag.tag));
+        }
 
-            if (parent != null)
+        public void OnDrop(PointerEventData eventData)
+        {
+            if (!HasDraggedObjectAValidTag(eventData))
             {
-                parent.RemoveChild(this);
-            }
-
-            parent = newParent;
-
-            if (newParent != null)
-            {
-                newParent.AddChild(this);
-            }
-        }
-
-        private void CreateNestBackgroundIfNeeded()
-        {
-            if (nestBackground != null) return;
-            nestBackground = go.transform.Find("NestBackground").gameObject;
-            _desiredBackgroundHeight = MinimalBackgroundNestHeight;
-        }
-
-        public void ExpandBackground(float backgroundSizeChange)
-        {
-            CreateNestBackgroundIfNeeded();
-            if (parent != null) parent.ExpandBackground(backgroundSizeChange);
-            _desiredBackgroundHeight += backgroundSizeChange;
-        }
-
-        public void ShrinkBackground(float backgroundSizeChange)
-        {
-            CreateNestBackgroundIfNeeded();
-            if (parent != null) parent.ExpandBackground(backgroundSizeChange);
-            _desiredBackgroundHeight -= backgroundSizeChange;
-            if (_desiredBackgroundHeight < MinimalBackgroundNestHeight)
-            {
-                _desiredBackgroundHeight = MinimalBackgroundNestHeight;
-            }
-        }
-
-        public void RepairNestBackground()
-        {
-            _desiredBackgroundHeight = NestHeight;
-        }
-
-        public void AddChild(CodeLine child)
-        {
-            CreateNestBackgroundIfNeeded();
-            ExpandBackground(child.NestHeight);
-            children.Add(child);
-            RefreshIfBonus();
-        }
-
-        public void RemoveChild(CodeLine child)
-        {
-            ShrinkBackground(child.NestHeight);
-            children.Remove(child);
-            RefreshIfBonus();
-        }
-
-        public int GetAllChildrenCount()
-        {
-            return children.Sum(x => x.GetAllChildrenCount()) + children.Count;
-        }
-
-        private void RefreshIfBonus()
-        {
-            ifChildrenCount = children.Where(x => InstructionHelper.IsIfInstruction(x.go)).Count();
-        }
-
-        public void ChangeDockPosition(Vector2 newDockPosition, int indent = 0)
-        {
-            newDockPosition = GetPositionTopDown(newDockPosition.x, newDockPosition.y);
-            this.dockPosition = newDockPosition;
-        }
-
-        public void RepairShift(Vector2 oldPos, Vector2 newPos)
-        {
-            Vector2 midpoint = oldPos + shift;
-            shift = newPos - midpoint;
-        }
-
-        public Vector2 GetPositionTopDown(float x, float y)
-        {
-            var parentRectTransform = go.transform.parent.GetComponent<RectTransform>();
-            var parentWidth = parentRectTransform.rect.width;
-            var parentHeight = parentRectTransform.rect.height;
-
-            var thisRectTransform = go.transform.GetComponent<RectTransform>();
-            var thisWidth = thisRectTransform.rect.width;
-            var thisHeight = thisRectTransform.rect.height;
-
-            Vector2 newPosition = new Vector2(x - parentWidth / 2 + thisWidth / 2, y - parentHeight / 2 - thisHeight / 2);
-            return newPosition;
-        }
-
-        public const float MinDistanceForRepelForce = 10f;
-        public const float MaxDistanceForRepelForce = SizeY + SpacingY; // height of the single element
-        public const float ReturnForceScaleFactor = 0.08f;
-        public const float RepelForceScaleFactor = 8;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="forceSourcePosition">Mouse position AFTER applying the scroll</param>
-        public Vector2 GetRepelForce(Vector2 forceSourcePosition, Vector2 scrollVector)
-        {
-            Vector2 relativeDock = GetDockPositionWithScroll(scrollVector);
-
-            float yDiff = relativeDock.y - forceSourcePosition.y + scrollVector.y;
-
-            yDiff = Mathf.Clamp(yDiff, -MinDistanceForRepelForce, MinDistanceForRepelForce);
-
-
-            if (yDiff >= 0 && yDiff < MinDistanceForRepelForce) yDiff = MinDistanceForRepelForce;
-            if (yDiff <= 0 && yDiff > -MinDistanceForRepelForce) yDiff = -MinDistanceForRepelForce;
-
-            if (yDiff > 0) return new Vector2(0, 0); //we do not want to repel the upper blocks
-
-            return new Vector2(0, RepelForceScaleFactor / Mathf.Pow(Mathf.Abs(yDiff), 0.45f) * Mathf.Sign(yDiff));
-        }
-
-        public Vector2 GetReturnVector(Vector2 scrollVector)
-        {
-            return -shift / 24;
-        }
-
-        public void UpdatePosition(bool isAnythingDragged, bool isThisOneDragged, float scrollY, Vector2 relMousePosition)
-        {
-            if (isThisOneDragged)
-            {
-                DrawContour(relMousePosition);
+                Debug.LogWarning($"Tried to drop an invalid object to the solution panel. Invalid object name: {eventData.pointerDrag.name}", eventData.pointerDrag);
                 return;
             }
 
-            Vector2 sumForce = Vector2.zero;
+            var allContainers = GetAllCodeLineContainersSorted();
+            if (unpinnedCodeline != null)
+            {                       
+                allContainers.Remove(unpinnedCodeline.container);
+            }
 
-            Vector2 scrollVector = new Vector2(0, scrollY);
-            Vector2 relativeMousePosition = relMousePosition;// (Vector2)Input.mousePosition - scrollVector;
+            CodeLine parentLine = GetParentBlockUnderMousePosition(allContainers);
+            List<GameObject> childInstructions = GetChildListBasedOnRoot(parentLine);
+            int index = GetIndexToInsertUnderMousePosition(childInstructions);
 
-            if (isAnythingDragged)
+            Debug.Log($"container index: {index}");
+            if (parentLine != null) Debug.Log($"parentLine", parentLine.container);
+            CodeLine lineToInsert = unpinnedCodeline ?? CodeLineFactory.GetStandardCodeLine(eventData.pointerDrag);
+            
+            InsertAtLine(lineToInsert, index, parentLine);
+
+            HandlePostDrag(lineToInsert, eventData);
+            InsertJumpLabelInstructionIfNeeded(lineToInsert, index, parentLine);
+
+            Pin();
+        }
+
+        private void HandlePostDrag(CodeLine lineToInsert, PointerEventData eventData)
+        {
+            HandleMoveInstructionFirstDrop(eventData);
+            HandleIfInstructionFirstDrop(eventData);
+            ShowDirectionIndicatorIfNeeded(eventData);
+            ShowComparisonTypeIndicatorIfNeeded(eventData);
+            ShowDropDownIfNeeded(eventData);
+
+            RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
+        }
+
+        private void InsertJumpLabelInstructionIfNeeded(CodeLine insertedLine, int index, CodeLine parentLine)
+        {
+            if (unpinnedCodeline != null) return;
+            if (!InstructionHelper.IsJumpInstruction(insertedLine.instruction)) return;
+            if (InstructionHelper.IsJumpInstructionLabel(insertedLine.instruction)) return;
+            var jumpLabel = insertedLine.instruction.GetComponent<JumpInstructionScript>().CreateBindedLabel();
+            var labelCodeLine = CodeLineFactory.GetStandardCodeLine(jumpLabel);
+            InsertAtLine(labelCodeLine, index, parentLine);
+            insertedLine.instruction.GetComponent<JumpInstructionScript>().AttachArrow();
+        }
+
+        public List<GameObject> GetChildListBasedOnRoot(CodeLine parentLine)
+        {
+            if (parentLine == null) return GetAllInstructionsWithoutParent();
+            else return GetAllChildInstructions(parentLine);
+        }
+
+        public List<CodeLine> GetCodeLineListBasedOnParent(CodeLine parentLine)
+        {
+            if (parentLine == null) return Solution;
+            else return parentLine.children;
+        }
+
+        public List<GameObject> GetAllChildInstructions(CodeLine parentLine)
+        {
+            List<GameObject> children = new List<GameObject>();
+            foreach(var child in parentLine.children)
             {
-                sumForce = GetRepelForce(relativeMousePosition, scrollVector) + GetReturnVector(scrollVector);
+                children.Add(child.instruction);
+            }
+            return children;
+        }
+
+        public List<GameObject> GetAllInstructionsWithoutParent()
+        {
+            List<GameObject> children = new List<GameObject>();
+            var root = RootContainer.transform;
+            for(int i=0; i<root.childCount-1; i++)
+            {
+                var instruction = GetNthInstructionInRootComponent(i, root);
+                children.Add(instruction);
+            }
+            return children;
+        }
+
+        public GameObject GetNthInstructionInRootComponent(int n, Transform root)
+        {
+            var nthContainer = root.GetChild(n);
+            for(int i=0; i<nthContainer.childCount; i++)
+            {
+                var child = nthContainer.GetChild(i);
+                if (child.tag == "Instruction") return child.gameObject;
+            }
+
+            throw new Exception("No instruction was present in a container.");
+        }
+
+        private GameObject RootContainer => GameObject.Find("RootContainer");
+
+        public void InsertAtLine(CodeLine lineToInsert, int index, CodeLine parentLine)
+        {
+            GameObject parentGameObject;
+            if (parentLine == null)
+            {
+                parentGameObject = RootContainer;
             }
             else
             {
-                sumForce = GetReturnVector(scrollVector);
+                parentLine.TemporaryCodeLine = null;
+                parentGameObject = parentLine.instruction;
             }
 
-            velocity = sumForce;
+            lineToInsert.SetParent(parentLine, index);
+            lineToInsert.container.transform.SetParent(parentGameObject.transform);
 
-            shift += velocity;
+            int parentLineIndex = parentLine == null ? 0 : parentLine.InstructionIndex;
 
-            Vector2 newPosition = new Vector2(dockPosition.x + IndentInPixels, shift.y + GetDockPositionWithScroll(scrollVector).y);
-
-            go.GetComponent<RectTransform>().anchoredPosition = newPosition;
-
-            DrawContour();
-
-            if (InstructionHelper.IsJumpInstruction(this.go))
+            if (parentLine == null)
             {
-                if (this.go.GetComponent<JumpInstructionScript>().arrow == null) Debug.Log("Null at arrow");
-                if (this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");
-                this.go.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>().UpdateCurve();
+                Solution.Insert(index + parentLineIndex, lineToInsert);
             }
 
-            UpdateBackgroundNestIfNeeded();
+            lineToInsert.container.transform.SetSiblingIndex(index);
+            lineToInsert.instruction.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            lineToInsert.container.GetComponent<CanvasGroup>().blocksRaycasts = true; 
+
+            Rearrange();
         }
 
-        private void UpdateBackgroundNestIfNeeded()
+        public Vector2 GetTopLeftForFirst(GameObject parentContainer)
         {
-            if (nestBackground == null) return;
-            var rectTransform = nestBackground.GetComponent<RectTransform>();
-            var rect = rectTransform.rect;
-            var parentScale = nestBackground.transform.parent.GetComponent<RectTransform>().localScale;
-
-            var newBackgroundHeight = Mathf.Lerp(rect.height, DesiredBackgroundHeight, 0.2f);
-
-            var ifSize = BlockSize;
-
-            var newPosition = new Vector2((NestWidth - ifSize.x) / 2, -ifSize.y / 2 + -newBackgroundHeight / 2 / parentScale.y);
-            var newSize = Vector2.zero;
-
-            rectTransform.anchoredPosition = newPosition;
-            rectTransform.sizeDelta = newSize;
-            rectTransform.localScale = Vector3.one / parentScale.x;
+            var parent = parentContainer;
+            var size = parent.GetComponent<RectTransform>().sizeDelta;
+            return new Vector2(-size.x / 2, size.y / 2);
         }
 
-        string guid = null;
-        bool drawContour = false;
+        public void Rearrange()
+        {            
+            RearrangeIndices();
+            RearrangePositions(Solution);
+            UpdateFiller();
+        }
 
-        public void DrawContour(Vector2? position = null)
+        private void RemoveDeadJumpInstructions()
         {
-            if (!drawContour) return;
-
-            GameObject instance;
-
-            if (guid == null)
+            var instructions = AllCodeLines;
+            for(int i=instructions.Count-1; i>=0; i--)
             {
-                System.Random rng = new System.Random();
-                guid = Guid.NewGuid().ToString();
-                var debugRectPrefab = GameObject.Find("DebugRect");
-                instance = GameObject.Instantiate(debugRectPrefab);
-                instance.name = "DebugRect" + guid;
-                instance.transform.SetParent(go.transform.parent);
-
-                instance.GetComponent<Image>().color = new Color((float)rng.NextDouble(), (float)rng.NextDouble(), (float)rng.NextDouble());
+                var current = instructions[i];
+                if (InstructionHelper.IsJumpInstruction(current.instruction))
+                {
+                    var script = current.instruction.GetComponent<JumpInstructionScript>();
+                    if (script.bindedInstruction == null)
+                    {
+                        RemoveCodeLineFromSolution(current);
+                        DestroyCodeLine(current);
+                    }
+                }
             }
+        }
+
+        public void RearrangeIndices()
+        {
+            var instructions = AllCodeLines;
+
+            for (int i = 0; i < instructions.Count; i++)
+            {
+                var codeLine = instructions[i];
+                codeLine.InstructionIndex = i+1;
+            }
+        }
+
+        public void RearrangePositions(GameObject parentContainer)
+        {
+            GameObject parentInstruction = null;
+
+            for(int i=0; i<parentContainer.transform.childCount; i++)
+            {
+                var child = parentContainer.transform.GetChild(i);
+                if (child.tag == "Instruction" || parentContainer.name == "SolutionPanel")
+                {
+                    parentInstruction = child.gameObject;
+                    break;
+                }
+            }
+
+            if (parentInstruction == null)
+            {
+                throw new Exception($"Tried to RearrangePositions in null transform. ParentContainer: {parentContainer.name}");
+            }
+
+            var currentTopLeft = GetTopLeftForFirst(parentContainer);
+
+            Debug.Log($"Rearranging in {parentInstruction.name}, it has {parentInstruction.transform.childCount} children", parentInstruction);
+
+            for(int i=0; i < parentInstruction.transform.childCount; i++)
+            {
+                var currentChildContainer = parentInstruction.transform.GetChild(i).gameObject;
+                var rectTransform = currentChildContainer.GetComponent<RectTransform>();
+                var size = rectTransform.sizeDelta;
+
+                var offset = new Vector2(size.x / 2, -size.y / 2);
+
+                var codeLine = GetCorrespondingCodeLine(currentChildContainer);
+
+                if (codeLine == null) continue; //FillerInstruction has no codeline
+
+                rectTransform.anchoredPosition = currentTopLeft + offset;
+
+                foreach(var child in codeLine.children)
+                {
+                    RearrangePositions(currentChildContainer);
+                }
+
+                currentTopLeft -= new Vector2(0, codeLine.BlockHeight);
+                if (InstructionHelper.IsGroupInstruction(codeLine.instruction))
+                {
+                    currentTopLeft -= new Vector2(0, 10);
+                }
+            }
+        }
+
+        public void RearrangePositions(List<CodeLine> lines)
+        {
+            if (lines.Count == 0) return;
+            var parentContainer = lines[0].container.transform.parent.parent;
+            var currentTopLeft = GetTopLeftForFirst(parentContainer.gameObject);
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                var currentChildContainer = lines[i].container;
+                var rectTransform = currentChildContainer.GetComponent<RectTransform>();
+                var size = rectTransform.sizeDelta;
+
+                var offset = new Vector2(size.x / 2, -size.y / 2);
+
+                var currentLine = lines[i];
+
+                rectTransform.anchoredPosition = currentTopLeft + offset;
+
+                RearrangePositions(lines[i].children);
+
+                currentTopLeft -= new Vector2(0, currentLine.BlockHeight);
+                if (InstructionHelper.IsGroupInstruction(currentLine.instruction))
+                {
+                    currentTopLeft -= new Vector2(0, 10);
+                }
+            }
+        }
+
+        Transform UnpinnedCodeLineParentTransform => GameObject.Find("UIPanel").transform;
+        CodeLine oldUnpinnedCodeLineParent = null;
+
+        public void Unpin(CodeLine codeLine)
+        {
+            unpinnedCodeline = codeLine;
+            oldUnpinnedCodeLineParent = unpinnedCodeline.parent;
+            codeLine.SetParent(null);
+            RemoveCodeLineFromSolution(codeLine);
+            codeLine.container.transform.SetParent(UnpinnedCodeLineParentTransform);
+            codeLine.instruction.transform.SetParent(codeLine.container.transform);
+            Rearrange();
+        }
+
+        public void Pin()
+        {
+            unpinnedCodeline = null;
+        }
+
+        public void Remove(GameObject draggedObject)
+        {
+            if (unpinnedCodeline != null)
+            {
+                RemovePairedJumpInstructionIfNeeded(unpinnedCodeline);
+                RemoveUnpinned();
+            }
+
             else
             {
-                instance = GameObject.Find("DebugRect" + guid).gameObject;
+                Destroy(draggedObject);
             }
-
-            var debugRectTransform = instance.GetComponent<RectTransform>();
-            debugRectTransform.anchoredPosition = position ?? dockPosition;
-            debugRectTransform.sizeDelta = go.GetComponent<RectTransform>().sizeDelta * 1.2f;
         }
 
-        internal void RevalidateChildren()
+        public void RemoveUnpinned()
         {
-            children = children.Where(x => x.go != null).ToList();
-            RefreshIfBonus();
+            var codeLine = unpinnedCodeline;
+            DestroyCodeLine(unpinnedCodeline);
+            unpinnedCodeline = null;
+            Rearrange();
+            RemoveDeadJumpInstructions();
         }
-    }
 
+        public void DestroyCodeLine(CodeLine line)
+        {
+            DestroyImmediate(line.instruction);
+            DestroyImmediate(line.container);
+        }
+
+        public void RemovePairedJumpInstructionIfNeeded(CodeLine line)
+        {
+            if (!InstructionHelper.IsJumpInstruction(line.instruction)) return;
+            var paired = line.instruction.GetComponent<JumpInstructionScript>().bindedInstruction;
+            var pairedInstruction = GetCorrespondingCodeLine(paired);
+            if (pairedInstruction == null) return;
+            pairedInstruction.SetParent(null);
+            RemoveCodeLineFromSolution(pairedInstruction);
+            Destroy(pairedInstruction.instruction);
+            Destroy(pairedInstruction.container);
+        }
+
+        public void RemoveCodeLineFromSolution(CodeLine codeLine)
+        {            
+            Solution.Remove(codeLine);
+            codeLine.SetParent(null);
+        }
+    }  
 }
 

@@ -15,56 +15,56 @@ namespace UI
         {
             var line = solution[currentLine];
 
-            if (InstructionHelper.IsMoveInstruction(line.go))
+            if (InstructionHelper.IsMoveInstruction(line.instruction))
             {
-                return new MoveCommand(InstructionHelper.GetInstructionDirection(line.go), currentLine + 1);
+                return new MoveCommand(InstructionHelper.GetInstructionDirection(line.instruction), currentLine + 1);
             }
 
-            if (InstructionHelper.IsPickInstruction(line.go))
+            if (InstructionHelper.IsPickInstruction(line.instruction))
             {
                 return new PickCommand(currentLine + 1);
             }
 
-            if (InstructionHelper.IsPutInstruction(line.go))
+            if (InstructionHelper.IsPutInstruction(line.instruction))
             {
                 return new PutCommand(currentLine + 1);
             }
 
-            if (InstructionHelper.IsAddInstruction(line.go))
+            if (InstructionHelper.IsAddInstruction(line.instruction))
             {
                 return new AddCommand(currentLine + 1);
             }
 
-            if (InstructionHelper.IsSubInstruction(line.go))
+            if (InstructionHelper.IsSubInstruction(line.instruction))
             {
                 return new SubCommand(currentLine + 1);
             }
 
-            if (InstructionHelper.IsDecInstruction(line.go))
+            if (InstructionHelper.IsDecInstruction(line.instruction))
             {
                 return new DecCommand(currentLine + 1);
             }
 
-            if (InstructionHelper.IsIncInstruction(line.go))
+            if (InstructionHelper.IsIncInstruction(line.instruction))
             {
                 return new IncCommand(currentLine + 1);
             }
 
-            if (InstructionHelper.IsJumpInstruction(line.go))
+            if (InstructionHelper.IsJumpInstruction(line.instruction))
             {
-                if (InstructionHelper.IsJumpInstructionLabel(line.go))
+                if (InstructionHelper.IsJumpInstructionLabel(line.instruction))
                 {
                     return new JumpCommand(currentLine + 1);
                 }
 
-                int jumpIndex = GetJumpLineNumber(solution, line.go);
+                int jumpIndex = GetJumpLineNumber(solution, line.instruction);
                 return new JumpCommand(jumpIndex);
             }
 
-            if (InstructionHelper.IsIfInstruction(line.go))
+            if (InstructionHelper.IsIfInstruction(line.instruction))
             {
                 int trueLineNumber = currentLine + 1;
-                int elseLineNumber = currentLine + line.GetAllChildrenCount() + 1;
+                int elseLineNumber = currentLine + line.TotalChildrenCount + 1;
                 return new IfCommand(trueLineNumber, elseLineNumber, GetConditions(line), GetLogicalOperators(line));
             }
 
@@ -73,9 +73,9 @@ namespace UI
 
         public List<Condition> GetConditions(CodeLine ifLine)
         {
-            var directionIndicator = ifLine.go.transform.Find("DirectionIndicator");
-            var comparisonIndicator = ifLine.go.transform.Find("ComparisonIndicator");
-            var relationIndicator = ifLine.go.transform.Find("Dropdown").Find("Label");
+            var directionIndicator = ifLine.instruction.transform.Find("DirectionIndicator");
+            var comparisonIndicator = ifLine.instruction.transform.Find("ComparisonIndicator");
+            var relationIndicator = ifLine.instruction.transform.Find("Dropdown").Find("Label");
             var relationIndicatorText = relationIndicator.GetComponent<Text>().text;
 
             Condition condition = new Condition()
@@ -138,7 +138,7 @@ namespace UI
         {
             for (int i = 0; i < solution.Count; i++)
             {
-                if (go == solution[i].go) return i;
+                if (go == solution[i].instruction) return i;
             }
 
             return -1;

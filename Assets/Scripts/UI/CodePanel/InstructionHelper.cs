@@ -59,6 +59,22 @@ namespace UI
             return go.GetComponent<IncInstructionScript>() != null;
         }
 
+        public static bool IsGroupInstruction(GameObject go)
+        {
+            if (IsIfInstruction(go)) return true; 
+            return false;
+        }
+
+        public static bool IsWhileInstruction(GameObject go)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool IsRepeatInstruction(GameObject go)
+        {
+            throw new NotImplementedException();
+        }
+
         public static Direction GetInstructionDirection(GameObject go)
         {
             Direction direction = go.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().SelectedDirection.Value;

@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 2142045413573902536}
   m_Layer: 5
   m_Name: MoveInstruction
-  m_TagString: Untagged
+  m_TagString: Instruction
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

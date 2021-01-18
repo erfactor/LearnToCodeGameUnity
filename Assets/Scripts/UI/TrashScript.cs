@@ -22,6 +22,7 @@ public class TrashScript : MonoBehaviour, IDropHandler
     public void Delete(GameObject go)
     {
         GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayInstructionDeleteSound();
+        Debug.Log("Dragged a code line to trash.");
         GameObject.Find("SolutionPanel").GetComponent<CodePanel>().Remove(go);
     }
 }
