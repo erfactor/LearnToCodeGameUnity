@@ -404,7 +404,7 @@ namespace UI
             return null;
         }
 
-        public bool HasDraggedObjectAValidTag(PointerEventData eventData)
+        public static bool HasDraggedObjectAValidTag(PointerEventData eventData)
         {
             List<string> validTags = new List<string>() { "Instruction", "Container" };
             return (validTags.Contains(eventData.pointerDrag.tag));
