@@ -5,6 +5,11 @@ using UnityEngine.EventSystems;
 
 public class SolutionWindow : MonoBehaviour, IPointerClickHandler
 {
+    private void Awake()
+    {
+        GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         GetComponent<Animator>().SetTrigger("Hide");
@@ -12,6 +17,7 @@ public class SolutionWindow : MonoBehaviour, IPointerClickHandler
 
     public void Show()
     {
+        GetComponent<CanvasGroup>().blocksRaycasts = true;
         GetComponent<Animator>().SetTrigger("Show");
     }
 }

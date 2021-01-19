@@ -366,7 +366,21 @@ namespace UI
 
         private void TrimScroll()
         {
-            scrollY = Mathf.Min(0, scrollY);
+            var maxScroll = CalculateMaxScroll();
+            var minScroll = 0;
+            scrollY = Mathf.Clamp(scrollY, minScroll, maxScroll);
+        }
+
+        private float CalculateMaxScroll()
+        {
+            var fillerContainerRT = FillerContainer.GetComponent<RectTransform>();
+            var codePanelRT = GetComponent<RectTransform>();
+
+            var fillerTop = fillerContainerRT.anchoredPosition.y + fillerContainerRT.sizeDelta.y / 2;
+            var codePanelHeight = codePanelRT.sizeDelta.y;
+
+            var difference = Mathf.Abs(fillerTop) - codePanelHeight/2;
+            return Mathf.Max(0, difference);
         }
 
         private void TrimScrollVelocity()

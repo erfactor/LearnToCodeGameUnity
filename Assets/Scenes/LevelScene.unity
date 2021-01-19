@@ -4742,7 +4742,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0107421875, y: 0.00024414062}
+  m_AnchoredPosition: {x: -0.009765625, y: 0}
   m_SizeDelta: {x: 0.021240234, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1272467837
@@ -6163,6 +6163,7 @@ GameObject:
   - component: {fileID: 1856155054}
   - component: {fileID: 1856155058}
   - component: {fileID: 1856155057}
+  - component: {fileID: 1856155059}
   m_Layer: 5
   m_Name: WinWindow
   m_TagString: Untagged
@@ -6276,6 +6277,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!225 &1856155059
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856155052}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1858228581
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,11 @@ using UnityEngine.UI;
 
 public class WinWindow : MonoBehaviour, IPointerClickHandler
 {
+    private void Awake()
+    {
+        GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         StartCoroutine(GoToMainMenu());        
@@ -21,6 +26,7 @@ public class WinWindow : MonoBehaviour, IPointerClickHandler
 
     public void Show()
     {
+        GetComponent<CanvasGroup>().blocksRaycasts = true;
         var text = transform.Find("Number").GetComponent<Text>().text = LevelLoader.Level.Number.ToString();
         // TODO change win text
         GetComponent<Animator>().SetTrigger("Show");
