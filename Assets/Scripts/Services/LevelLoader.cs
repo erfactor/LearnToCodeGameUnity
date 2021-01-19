@@ -231,7 +231,9 @@ namespace Services
 
             var center = new Vector3(0, 0);
 
-            var finalPosition = center + new Vector3(-finalWidth / 2 + tileSize/2, -finalHeight / 2, 10);
+            var finalPosition = center + new Vector3(-finalWidth / 2 + 0.5f * tileSize * finalScale, -finalHeight / 2, 10);
+
+            Debug.Log($"tileSize: {tileSize} final width: {finalWidth}");
 
             tileLevel.transform.localScale = new Vector3(finalScale, finalScale, 1);
             tileLevel.transform.position = finalPosition;
