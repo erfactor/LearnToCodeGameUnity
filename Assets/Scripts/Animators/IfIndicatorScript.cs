@@ -6,7 +6,7 @@ namespace Animators
     {
         void DestroyItself()
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 }

@@ -19,7 +19,13 @@ namespace Animators
         private Piece _piece;
         private GameObject _tempPiece;
         private GameObject _fallingBot;
+        private Transform _tileLevel;
         public Bot Bot { get; set; }
+
+        private void Awake()
+        {
+            _tileLevel = GameObject.Find("TileLevel").transform.Find("Layer 1").transform;
+        }
 
         private void Update()
         {
@@ -57,7 +63,7 @@ namespace Animators
         {
             var pieceTransform = _piece.PieceTransform;
             var leftArm = GetComponent<Transform>().Find("LeftArmSolver").Find("LeftArmSolver_Target");
-            pieceTransform.parent = _isPickingUp ? leftArm : GameObject.Find("Layer 1").transform;
+            pieceTransform.parent = _isPickingUp ? leftArm : _tileLevel;
         }
 
         public void Add(Piece piece, Piece heldPiece, bool isAdd)
@@ -124,8 +130,7 @@ namespace Animators
         {
             var prefab = Resources.Load<Transform>("Bot/IfIndicator/IfIndicator");
             prefab.transform.position = new Vector3(location.x, location.y);
-            var parent = GameObject.Find("Layer 1").transform;
-            var ifIndicator = Instantiate(prefab, parent, false);
+            var ifIndicator = Instantiate(prefab, _tileLevel, false);
             ifIndicator.GetComponent<SpriteRenderer>().color = color;
         }
     }
