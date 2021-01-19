@@ -66,6 +66,8 @@ namespace UI
             draggedObject = null;
 
             fakeSingleLine = CodeLineFactory.GetStandardCodeLine(GameObject.Instantiate(GameObject.Find("MoveInstruction")));
+            fakeSingleLine.container.transform.SetParent(GameObject.Find("NotVisible").transform);
+            //fakeSingleLine.instruction.transform.SetParent(GameObject.Find("NotVisible").transform);
             ghostInstruction = GameObject.Find("GhostInstruction");
 
             scrollY = 0;
@@ -77,35 +79,21 @@ namespace UI
             ghostInstruction.transform.SetParent(GameObject.Find("GhostContainer").transform);
         }
 
-
         public static bool IsInRect(Rect r, Vector2 pos)
         {
             return (pos.x >= r.x && pos.x <= r.x + r.width && pos.y <= r.y && pos.y >= r.y - r.height);
         }
 
         void FixedUpdate()
-        {            
-            var isMouseInCodePanel = IsMouseInCodePanel();
-
-            if (draggedObject != null && isMouseInCodePanel)
-            {
-                HandleDrag();
-            }
-            else
-            {
-                //RemoveGhostInstruction();
-            }
-
+        {
             UpdateScroll();
             UpdatePositions();
-            //RearrangePositions(Solution);
         }
 
         private void UpdatePositions()
         {
             var isMouseInCodePanel = IsMouseInCodePanel();
             var isAnythingDragged = draggedObject != null;
-            var applyRepelForce = isMouseInCodePanel && isAnythingDragged;
             var allCodeLines = AllCodeLines;
 
             var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -118,7 +106,7 @@ namespace UI
                 currentLine.BaseUpdate();
             }
 
-            if (draggedObject != null)
+            if (isAnythingDragged)
             {
                 CodeLine parentLine = GetParentBlockUnderMousePosition(allContainers);
                 List<GameObject> childInstructions = GetChildListBasedOnRoot(parentLine);
@@ -160,8 +148,6 @@ namespace UI
             ghostInstruction.transform.parent.SetParent(parentObject.transform);
             var ghostContainerRT = ghostInstruction.transform.parent.gameObject.GetComponent<RectTransform>();
 
-            Debug.Log($"index: {index} | parentObject: {parentObject}");
-
             if (siblings.Count == 0)
             {
                 Vector2 topLeft = firstPosition;
@@ -185,7 +171,7 @@ namespace UI
                     var pos = childContainerRT.anchoredPosition;
                     var size = childContainerRT.sizeDelta;
                     var ghostSize = ghostContainerRT.sizeDelta;
-                    ghostContainerRT.anchoredPosition = pos;// + new Vector2(0, +size.y / 2 + ghostSize.y / 2);
+                    ghostContainerRT.anchoredPosition = pos;
                 }
 
                 
@@ -230,11 +216,6 @@ namespace UI
         private bool IsThisOneDragged(CodeLine codeLine)
         {
             return codeLine == unpinnedCodeline;
-        }
-
-        public void HandleDrag()
-        {
-            //ShowGhostInstruction();
         }
 
         public Vector2 CalculatePositionForGhostInstruction(Vector2 absoluteDockPosition)
@@ -493,15 +474,9 @@ namespace UI
 
         public void OnDrop(PointerEventData eventData)
         {
-            if (!HasDraggedObjectAValidTag(eventData))
-            {
-                Debug.LogWarning($"Tried to drop an invalid object to the solution panel. Invalid object name: {eventData.pointerDrag.name}", eventData.pointerDrag);
-                return;
-            }
-
             var allContainers = GetAllCodeLineContainersSorted();
             if (unpinnedCodeline != null)
-            {                       
+            {
                 allContainers.Remove(unpinnedCodeline.container);
             }
 
@@ -509,16 +484,15 @@ namespace UI
             List<GameObject> childInstructions = GetChildListBasedOnRoot(parentLine);
             int index = GetIndexToInsertUnderMousePosition(childInstructions);
 
-            Debug.Log($"container index: {index}");
             if (parentLine != null) Debug.Log($"parentLine", parentLine.container);
             CodeLine lineToInsert = unpinnedCodeline ?? CodeLineFactory.GetStandardCodeLine(eventData.pointerDrag);
-            
+
             InsertAtLine(lineToInsert, index, parentLine);
 
             HandlePostDrag(lineToInsert, eventData);
             InsertJumpLabelInstructionIfNeeded(lineToInsert, index, parentLine);
 
-            Pin();
+            Pin();           
         }
 
         private void HandlePostDrag(CodeLine lineToInsert, PointerEventData eventData)
@@ -568,12 +542,13 @@ namespace UI
         public List<GameObject> GetAllInstructionsWithoutParent()
         {
             List<GameObject> children = new List<GameObject>();
-            var root = RootContainer.transform;
-            for(int i=0; i<root.childCount; i++)
+            var rootTransform = RootContainer.transform;
+            Debug.Log($"rootcontainer child count: {RootContainer.transform.childCount}");
+            for(int i=0; i<rootTransform.childCount; i++)
             {
-                var currentChild = root.GetChild(i);
+                var currentChild = rootTransform.GetChild(i);
                 if (!HasGameObjectAValidTag(currentChild.gameObject)) continue;
-                var instruction = GetNthInstructionInRootComponent(i, root);
+                var instruction = GetNthInstructionInRootComponent(i, rootTransform);
                 children.Add(instruction);
             }
             return children;
