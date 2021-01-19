@@ -474,6 +474,7 @@ namespace UI
 
         public void OnDrop(PointerEventData eventData)
         {
+            if (!HasDraggedObjectAValidTag(eventData)) return;
             var allContainers = GetAllCodeLineContainersSorted();
             if (unpinnedCodeline != null)
             {

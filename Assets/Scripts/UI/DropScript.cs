@@ -11,11 +11,10 @@ public class DropScript : MonoBehaviour, IDropHandler
         {
             //eventData.pointerDrag.transform.position = transform.position;
 
-            if (eventData.pointerDrag.transform.parent != transform)
-            {
-                eventData.pointerDrag.transform.SetParent(transform);
-            }
-
+            //if (eventData.pointerDrag.transform.parent != transform)
+            //{
+            //    eventData.pointerDrag.transform.SetParent(transform);
+            //}
             
         }
     }

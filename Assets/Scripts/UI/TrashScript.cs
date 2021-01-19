@@ -9,7 +9,11 @@ public class TrashScript : MonoBehaviour, IDropHandler
         Debug.Log("OnDrop - usuwanie obiektu");
         if (eventData.pointerDrag != null)
         {
-            if (!CodePanel.HasDraggedObjectAValidTag(eventData)) return;            
+            if (!CodePanel.HasDraggedObjectAValidTag(eventData))
+            {
+                Debug.Log($"Invalid tag: {eventData.pointerDrag.tag}");
+                return;
+            }
 
             Delete(eventData.pointerDrag);
             //CodePanel.Remove(eventData.pointerDrag);
