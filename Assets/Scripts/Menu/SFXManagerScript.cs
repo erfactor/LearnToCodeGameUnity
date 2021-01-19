@@ -88,6 +88,11 @@ public class SFXManagerScript : MonoBehaviour
         InternalPlaySound(confetti);
     }
 
+    public void PlayLevelCompletedSound()
+    {
+        InternalPlaySound(levelCompleted);
+    }
+
     public void MuteSound()
     {
         StopAllSounds();

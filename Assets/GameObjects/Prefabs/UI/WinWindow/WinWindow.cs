@@ -27,6 +27,7 @@ public class WinWindow : MonoBehaviour, IPointerClickHandler
 
     public void Show()
     {
+
         GetComponent<CanvasGroup>().blocksRaycasts = true;
         var text = transform.Find("Number").GetComponent<Text>().text = LevelLoader.Level.Number.ToString();
         // TODO change win text

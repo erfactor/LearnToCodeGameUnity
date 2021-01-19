@@ -408,6 +408,7 @@ namespace Services
             Debug.Log("Level completed!");
             GameObject.Find("ProfileManager").GetComponent<ProfileManager>().UnlockLevel(Level.Number + 1);
             GameObject.Find("WinWindow").GetComponent<WinWindow>().Show();
+            GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayLevelCompletedSound();
         }
 
         private Transform CreateGameObject(string prefabName, float xPos, float yPos, int zPos,
