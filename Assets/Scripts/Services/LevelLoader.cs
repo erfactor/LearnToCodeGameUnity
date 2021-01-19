@@ -331,7 +331,7 @@ namespace Services
                     yield break;
                 }
 
-                yield return new WaitForSeconds(_animationTime + 0.3f);
+                yield return new WaitForSeconds(_animationTime + 0.1f);
                 ChangeAnimationSpeed();
             }
 

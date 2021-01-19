@@ -108,23 +108,23 @@ public class ExecutionIndicatorManager : MonoBehaviour
     Vector2 GetPositionForIndicator(GameObject instruction, int commandId)
     {
         Vector2 indicatorOffset = new Vector2(-instruction.GetComponent<RectTransform>().sizeDelta.x/2 - 10, 0);
-        Vector2 instructionPosition = instruction.GetComponent<RectTransform>().anchoredPosition;
+        Vector2 instructionPosition = instruction.transform.position;
         return instructionPosition + indicatorOffset + GetIndicatorYOffset(commandId);
     }
 
     void MoveTowards(GameObject indicator, Vector2 destination)
     {
-        var rectTransform = indicator.GetComponent<RectTransform>();
-        rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, destination, 0.33f);
+        indicator.transform.position = Vector2.Lerp(indicator.transform.position, destination, 0.33f);
     }
 
     public void UpdateIndicator(Bot bot, int commandId)
     {
-        //indicatorPositions[bot] = commandId;
-        //var indicatorToUpdate = indicators[bot];
-        //var codeLine = panel.Solution[commandId];
-        //StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(codeLine.instruction, commandId)));
-        //SortIndicators();
+        indicatorPositions[bot] = commandId;
+        var indicatorToUpdate = indicators[bot];
+        //cache this list plox
+        var codeLine = panel.AllCodeLines[commandId];
+        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(codeLine.instruction, commandId)));
+        SortIndicators();
     }
 
     public IEnumerator CoroutineMoveToPosition(GameObject indicator, Vector2 destination)
