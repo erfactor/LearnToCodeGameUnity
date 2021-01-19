@@ -379,7 +379,7 @@ namespace UI
             var fillerTop = fillerContainerRT.anchoredPosition.y + fillerContainerRT.sizeDelta.y / 2;
             var codePanelHeight = codePanelRT.sizeDelta.y;
 
-            var difference = Mathf.Abs(fillerTop) - codePanelHeight/2;
+            var difference = Mathf.Abs(fillerTop - codePanelHeight / 2) - codePanelHeight/2;
             return Mathf.Max(0, difference);
         }
 
