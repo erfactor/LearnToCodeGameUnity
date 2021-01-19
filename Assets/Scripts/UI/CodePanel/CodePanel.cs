@@ -16,6 +16,7 @@ namespace UI
         public static GameObject draggedObject;
         public CodeLine unpinnedCodeline;
         public CodeLine fakeSingleLine;
+        public GameObject ghostInstruction;
 
         public List<CodeLine> Solution { get; private set; }
 
@@ -35,6 +36,20 @@ namespace UI
             }
         }
 
+        public void SetRaycastBlockingForAllInstructions(bool value)
+        {
+            SetRaycastBlockingRecursive(value, Solution);
+        }
+
+        private void SetRaycastBlockingRecursive(bool value, List<CodeLine> codeLines)
+        {
+            foreach(var line in codeLines)
+            {
+                line.instruction.GetComponent<CanvasGroup>().blocksRaycasts = value;
+                line.container.GetComponent<CanvasGroup>().blocksRaycasts = value;
+            }
+        }
+
         private float scrollY;
 
         private void InitializeSolutions()
@@ -51,14 +66,15 @@ namespace UI
             draggedObject = null;
 
             fakeSingleLine = CodeLineFactory.GetStandardCodeLine(GameObject.Instantiate(GameObject.Find("MoveInstruction")));
+            ghostInstruction = GameObject.Find("GhostInstruction");
 
             scrollY = 0;
         }
 
         public void InitializeGhostInstruction()
         {
-            ghostInstructionBlock = GameObject.Find("GhostInstruction");
-            ghostInstructionBlock.transform.SetParent(GameObject.Find("NotVisible").transform);
+            ghostInstruction = GameObject.Find("GhostInstruction");
+            ghostInstruction.transform.SetParent(GameObject.Find("GhostContainer").transform);
         }
 
 
@@ -95,29 +111,90 @@ namespace UI
             var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             var allContainers = GetAllCodeLineContainersSorted();
-
-            var parentLine = GetParentBlockUnderMousePosition(allContainers);
-
-            for(int i=0; i<allCodeLines.Count; i++)
+                        
+            for (int i=0; i<allCodeLines.Count; i++)
             {
                 var currentLine = allCodeLines[i];
                 currentLine.BaseUpdate();
             }
 
-            var linesToCalculateRepel = GetCodeLinesToUpdatePhysics(parentLine);
-
-            if (isMouseInCodePanel)
+            if (draggedObject != null)
             {
-                for (int i = 0; i < linesToCalculateRepel.Count; i++)
+                CodeLine parentLine = GetParentBlockUnderMousePosition(allContainers);
+                List<GameObject> childInstructions = GetChildListBasedOnRoot(parentLine);
+                int index = GetIndexToInsertUnderMousePosition(childInstructions);
+
+                var linesToCalculateRepel = GetCodeLinesToUpdatePhysics(parentLine);
+
+                if (isMouseInCodePanel)
                 {
-                    var currentLine = linesToCalculateRepel[i];
-                    if (IsThisOneDragged(currentLine)) continue;
-                    currentLine.RepelUpdate(mousePosition);
+                    for (int i = 0; i < linesToCalculateRepel.Count; i++)
+                    {
+                        var currentLine = linesToCalculateRepel[i];
+                        if (IsThisOneDragged(currentLine)) continue;
+                        currentLine.RepelUpdate(mousePosition);
+                    }
+
+                    var parentObject = parentLine?.container ?? RootContainer;
+                    var siblings = parentLine != null ? parentLine.children : Solution;
+                    Vector2 firstPosition = parentLine == null ? GetTopLeftForFirst(parentObject) : new Vector2(-150, -30);
+                    ShowGhostInstruction(parentObject, siblings, index, firstPosition);
                 }
+                else
+                {
+                    ClearGhostInstruction();
+                }
+            }  
+            else
+            {
+                ClearGhostInstruction();
             }
 
             Rearrange();
             UpdateFiller();
+        }
+
+        
+        private void ShowGhostInstruction(GameObject parentObject, List<CodeLine> siblings, int index, Vector2 firstPosition)
+        {            
+            ghostInstruction.transform.parent.SetParent(parentObject.transform);
+            var ghostContainerRT = ghostInstruction.transform.parent.gameObject.GetComponent<RectTransform>();
+
+            Debug.Log($"index: {index} | parentObject: {parentObject}");
+
+            if (siblings.Count == 0)
+            {
+                Vector2 topLeft = firstPosition;
+                ghostContainerRT.anchoredPosition = topLeft + new Vector2(ghostContainerRT.sizeDelta.x / 2, -ghostContainerRT.sizeDelta.y / 2);
+            }
+            else
+            {
+                if (index > 0)
+                {
+                    ghostInstruction.transform.parent.SetParent(siblings[index - 1].container.transform.parent);
+                    var childContainerRT = siblings[index - 1].container.GetComponent<RectTransform>();
+                    var pos = childContainerRT.anchoredPosition;
+                    var size = childContainerRT.sizeDelta;
+                    var ghostSize = ghostContainerRT.sizeDelta;
+                    ghostContainerRT.anchoredPosition = pos + new Vector2(0, -size.y / 2 - ghostSize.y / 2);
+                }
+                else
+                {
+                    ghostInstruction.transform.parent.SetParent(siblings[0].container.transform.parent);
+                    var childContainerRT = siblings[0].container.GetComponent<RectTransform>();
+                    var pos = childContainerRT.anchoredPosition;
+                    var size = childContainerRT.sizeDelta;
+                    var ghostSize = ghostContainerRT.sizeDelta;
+                    ghostContainerRT.anchoredPosition = pos;// + new Vector2(0, +size.y / 2 + ghostSize.y / 2);
+                }
+
+                
+            }
+        }
+
+        private void ClearGhostInstruction()
+        {
+            ghostInstruction.transform.parent.SetParent(GameObject.Find("NotVisible").transform);
         }
 
         private List<CodeLine> GetCodeLinesToUpdatePhysics(CodeLine codeLine)
@@ -136,9 +213,10 @@ namespace UI
         {
             var filler = GameObject.Find("FillerContainer");
             var root = RootContainer;
-            if (root.transform.childCount == 1) return;
+            //if (root.transform.childCount == 1) return;
+            if (Solution.Count == 0) return;
 
-            var lowestChild = RootContainer.transform.GetChild(root.transform.childCount - 2);
+            var lowestChild = Solution.Last().container.transform;// RootContainer.transform.GetChild(root.transform.childCount - 2);
             var childRT = lowestChild.GetComponent<RectTransform>();
             var bottomY = childRT.anchoredPosition.y - childRT.sizeDelta.y / 2;
 
@@ -153,8 +231,6 @@ namespace UI
         {
             return codeLine == unpinnedCodeline;
         }
-
-        GameObject ghostInstructionBlock;
 
         public void HandleDrag()
         {
@@ -406,8 +482,13 @@ namespace UI
 
         public static bool HasDraggedObjectAValidTag(PointerEventData eventData)
         {
+            return HasGameObjectAValidTag(eventData.pointerDrag);
+        }
+
+        public static bool HasGameObjectAValidTag(GameObject go)
+        {
             List<string> validTags = new List<string>() { "Instruction", "Container" };
-            return (validTags.Contains(eventData.pointerDrag.tag));
+            return (validTags.Contains(go.tag));
         }
 
         public void OnDrop(PointerEventData eventData)
@@ -488,8 +569,10 @@ namespace UI
         {
             List<GameObject> children = new List<GameObject>();
             var root = RootContainer.transform;
-            for(int i=0; i<root.childCount-1; i++)
+            for(int i=0; i<root.childCount; i++)
             {
+                var currentChild = root.GetChild(i);
+                if (!HasGameObjectAValidTag(currentChild.gameObject)) continue;
                 var instruction = GetNthInstructionInRootComponent(i, root);
                 children.Add(instruction);
             }
@@ -661,7 +744,7 @@ namespace UI
                 //var instructionRT = lines[i].instruction.GetComponent<RectTransform>();
                 //instructionRT.anchoredPosition -= newPosition - oldPosition;
 
-                RearrangePositions(lines[i].children, new Vector2(-100, -30));
+                RearrangePositions(lines[i].children, FirstChildOffset);
 
                 currentTopLeft -= new Vector2(0, currentLine.YSpacing);
                 if (InstructionHelper.IsGroupInstruction(currentLine.instruction))
@@ -670,6 +753,8 @@ namespace UI
                 }
             }
         }
+
+        Vector2 FirstChildOffset => new Vector2(-100, -30);
 
         Transform UnpinnedCodeLineParentTransform => GameObject.Find("UIPanel").transform;
         CodeLine oldUnpinnedCodeLineParent = null;
