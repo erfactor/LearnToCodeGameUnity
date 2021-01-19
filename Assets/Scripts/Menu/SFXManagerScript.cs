@@ -13,6 +13,8 @@ public class SFXManagerScript : MonoBehaviour
     public AudioClip instructionDrop;
     public AudioClip instructionDelete;
 
+    public AudioClip confetti;
+
     public AudioClip levelCompleted;
 
     public AudioClip changeSolution;
@@ -79,6 +81,11 @@ public class SFXManagerScript : MonoBehaviour
     public void PlaySolutionChangeSound()
     {
         InternalPlaySound(changeSolution);
+    }
+
+    public void PlayConfettiSound()
+    {
+        InternalPlaySound(confetti);
     }
 
     public void MuteSound()
