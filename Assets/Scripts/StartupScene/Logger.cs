@@ -12,7 +12,7 @@ namespace Startup
 
         private void Start()
         {
-            DontDestroyOnLoad(this); 
+            DontDestroyOnLoad(this);
         }
 
         void OnEnable() { Application.logMessageReceived += Log; }

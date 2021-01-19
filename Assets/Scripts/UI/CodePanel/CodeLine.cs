@@ -109,6 +109,21 @@ namespace UI
             }
         }
 
+        public float YSpacing
+        {
+            get
+            {
+                if (InstructionHelper.IsGroupInstruction(instruction))
+                {
+                    return 30 + RealtimeNestHeight;
+                }
+                else
+                {
+                    return 60;
+                }
+            }
+        }
+
         public float ChildrenHeight
         {
             get
@@ -197,17 +212,17 @@ namespace UI
 
         public void RearrangeChildren()
         {
-            var currentTopLeft = GetTopLeftPositionForFirstContainer();
-            for (int i = 0; i < children.Count; i++)
-            {
-                var child = children[i];
-                var childContainerRT = child.container.GetComponent<RectTransform>();
-                var size = childContainerRT.sizeDelta;
-                float newX = currentTopLeft.x + size.x / 2;
-                float newY = currentTopLeft.y - size.y / 2;
-                childContainerRT.anchoredPosition = new Vector2(newX, newY);
-                currentTopLeft += new Vector2(0, -size.y);
-            }
+            //var currentTopLeft = GetTopLeftPositionForFirstContainer();
+            //for (int i = 0; i < children.Count; i++)
+            //{
+            //    var child = children[i];
+            //    var childContainerRT = child.container.GetComponent<RectTransform>();
+            //    var size = childContainerRT.sizeDelta;
+            //    float newX = currentTopLeft.x + size.x / 2;
+            //    float newY = currentTopLeft.y - size.y / 2;
+            //    childContainerRT.anchoredPosition = new Vector2(newX, newY);
+            //    currentTopLeft += new Vector2(0, -size.y);
+            //}
         }
 
         public void RecalculateContainer()
@@ -215,13 +230,16 @@ namespace UI
             //var sumHeight = DefaultContainerHeight + children.Sum(x => x.BlockSize.y);
             var containerRT = container.GetComponent<RectTransform>();
             //var containerRTrect = container.GetComponent<RectTransform>().rect;
-
+            var oldPosition = containerRT.anchoredPosition;
             Vector2 oldSize = containerRT.sizeDelta;
             //Vector2 newSize = new Vector2(containerRT.rect.width, sumHeight);
             Vector2 newSize = new Vector2(containerRT.rect.width, BlockHeight);
             Vector2 newPosition = containerRT.anchoredPosition - (newSize - oldSize) / 2.0f;
             containerRT.sizeDelta = newSize;
             containerRT.anchoredPosition = newPosition;
+
+            var instructionRT = instruction.GetComponent<RectTransform>();
+            instructionRT.anchoredPosition -= newPosition - oldPosition;
 
             // Debug.Log($"new height: {sumHeight}");
         }
@@ -285,7 +303,7 @@ namespace UI
             var nestRT = nestObject.GetComponent<RectTransform>();
 
             var oldHeight = nestRT.rect.height;
-            var newHeight = Mathf.Lerp(oldHeight, DesiredNestHeight, 0.2f);
+            var newHeight = Mathf.Lerp(oldHeight, DesiredNestHeight, 0.17f);
 
             nestRT.sizeDelta = new Vector2(nestRT.sizeDelta.x, newHeight);
 
@@ -362,13 +380,15 @@ namespace UI
             }
         }
 
+        private float RepelConst = 5;
+
         public Vector2 CalculateRepelForce(Vector2 mousePosition)
         {
             Vector2 blockPosition = PositionForPhysicsCalculation;
 
             if (blockPosition.y > mousePosition.y) return Vector2.zero;
 
-            var yForce = -3.0f;
+            var yForce = -RepelConst;
 
             return new Vector2(0, yForce);
         }
@@ -378,7 +398,7 @@ namespace UI
             var defaultY = DefaultInstructionYWithZeroForce.y;
             var currentY = PositionForPhysicsCalculation.y;
             var yDifference = currentY - defaultY;
-            var yForce = -yDifference / 20;
+            var yForce = -yDifference / (60/RepelConst);
             return new Vector2(0, yForce);
         }
 

@@ -82,6 +82,7 @@ namespace UI
 
             UpdateScroll();
             UpdatePositions();
+            //RearrangePositions(Solution);
         }
 
         private void UpdatePositions()
@@ -113,8 +114,9 @@ namespace UI
                     if (IsThisOneDragged(currentLine)) continue;
                     currentLine.RepelUpdate(mousePosition);
                 }
-            }            
+            }
 
+            Rearrange();
             UpdateFiller();
         }
 
@@ -535,7 +537,7 @@ namespace UI
             lineToInsert.instruction.GetComponent<CanvasGroup>().blocksRaycasts = true;
             lineToInsert.container.GetComponent<CanvasGroup>().blocksRaycasts = true; 
 
-            Rearrange();
+            //Rearrange();
         }
 
         public Vector2 GetTopLeftForFirst(GameObject parentContainer)
@@ -548,7 +550,7 @@ namespace UI
         public void Rearrange()
         {            
             RearrangeIndices();
-            RearrangePositions(Solution);
+            RearrangePositions(Solution, GetTopLeftForFirst(RootContainer));
             UpdateFiller();
         }
 
@@ -631,11 +633,11 @@ namespace UI
             }
         }
 
-        public void RearrangePositions(List<CodeLine> lines)
+        public void RearrangePositions(List<CodeLine> lines, Vector2 topLeft)
         {
             if (lines.Count == 0) return;
             var parentContainer = lines[0].container.transform.parent.parent;
-            var currentTopLeft = GetTopLeftForFirst(parentContainer.gameObject);
+            var currentTopLeft = topLeft;// GetTopLeftForFirst(parentContainer.gameObject);
 
             for (int i = 0; i < lines.Count; i++)
             {
@@ -646,15 +648,25 @@ namespace UI
                 var offset = new Vector2(size.x / 2, -size.y / 2);
 
                 var currentLine = lines[i];
+                if (InstructionHelper.IsGroupInstruction(currentLine.instruction))
+                {
+
+                }
+
+                //var oldPosition = rectTransform.anchoredPosition;
 
                 rectTransform.anchoredPosition = currentTopLeft + offset;
 
-                RearrangePositions(lines[i].children);
+                //var newPosition = rectTransform.anchoredPosition;
+                //var instructionRT = lines[i].instruction.GetComponent<RectTransform>();
+                //instructionRT.anchoredPosition -= newPosition - oldPosition;
 
-                currentTopLeft -= new Vector2(0, currentLine.BlockHeight);
+                RearrangePositions(lines[i].children, new Vector2(-100, -30));
+
+                currentTopLeft -= new Vector2(0, currentLine.YSpacing);
                 if (InstructionHelper.IsGroupInstruction(currentLine.instruction))
                 {
-                    currentTopLeft -= new Vector2(0, 10);
+                    
                 }
             }
         }
@@ -670,7 +682,7 @@ namespace UI
             RemoveCodeLineFromSolution(codeLine);
             codeLine.container.transform.SetParent(UnpinnedCodeLineParentTransform);
             codeLine.instruction.transform.SetParent(codeLine.container.transform);
-            Rearrange();
+            //Rearrange();
         }
 
         public void Pin()
@@ -697,7 +709,7 @@ namespace UI
             var codeLine = unpinnedCodeline;
             DestroyCodeLine(unpinnedCodeline);
             unpinnedCodeline = null;
-            Rearrange();
+            //Rearrange();
             RemoveDeadJumpInstructions();
         }
 
