@@ -2,19 +2,12 @@
 
 public class PipeScript : MonoBehaviour
 {
-    // Start is called before the first frame update
     public int LevelFrom;
     public int LevelTo;
 
-    void Start()
+    void Awake()
     {
         gameObject.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void Emerge()
