@@ -41,7 +41,6 @@ public class GoToMenuButton : MonoBehaviour
         for (int i = 0; i < 30; i++)
         {
             currentPosition = Vector2.Lerp(currentPosition, destination, 0.001f + i * 0.0006f);
-            Debug.Log($"currentSize: {currentPosition}");
             rectTransform.anchoredPosition = currentPosition;
             yield return new WaitForFixedUpdate();
         }

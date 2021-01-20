@@ -558,7 +558,6 @@ namespace UI
         {
             List<GameObject> children = new List<GameObject>();
             var rootTransform = RootContainer.transform;
-            Debug.Log($"rootcontainer child count: {RootContainer.transform.childCount}");
             for(int i=0; i<rootTransform.childCount; i++)
             {
                 var currentChild = rootTransform.GetChild(i);

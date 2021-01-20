@@ -69,11 +69,11 @@ namespace Services
             for(int i=0; i<Level.Hint.Length; i++)
             {
                 yield return new WaitForFixedUpdate();
-                hintTextComponent.text += Level.Hint[i];
                 if (Level.Hint[i] == '\n')
                 {
                     yield return new WaitForSeconds(0.5f);
                 }
+                hintTextComponent.text += Level.Hint[i];
             }
         }
 
@@ -256,9 +256,9 @@ namespace Services
             var finalScale = finalHeight / tileLevelRect.height;
             var finalWidth = tileLevelRect.width * finalScale;
 
-            var center = new Vector3(0, 0);
+            var center = GameObject.Find("SolutionWindow").transform.position;
 
-            var finalPosition = center + new Vector3(-finalWidth / 2 + 0.5f * tileSize * finalScale, -finalHeight / 2, 10);
+            var finalPosition = center + new Vector3(-finalWidth / 2 + 0.5f * tileSize * finalScale, -finalHeight / 2 - 0.5f * tileSize * finalScale, 10);
 
             Debug.Log($"tileSize: {tileSize} final width: {finalWidth}");
 
