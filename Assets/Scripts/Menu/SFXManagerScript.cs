@@ -90,7 +90,15 @@ public class SFXManagerScript : MonoBehaviour
 
     public void PlayLevelCompletedSound()
     {
+        StartCoroutine(CoroutineLevelCompletedSound());
+    }
+
+    private IEnumerator CoroutineLevelCompletedSound()
+    {
+        yield return CoroutineLowerMusicVolumeOverTime(10);
         InternalPlaySound(levelCompleted);
+        yield return new WaitForSeconds(2.0f);
+        yield return CoroutineRaiseMusicVolumeOverTime(10);
     }
 
     public void MuteSound()
@@ -114,9 +122,9 @@ public class SFXManagerScript : MonoBehaviour
         StartCoroutine(CoroutineLowerMusicVolumeOverTime());
     }
 
-    IEnumerator CoroutineLowerMusicVolumeOverTime()
+    IEnumerator CoroutineLowerMusicVolumeOverTime(int step = 5)
     {
-        for(int i=100; i>=0; i -= 5)
+        for(int i=100; i>=0; i -= step)
         {
             float newVolume = i / 100.0f;
             if (newVolume > audioSourceMusic.volume) continue;
@@ -133,9 +141,10 @@ public class SFXManagerScript : MonoBehaviour
         StartCoroutine(CoroutineRaiseMusicVolumeOverTime());
     }
 
-    IEnumerator CoroutineRaiseMusicVolumeOverTime()
+    IEnumerator CoroutineRaiseMusicVolumeOverTime(int step = 5)
     {
-        for (int i = 0; i <= 100; i += 5)
+        if (SoundMuted) yield break;
+        for (int i = 0; i <= 100; i += step)
         {
             float newVolume = i / 100.0f;
             if (newVolume < audioSourceMusic.volume) continue;
