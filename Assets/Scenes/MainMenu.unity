@@ -143,6 +143,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: eef25b515f4627b4e8babb1a7fca4c69, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: 865845492b3a6c544809b9ad1eeea08f, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -433,6 +438,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: 0e38dd3580e53bf4dab173f0fb048729, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: bd583c1ee2400354d941744b887c84cf, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -624,6 +634,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: fabd5549855e8254bba34a4875de5302, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: 900a685c4af4ef5479459e8ec64e2888, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -868,6 +883,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: 91d48d3c84aaf9b4da3484cd5852f827, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: 29dce414c515a9947892ebc62e0f31ec, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -1159,6 +1179,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: fa6fe9690a46dad4ea10188568050b73, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: d5cea7e1d38ee9d48a87126ac7e425ed, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -1879,6 +1904,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: 9f522df1f2ae08947b14f7740943edaf, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: b00025e6c1bb3144c898869176ed43a7, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -2271,6 +2301,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: d6a31681819f9b244b1c3f376195243a, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: 404c288a3c0d3eb40b255df65cd1577a, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text
@@ -2547,6 +2582,11 @@ PrefabInstance:
       propertyPath: levelSolution
       value: 
       objectReference: {fileID: 4900000, guid: 8bf915928dbc74346bb9ec1855a88638, type: 3}
+    - target: {fileID: 2502667268350067810, guid: 6083e2fd25baf4b42ac33202de2531c8,
+        type: 3}
+      propertyPath: hint
+      value: 
+      objectReference: {fileID: 4900000, guid: 604e130c5428e484191de0ea21b4ebf5, type: 3}
     - target: {fileID: 3227283844017048118, guid: 6083e2fd25baf4b42ac33202de2531c8,
         type: 3}
       propertyPath: m_Text

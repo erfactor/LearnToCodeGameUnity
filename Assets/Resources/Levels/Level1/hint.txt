@@ -1,0 +1,3 @@
+Move the bots from left to right.
+You can drag the instructions from the bank.
+Place them at the solution panel.

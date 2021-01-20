@@ -11,6 +11,7 @@ using Models;
 using Packages._2DTileMapLevelEditor.Scripts;
 using Profiles;
 using UnityEngine;
+using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 using Quaternion = UnityEngine.Quaternion;
 using Random = System.Random;
@@ -47,10 +48,33 @@ namespace Services
         public static string WidthSeparator { get; } = ";";
 
         private void Start()
-        {
+        {            
             LoadLevel();
             LoadSolutionToSolutionWindow();
             LoadSolution();
+            SetHint();
+        }
+
+        public void SetHint()
+        {
+            StartCoroutine(CoroutineSetHint());
+        }
+
+        public IEnumerator CoroutineSetHint()
+        {
+            var hintTextComponent = GameObject.Find("HintText").GetComponent<Text>();
+            hintTextComponent.text = "";
+            yield return new WaitForSeconds(1f);
+
+            for(int i=0; i<Level.Hint.Length; i++)
+            {
+                yield return new WaitForFixedUpdate();
+                hintTextComponent.text += Level.Hint[i];
+                if (Level.Hint[i] == '\n')
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
         }
 
         public void LoadLevel()

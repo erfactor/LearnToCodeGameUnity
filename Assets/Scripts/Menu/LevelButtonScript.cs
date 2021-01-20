@@ -7,6 +7,7 @@ namespace Menu
     public class LevelButtonScript : MonoBehaviour
     {
         public int levelIndex;
+        
 
         private Button button;
 
@@ -14,6 +15,7 @@ namespace Menu
 
         public TextAsset level;
         public TextAsset levelSolution;
+        public TextAsset hint;
 
         public Animator animator;
 
@@ -72,6 +74,7 @@ namespace Menu
             LevelLoader.Level = new Level
             {
                 Number = levelIndex,
+                Hint = hint.text,
                 File = level.text,
                 SolutionFile = levelSolution.text
             };
