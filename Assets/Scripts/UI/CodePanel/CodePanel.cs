@@ -171,7 +171,7 @@ namespace UI
                     var pos = childContainerRT.anchoredPosition;
                     var size = childContainerRT.sizeDelta;
                     var ghostSize = ghostContainerRT.sizeDelta;
-                    ghostContainerRT.anchoredPosition = pos;
+                    ghostContainerRT.anchoredPosition = pos + new Vector2(0, +size.y / 2 - ghostSize.y / 2);
                 }
 
                 
