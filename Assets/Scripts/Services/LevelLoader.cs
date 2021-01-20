@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Animators;
 using Commands;
 using Config;
@@ -11,12 +12,16 @@ using Packages._2DTileMapLevelEditor.Scripts;
 using Profiles;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Quaternion = UnityEngine.Quaternion;
 using Random = System.Random;
+using Vector3 = UnityEngine.Vector3;
 
 namespace Services
 {
     public class LevelLoader : MonoBehaviour
     {
+        private const float BotOffset = -0.472f;
+        private const float PieceOffset = -0.255f;
         private static readonly Random Random = new Random();
         public static Level Level;
         public Tileset Tileset;
@@ -334,11 +339,23 @@ namespace Services
                 }
 
                 yield return new WaitForSeconds(_animationTime + 0.1f);
+                FixBotsPositions();
                 ChangeAnimationSpeed();
             }
 
             _codeExecutionOn = false;
             //executionIndicatorManager.ClearIndicators();
+        }
+
+        private void FixBotsPositions()
+        {
+            foreach (var bot in _board.Bots)
+            {
+                var botTransform = bot.Animator.transform;
+                var oldPosition = botTransform.localPosition;
+                var roundedPosition = new Vector3((float) Math.Round(oldPosition.x), (float) (Math.Ceiling(oldPosition.y) + BotOffset), oldPosition.z);
+                botTransform.localPosition = roundedPosition;
+            }
         }
 
         private void ChangeAnimationSpeed()
@@ -419,11 +436,11 @@ namespace Services
             if (prefab.name == "botHead")
             {
                 prefab = Resources.Load<Transform>("Bot/Bot");
-                yPos -= 0.472f;
+                yPos += BotOffset;
             }
             else if (prefab.name == "piece")
             {
-                yPos -= 0.255f;
+                yPos += PieceOffset;
             }
 
             var newObject = Instantiate(prefab, new Vector3(xPos, yPos, prefab.position.z), rotation);
