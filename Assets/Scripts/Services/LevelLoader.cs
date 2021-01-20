@@ -226,8 +226,6 @@ namespace Services
                 }
             }
 
-            GameObject.Find("TileLevelSolution").transform.localScale = new Vector3(100, 100, 100);
-            GameObject.Find("TileLevelSolution").transform.position = new Vector3(100, 100, 100);
             IncreaseVisibility(GameObject.Find("TileLevelSolution").transform);
             ClipLevelSolution();
         }
@@ -266,6 +264,7 @@ namespace Services
 
             tileLevel.transform.localScale = new Vector3(finalScale, finalScale, 1);
             tileLevel.transform.position = finalPosition;
+            Debug.Log($"final position of the tilesolutionlevel: {finalPosition}");
         }
 
         private void LoadSolution()
