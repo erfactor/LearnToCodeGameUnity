@@ -68,7 +68,7 @@ namespace Services
 
             for(int i=0; i<Level.Hint.Length; i++)
             {
-                yield return new WaitForFixedUpdate();
+                yield return new WaitForSeconds(0.005f);
                 if (Level.Hint[i] == '\n')
                 {
                     yield return new WaitForSeconds(0.5f);

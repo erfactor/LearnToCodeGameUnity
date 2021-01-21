@@ -12,7 +12,7 @@ namespace Packages._2DTileMapLevelEditor.Scripts.Functionalities {
 		private LevelEditor _levelEditor;
 
 		// The currently selected layer
-		private int _selectedLayer;
+		private int _selectedLayer = 2;
 
 		// The total number of layers
 		private int _totalyayers;

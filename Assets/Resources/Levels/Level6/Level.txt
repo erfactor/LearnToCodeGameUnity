@@ -1,8 +1,0 @@
-8,7,3
-,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner
-,,edge;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,edge
-,,edge;,,tile2;,,tile1;,,tile2;,,tile1;,,tile2;,,tile1;,,edge
-,,edge;piece,botHead,tile2;piece,botHead,tile2;piece,botHead,tile2;piece,botHead,tile2;piece,botHead,tile2;piece,botHead,tile2;,,edge
-,,edge;,,tile1;,,tile2;,,tile1;,,tile2;,,tile1;,,tile2;,,edge
-,,edge;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,edge
-,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner

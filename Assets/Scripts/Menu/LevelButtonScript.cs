@@ -1,4 +1,5 @@
-﻿using Services;
+﻿using Profiles;
+using Services;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -71,15 +72,15 @@ namespace Menu
                 return;
             }
 
-            LevelLoader.Level = new Level
+            if (GameObject.Find("ProfileManager").GetComponent<ProfileManager>().ShouldPlayTutorial())
             {
-                Number = levelIndex,
-                Hint = hint.text,
-                File = level.text,
-                SolutionFile = levelSolution.text
-            };
-
-            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(3);         
+                PlayTutorial();
+            }
+            else
+            {
+                PlayNormalLevel();
+            }
+                     
         }
 
         public void SetButtonColor(Color color)
@@ -88,6 +89,32 @@ namespace Menu
             //newColors.normalColor = color;
             //GetComponentInChildren<Button>().colors = newColors;
             GetComponentInChildren<Image>().color = color;
+        }
+
+        public void PlayTutorial()
+        {
+            LevelLoader.Level = new Level
+            {
+                Number = levelIndex,
+                Hint = hint.text,
+                File = level.text,
+                SolutionFile = levelSolution.text
+            };
+
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(4);
+        }
+
+        public void PlayNormalLevel()
+        {
+            LevelLoader.Level = new Level
+            {
+                Number = levelIndex,
+                Hint = hint.text,
+                File = level.text,
+                SolutionFile = levelSolution.text
+            };
+
+            GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(3);
         }
 
 

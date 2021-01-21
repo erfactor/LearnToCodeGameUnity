@@ -1,0 +1,3 @@
+Twoim zadaniem jest przemieścić wszystkie boty z lewej strony do prawej strony.
+Do poruszania botami służy komenda MOVE.
+Przeciągnij ją na panel po prawej, a następnie wybierz kierunek, w którym ma poruszyć się bot.

@@ -6,5 +6,7 @@ namespace Profiles
     {
         public string Name { get; set; }
         public List<int> UnlockedLevels { get; set; }
+
+        public bool TutorialCompleted { get; set; }
     }
 }

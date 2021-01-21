@@ -142,6 +142,17 @@ namespace Profiles
             UnlockLevel(selectedProfile.UnlockedLevels.Max() + 1);
         }
 
+        public bool ShouldPlayTutorial()
+        {
+            return !selectedProfile.TutorialCompleted;
+        }
+
+        public void MarkTutorialAsCompleted()
+        {
+            selectedProfile.TutorialCompleted = true;
+            SerializeProfiles();
+        }
+
         public void Update()
         {
             if (Input.GetKeyDown(KeyCode.N))
