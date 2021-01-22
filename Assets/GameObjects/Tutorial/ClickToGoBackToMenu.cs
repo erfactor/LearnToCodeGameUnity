@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Profiles;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -26,6 +27,7 @@ namespace Tutorial
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            GameObject.Find("ProfileManager").GetComponent<ProfileManager>().MarkTutorialAsCompleted();
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(2);
         }
 
