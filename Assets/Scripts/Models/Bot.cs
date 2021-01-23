@@ -1,5 +1,8 @@
 ﻿using Animators;
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Models
 {
@@ -18,7 +21,9 @@ namespace Models
             set
             {
                 _color = value;
-                Animator.transform.Find("Body").GetComponent<SpriteRenderer>().color = _color;
+                Animator.transform.Find("Head copy").GetComponent<SpriteRenderer>().color = _color;
+                var list = Animator.transform.GetComponentsInChildren<SpriteRenderer>().ToList();
+                list.ForEach(x => x.color = _color);
             }
         }
 
