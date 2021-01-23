@@ -3,6 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -506,16 +509,17 @@ namespace UI
 
             HandlePostDrag(lineToInsert, eventData);
             InsertJumpLabelInstructionIfNeeded(lineToInsert, index, parentLine);
-            ActivateDropdownIfNeeded(lineToInsert);
+            ActivateDropdownIfNeeded(lineToInsert, eventData);
 
             Pin();           
         }
 
-        public void ActivateDropdownIfNeeded(CodeLine line)
+        public void ActivateDropdownIfNeeded(CodeLine line, PointerEventData eventData)
         {
-            var dropdown = line.instruction.transform.Find("Dropdown");
+            var dropdown = line.instruction.transform.Find("Dropdown")?.GetComponent<Dropdown>();
             if (dropdown == null) return;
-            dropdown.GetComponent<Dropdown>().enabled = true;
+            Debug.Log("Repairing a dropdown...");
+            dropdown.GetComponent<CanvasGroup>().ignoreParentGroups = true;
         }
 
         private void HandlePostDrag(CodeLine lineToInsert, PointerEventData eventData)
@@ -784,6 +788,8 @@ namespace UI
             {
                 Destroy(draggedObject);
             }
+
+            Rearrange();
         }
 
         public void RemoveUnpinned()

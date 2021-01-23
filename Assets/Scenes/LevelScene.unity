@@ -9039,7 +9039,7 @@ CanvasGroup:
   m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
+  m_IgnoreParentGroups: 1
 --- !u!1 &448851388734753838 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 448851389613548432, guid: 8767416491bb35b42bbe8b3a74bd6424,

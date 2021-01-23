@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 using UI;
+using UnityEngine.UI;
 
 public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
@@ -52,11 +53,19 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
 
         if (codeLineOnCodePanel != null)
         {
+            DisableDropdownIfNeeded(codeLineOnCodePanel);
             eventData.pointerDrag = codeLineOnCodePanel.container;
             codePanel.Unpin(codeLineOnCodePanel);
         }
 
         RaycastManagerScript.SetRaycastBlockingOnInstructionDragged();
+    }
+
+    public void DisableDropdownIfNeeded(CodeLine line)
+    {
+        var dropdown = line.instruction.transform.Find("Dropdown")?.GetComponent<Dropdown>();
+        if (dropdown == null) return;
+        dropdown.GetComponent<CanvasGroup>().ignoreParentGroups = false;
     }
 
     public void OnDrag(PointerEventData eventData)

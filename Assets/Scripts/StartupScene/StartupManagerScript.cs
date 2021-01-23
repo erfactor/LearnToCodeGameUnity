@@ -7,6 +7,7 @@ public class StartupManagerScript : MonoBehaviour
 {
     public TextAsset defaultLevel;
     public TextAsset defaultLevelSolution;
+    public TextAsset defaultHint;
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +25,8 @@ public class StartupManagerScript : MonoBehaviour
             {
                 Number = 1,
                 File = defaultLevel.text,
-                SolutionFile = defaultLevelSolution.text
+                SolutionFile = defaultLevelSolution.text,
+                Hint = defaultHint.text
             };
 
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(3);

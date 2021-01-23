@@ -1444,9 +1444,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bf82136b73e6e545b8a90a4577495a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultLevel: {fileID: 4900000, guid: bfdeaeebc3ceadc4f8ee1bfb12f8eaa0, type: 3}
-  defaultLevelSolution: {fileID: 4900000, guid: 8bf915928dbc74346bb9ec1855a88638,
+  defaultLevel: {fileID: 4900000, guid: eaab7696f4603a848b95f03419dc010d, type: 3}
+  defaultLevelSolution: {fileID: 4900000, guid: 6a1e375f25ed2e14d992a93fc119612d,
     type: 3}
+  defaultHint: {fileID: 4900000, guid: 8f3f44eb09899524bbe682860410ecc4, type: 3}
 --- !u!1 &1574396978
 GameObject:
   m_ObjectHideFlags: 0
