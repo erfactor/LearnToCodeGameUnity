@@ -38,7 +38,7 @@ public class SFXManagerScript : MonoBehaviour
     private void Start()
     {
         audioSources = new List<AudioSource> {audioSource1, audioSource2, audioSource3, audioSource4};
-        musicInScene = new List<AudioClip> { startupMusic, profileMusic, mainMenuMusic, levelMusic};
+        musicInScene = new List<AudioClip> { startupMusic, profileMusic, mainMenuMusic, levelMusic, null, null};
         audioSourceMusic.loop = true;
         UnmuteSound();
         DontDestroyOnLoad(this);
