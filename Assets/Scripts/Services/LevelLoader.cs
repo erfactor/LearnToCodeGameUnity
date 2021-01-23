@@ -370,7 +370,6 @@ namespace Services
             }
 
             _codeExecutionOn = false;
-            //executionIndicatorManager.ClearIndicators();
         }
 
         private void FixBotsPositions()
@@ -428,7 +427,7 @@ namespace Services
         {
             GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>().ClearIndicators();
             _codeExecutionOn = false;
-            StopAllCoroutines();
+            StopCoroutine("InterpretCode");
         }
 
         public void StopAndReload()
