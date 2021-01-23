@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DirectionSelectionWindowScript : MonoBehaviour
+public class DirectionSelectionWindowScript : MonoBehaviour, ISelectionWindow
 {
     public Animator animator;
 
@@ -47,7 +47,7 @@ public class DirectionSelectionWindowScript : MonoBehaviour
         changedDirectionIndicator.GetComponent<Image>().sprite = newSprite;
         changedDirectionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection = direction;
         Destroy(gameObject, 0.5f);
-        RaycastManagerScript.ReleaseFocus();
+        GameObject.Find("SelectorBlocker").GetComponent<SelectorBlocker>().Hide();
     }
 
     public void Show(bool hideCenter)
@@ -67,6 +67,7 @@ public class DirectionSelectionWindowScript : MonoBehaviour
     public void Hide()
     {
         animator.SetTrigger("Hide");
+        RaycastManagerScript.ReleaseFocus();
     }
 
     public static Sprite GetSprite(Direction direction)

@@ -9,12 +9,15 @@ public class ComparisonTypeIndicatorScript : MonoBehaviour, IPointerClickHandler
 
     public ComparedType SelectedComparisonType { get; set; } = ComparedType.Bot;
 
+    SelectorBlocker selectorBlocker;
+
     // Start is called before the first frame update
     void Start()
     {
         comparisonTypeWindow = GameObject.Find("ComparisonTypeSelectionWindow");
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         //Hide();
+        selectorBlocker = GameObject.Find("SelectorBlocker").GetComponent<SelectorBlocker>();
     }
 
     // Update is called once per frame
@@ -42,14 +45,14 @@ public class ComparisonTypeIndicatorScript : MonoBehaviour, IPointerClickHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             RaycastManagerScript.SetFocus();
-
+            
             var selectionPanel = Instantiate(comparisonTypeWindow);
             selectionPanel.transform.SetParent(GameObject.Find("LevelCanvas").transform);
             selectionPanel.transform.localScale = new Vector3(1, 1, 1);
             selectionPanel.transform.position = ClampPosition(transform.position);
 
-
             var selectionPanelScript = selectionPanel.GetComponent<ComparisonTypeSelectionWindowScript>();
+            selectorBlocker.Show(selectionPanelScript);
             selectionPanelScript.changedComparisonIndicator = gameObject;
             selectionPanelScript.Show();
         }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Commands;
 
-public class ComparisonTypeSelectionWindowScript : MonoBehaviour
+public class ComparisonTypeSelectionWindowScript : MonoBehaviour, ISelectionWindow
 {
     public Animator animator;
 
@@ -48,6 +48,7 @@ public class ComparisonTypeSelectionWindowScript : MonoBehaviour
     public void Hide()
     {
         animator.SetTrigger("Hide");
+        RaycastManagerScript.ReleaseFocus();
     }
 
     public void SetSelected(ComparedType type)
@@ -57,7 +58,7 @@ public class ComparisonTypeSelectionWindowScript : MonoBehaviour
         changedComparisonIndicator.GetComponent<Image>().sprite = newSprite;
         changedComparisonIndicator.GetComponent<ComparisonTypeIndicatorScript>().SelectedComparisonType = type;
         Destroy(gameObject, 0.5f);
-        RaycastManagerScript.ReleaseFocus();
+        GameObject.Find("SelectorBlocker").GetComponent<SelectorBlocker>().Hide();
     }
 
     public static Sprite GetSprite(ComparedType type)
