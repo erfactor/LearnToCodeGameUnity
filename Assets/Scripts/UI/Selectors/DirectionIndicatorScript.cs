@@ -48,11 +48,10 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
             selectionPanel.transform.position = transform.position;
 
             var selectionPanelScript = selectionPanel.GetComponent<DirectionSelectionWindowScript>();
-            bool isInMoveDirection = IsParentMoveDirection();
-            selectionPanelScript.Show(isInMoveDirection);
+            selectionPanelScript.Show(IsParentMoveDirection());
             selectionPanelScript.changedDirectionIndicator = gameObject;
         }
-    }
+    }    
 
     private bool IsParentMoveDirection()
     {

@@ -506,8 +506,16 @@ namespace UI
 
             HandlePostDrag(lineToInsert, eventData);
             InsertJumpLabelInstructionIfNeeded(lineToInsert, index, parentLine);
+            ActivateDropdownIfNeeded(lineToInsert);
 
             Pin();           
+        }
+
+        public void ActivateDropdownIfNeeded(CodeLine line)
+        {
+            var dropdown = line.instruction.transform.Find("Dropdown");
+            if (dropdown == null) return;
+            dropdown.GetComponent<Dropdown>().enabled = true;
         }
 
         private void HandlePostDrag(CodeLine lineToInsert, PointerEventData eventData)

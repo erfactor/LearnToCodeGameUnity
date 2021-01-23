@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using UI;
 
-public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     private RectTransform rectTransform;
     private CanvasGroup canvasGroup;
@@ -42,7 +42,6 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         Debug.Log("OnBeginDrag");
         canvasGroup.blocksRaycasts = false;
         canvasGroup.interactable = false;
-        canvasGroup.alpha = 0.8f;
 
         startPosition = transform.position;
 
@@ -50,22 +49,14 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         CodePanel.draggedObject.transform.SetParent(GameObject.Find("UIPanel").transform);
         var codePanel = GameObject.Find("SolutionPanel").GetComponent<CodePanel>();
         var codeLineOnCodePanel = codePanel.GetCorrespondingCodeLine(gameObject);
+
         if (codeLineOnCodePanel != null)
         {
-            codePanel.Unpin(codeLineOnCodePanel);
             eventData.pointerDrag = codeLineOnCodePanel.container;
-            //codePanel.unpinnedCodeline = codePanel.Solution[indexOnCodePanel];
-                        
-            //codePanel.unpinnedCodeline.SetParent(null);
-
-            //codePanel.Unpin(codePanel.unpinnedCodeline);
-            //codePanel.ZipHierarchy(codePanel.unpinnedCodeline);
-            //codePanel.Rearrange();
+            codePanel.Unpin(codeLineOnCodePanel);
         }
 
-        //GameObject.Find("RaycastManager").GetComponent<RaycastManagerScript>().SetRaycastBlockingOnInstructionDragged();
         RaycastManagerScript.SetRaycastBlockingOnInstructionDragged();
-        //CodePanel.SetRaycastBlockingForAllInstructions(false);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -89,15 +80,5 @@ public class DragScript : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDr
         CodePanel.draggedObject = null;
         GameObject.Find("SFXManager").GetComponent<SFXManagerScript>().PlayInstructionDropSound();
         RaycastManagerScript.SetRaycastBlockingAfterInstructionReleased();
-    }
-
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        //GetComponent<Animator>().SetTrigger("Hover");
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        //GetComponent<Animator>().SetTrigger("Unhover");
     }
 }

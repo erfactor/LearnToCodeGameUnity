@@ -55,6 +55,10 @@ public class DirectionSelectionWindowScript : MonoBehaviour
         if (hideCenter)
         {
             transform.Find("Center").gameObject.SetActive(false);
+            transform.Find("DownLeft").gameObject.SetActive(false);
+            transform.Find("DownRight").gameObject.SetActive(false);
+            transform.Find("UpRight").gameObject.SetActive(false);
+            transform.Find("UpLeft").gameObject.SetActive(false);
         }
 
         animator.SetTrigger("Show");

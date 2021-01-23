@@ -46,12 +46,31 @@ public class ComparisonTypeIndicatorScript : MonoBehaviour, IPointerClickHandler
             var selectionPanel = Instantiate(comparisonTypeWindow);
             selectionPanel.transform.SetParent(GameObject.Find("LevelCanvas").transform);
             selectionPanel.transform.localScale = new Vector3(1, 1, 1);
-            selectionPanel.transform.position = transform.position;
+            selectionPanel.transform.position = ClampPosition(transform.position);
 
 
             var selectionPanelScript = selectionPanel.GetComponent<ComparisonTypeSelectionWindowScript>();
             selectionPanelScript.changedComparisonIndicator = gameObject;
             selectionPanelScript.Show();
         }
+    }
+
+    public Vector3 ClampPosition(Vector3 pos)
+    {
+        return new Vector3(ClampXPosition(pos.x), ClampYPosition(pos.y), pos.z);
+    }
+
+    public float ClampXPosition(float xPos)
+    {
+        const float PopUpWindowMaxX = 870;
+        return Mathf.Min(xPos, PopUpWindowMaxX);
+    }
+
+    public float ClampYPosition(float yPos)
+    {
+        const float PopUpWindowMaxY = 390;
+        const float PopUpWindowMinY = -370;
+
+        return Mathf.Clamp(yPos, PopUpWindowMinY, PopUpWindowMaxY);
     }
 }

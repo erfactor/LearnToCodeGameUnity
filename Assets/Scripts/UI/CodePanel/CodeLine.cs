@@ -288,6 +288,14 @@ namespace UI
 
             RecalculateContainer();
             RearrangeChildren();
+
+            //var dropdown = instruction.transform.Find("Dropdown")
+
+            //if (dropdown != null)
+            //{
+            //    var isActivestring = dropdown.gameObject.
+            //    Debug.Log("czy dropdown jest aktywny?");
+            //}
         }
 
         public void RepelUpdate(Vector2 mousePosition)

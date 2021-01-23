@@ -41,7 +41,7 @@ namespace Services
         private Coroutine _gameCoroutine;
         private Board _solution;
         private GameObject _tileLevelParent;
-        private float _animationSpeed = 1;
+        public float animationSpeed = 1;
         private float _animationTime = 1;
         private List<Transform> Tiles => Tileset.Tiles;
         public static string DepthSeparator { get; } = ",";
@@ -335,8 +335,7 @@ namespace Services
                     {
                         if (traversedJumpCommands.Contains(command.NextCommandId))
                         {
-                            Debug.LogWarning("Bot has fallen into an infinite loop.");
-                            executionIndicatorManager.RemoveIndicatorForBot(bot);
+                            Debug.LogWarning("Bot has fallen into an infinite loop.");                            
                             bot.HasFinished = true;
                             break;
                         }
@@ -351,6 +350,10 @@ namespace Services
                         executionIndicatorManager.UpdateIndicator(bot, bot.CommandId);
                         bot.CommandId = command.Execute(_board, bot);
                         print(commands[bot.CommandId]);
+                    }
+                    else
+                    {
+                        executionIndicatorManager.RemoveIndicatorForBot(bot);
                     }
                 }
 
@@ -383,8 +386,8 @@ namespace Services
 
         private void ChangeAnimationSpeed()
         {
-            _animationTime = 1 / _animationSpeed;
-            _board.Bots.ForEach(b => b.Animator.animator.speed = _animationSpeed);
+            _animationTime = 1 / animationSpeed;
+            _board.Bots.ForEach(b => b.Animator.animator.speed = animationSpeed);
         }
 
         public void SetAnimationSpeed(float speed)
@@ -396,7 +399,7 @@ namespace Services
                 {3, 2},
                 {4, 4},
             };
-            _animationSpeed = speedToSpeed[speed];
+            animationSpeed = speedToSpeed[speed];
         }
 
         public bool ShouldDisplayExecutionIndicators()

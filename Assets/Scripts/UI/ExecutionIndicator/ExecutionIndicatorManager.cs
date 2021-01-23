@@ -74,6 +74,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     public void RemoveIndicatorForBot(Bot bot)
     {
+        if (!indicators.ContainsKey(bot)) return;
         var indicator = indicators[bot];
         indicators.Remove(bot);
         indicatorPositions.Remove(bot);
@@ -114,8 +115,8 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     void MoveTowards(GameObject indicator, Vector2 destination)
     {
-        indicator.transform.position = Vector2.Lerp(indicator.transform.position, destination, 0.33f);
-    }
+        indicator.transform.position = Vector2.Lerp(indicator.transform.position, destination, 0.5f);
+    }    
 
     public void UpdateIndicator(Bot bot, int commandId)
     {
@@ -129,7 +130,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
 
     public IEnumerator CoroutineMoveToPosition(GameObject indicator, Vector2 destination)
     {
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < 20; i++)
         {
             MoveTowards(indicator, destination);
             yield return new WaitForFixedUpdate();
