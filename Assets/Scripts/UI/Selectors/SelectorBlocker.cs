@@ -30,6 +30,7 @@ public class SelectorBlocker : MonoBehaviour, IPointerClickHandler
     }
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (windowToClose == null) return;
         windowToClose.Hide();
         Hide();
     }
