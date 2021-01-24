@@ -401,7 +401,8 @@ namespace UI
 
         public List<GameObject> GetAllCodeLineContainersSorted()
         {
-            return GameObject.FindGameObjectsWithTag("Container").OrderByDescending(x => x.transform.position.y).ToList();
+            return GameObject.FindGameObjectsWithTag("Container")
+                .OrderByDescending(container => container.transform.position.y + container.GetComponent<RectTransform>().rect.size.y/2).ToList();
         }
 
         public CodeLine GetCorrespondingCodeLine(GameObject containerOrInstruction)
@@ -412,14 +413,6 @@ namespace UI
         }
 
         public GameObject FillerContainer => GameObject.Find("FillerContainer");
-
-        public Rect GetContainerRect(GameObject container)
-        {
-            var realPosition = container.transform.position;
-            var containerSize = container.GetComponent<RectTransform>().rect.size;
-            Vector2 topLeft = new Vector2(realPosition.x - containerSize.x / 2, realPosition.y + containerSize.y / 2);
-            return new Rect(topLeft, containerSize);
-        }
 
         public int GetIndexToInsertUnderMousePosition(List<GameObject> childInstructions)
         {
@@ -462,10 +455,15 @@ namespace UI
 
             for (int i = allContainers.Count - 1; i >= 0; i--)
             {
+                Debug.Log(i);
                 GameObject container = allContainers[i];
-                if (IsContainerUnpinned(container)) continue; //
+                if (IsContainerUnpinned(container)) continue;
                 var correspondingCodeLine = GetCorrespondingCodeLine(container);
-                if (correspondingCodeLine == null) continue;
+                if (correspondingCodeLine == null)
+                {
+                    Debug.Log("correspondingCodeLine was null");
+                    continue;
+                }
                 if (!InstructionHelper.IsGroupInstruction(correspondingCodeLine.instruction)) continue;
 
                 if (correspondingCodeLine.IsInsideNest(mousePosition))
@@ -474,6 +472,7 @@ namespace UI
                     {
                         correspondingCodeLine.TemporaryCodeLine = unpinnedCodeline ?? fakeSingleLine;
                     }
+                    Debug.Log($"currentContainerIndex: {correspondingCodeLine.InstructionIndex}, {i}");
                     return correspondingCodeLine;
                 }
             }

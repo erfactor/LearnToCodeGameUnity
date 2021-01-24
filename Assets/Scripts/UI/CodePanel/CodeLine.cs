@@ -159,6 +159,7 @@ namespace UI
         {
             if (!InstructionHelper.IsGroupInstruction(instruction)) return;
             nestObject = GameObject.Instantiate(NestPrefab);
+            nestObject.GetComponent<Image>().color = instruction.GetComponent<Image>().color;
             nestObject.transform.SetParent(container.transform);
             nestObject.transform.SetAsFirstSibling();
         }
@@ -411,7 +412,7 @@ namespace UI
 
         public bool IsInsideNest(Vector2 worldMousePosition)
         {
-            if (!InstructionHelper.IsGroupInstruction(instruction)) return false;
+            //if (!InstructionHelper.IsGroupInstruction(instruction)) return false;
 
             var nestSize = nestObject.GetComponent<RectTransform>().rect.size;
             var nestPos = nestObject.transform.position;
@@ -428,17 +429,5 @@ namespace UI
         }
 
         #endregion PHYSICS
-
-        public bool IsLastChild()
-        {
-            if (parent == null) return false;
-            return parent.children.Last() == this;
-        }
-
-        public bool ShouldReturnControlToParent()
-        {
-            return IsLastChild() && InstructionHelper.IsLoopInstruction(parent.instruction);
-        }
-
     }
 }
