@@ -19,7 +19,7 @@ public class ComparisonTypeSelectionWindowScript : MonoBehaviour, ISelectionWind
             comparisonSprites.Add(ComparedType.Direction, Resources.Load<Sprite>("Sprites/UI/Comparison/direction"));
             comparisonSprites.Add(ComparedType.Bot, Resources.Load<Sprite>("Sprites/UI/Comparison/bot"));
             comparisonSprites.Add(ComparedType.Something, Resources.Load<Sprite>("Sprites/UI/Comparison/something"));
-            comparisonSprites.Add(ComparedType.Nothing, Resources.Load<Sprite>("Sprites/UI/Comparison/nothing"));
+            comparisonSprites.Add(ComparedType.Floor, Resources.Load<Sprite>("Sprites/UI/Comparison/nothing"));
             comparisonSprites.Add(ComparedType.Item, Resources.Load<Sprite>("Sprites/UI/Comparison/item"));
             comparisonSprites.Add(ComparedType.Number, Resources.Load<Sprite>("Sprites/UI/Comparison/number"));
             comparisonSprites.Add(ComparedType.Wall, Resources.Load<Sprite>("Sprites/UI/Comparison/wall"));

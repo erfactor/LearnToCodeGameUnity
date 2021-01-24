@@ -1,0 +1,10 @@
+9,9,3
+,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner
+,,edge;,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,edge
+,,edge;,,hole;piece,,tile1;,,tile1;,,tile1;,,tile1;,,tile1;,,hole;,,edge
+,,edge;,,hole;,,tile1;piece,,tile1;,,tile1;,,tile1;,,tile1;,,hole;,,edge
+,,edge;,,hole;,,tile1;,,tile1;piece,,tile1;,,tile1;,,tile1;,,hole;,,edge
+,,edge;,,hole;,,tile1;,,tile1;,,tile1;piece,,tile1;,,tile1;,,hole;,,edge
+,,edge;,,hole;,,tile1;,,tile1;,,tile1;,,tile1;piece,,tile1;,,hole;,,edge
+,,edge;,,hole;,botHead,tile1;,botHead,tile1;,botHead,tile1;,botHead,tile1;,botHead,tile1;,,hole;,,edge
+,,corner;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,edge;,,corner

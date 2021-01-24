@@ -116,9 +116,9 @@ namespace Commands
                         return CompareWithSomething(leftSideField, comparisonSign);
                     }
 
-                case ComparedType.Nothing:
+                case ComparedType.Floor:
                     {
-                        return CompareWithNothing(leftSideField, comparisonSign);
+                        return CompareWithFloor(leftSideField, comparisonSign);
                     }
 
                 case ComparedType.Item:
@@ -168,29 +168,29 @@ namespace Commands
 
             if (comparisonSign == ComparisonSign.Equal)
             {
-                return CompareWithNothing(leftSideField, ComparisonSign.NotEqual);
+                return CompareWithFloor(leftSideField, ComparisonSign.NotEqual);
             }
 
             if (comparisonSign == ComparisonSign.NotEqual)
             {
-                return CompareWithNothing(leftSideField, ComparisonSign.Equal);
+                return CompareWithFloor(leftSideField, ComparisonSign.Equal);
             }
 
             throw new ArgumentException();
         }
 
-        public bool CompareWithNothing(Field leftSideField, ComparisonSign comparisonSign)
+        public bool CompareWithFloor(Field leftSideField, ComparisonSign comparisonSign)
         {
             if (IsRelationSign(comparisonSign)) return false; //how can we say left > nothing?
 
             if (comparisonSign == ComparisonSign.Equal)
             {
-                return leftSideField.IsNothing;
+                return leftSideField.IsEmptyFloor;
             }
 
             if (comparisonSign == ComparisonSign.NotEqual)
             {
-                return !leftSideField.IsNothing;
+                return !leftSideField.IsEmptyFloor;
             }
 
             throw new ArgumentException();
@@ -311,7 +311,7 @@ namespace Commands
     {
         Direction,
         Something,
-        Nothing,
+        Floor,
         Number,
         Item,
         Bot,

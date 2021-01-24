@@ -45,7 +45,7 @@ public class DirectionSelectionWindowScript : MonoBehaviour, ISelectionWindow
         InitializeDirectionSprites();
         var newSprite = GetSprite(direction);
         changedDirectionIndicator.GetComponent<Image>().sprite = newSprite;
-        changedDirectionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection = direction;
+        changedDirectionIndicator.GetComponent<DirectionIndicatorScript>().SelectedDirection = direction;        
         Destroy(gameObject, 0.5f);
         GameObject.Find("SelectorBlocker").GetComponent<SelectorBlocker>().Hide();
     }
@@ -68,6 +68,7 @@ public class DirectionSelectionWindowScript : MonoBehaviour, ISelectionWindow
     {
         animator.SetTrigger("Hide");
         RaycastManagerScript.ReleaseFocus();
+        changedDirectionIndicator.GetComponent<DirectionIndicatorScript>().HasBeenSetManually = true;
     }
 
     public static Sprite GetSprite(Direction direction)

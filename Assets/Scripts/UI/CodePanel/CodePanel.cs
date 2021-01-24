@@ -281,7 +281,7 @@ namespace UI
         {
             yield return new WaitForFixedUpdate();
             yield return CoroutineExpandDirectionIndicator(eventData, directionScript);
-            yield return new WaitUntil(() => directionScript.SelectedDirection != null);
+            yield return new WaitUntil(() => directionScript.HasBeenSetManually == true);
             yield return new WaitForSeconds(0.2f);
             ExpandComparisonTypeIndicator(eventData, comparisonScript);
         }
@@ -758,17 +758,14 @@ namespace UI
         Vector2 FirstChildOffset => new Vector2(-100, -30);
 
         Transform UnpinnedCodeLineParentTransform => GameObject.Find("UIPanel").transform;
-        CodeLine oldUnpinnedCodeLineParent = null;
 
         public void Unpin(CodeLine codeLine)
         {
             unpinnedCodeline = codeLine;
-            oldUnpinnedCodeLineParent = unpinnedCodeline.parent;
             codeLine.SetParent(null);
             RemoveCodeLineFromSolution(codeLine);
             codeLine.container.transform.SetParent(UnpinnedCodeLineParentTransform);
             codeLine.instruction.transform.SetParent(codeLine.container.transform);
-            //Rearrange();
         }
 
         public void Pin()
@@ -797,7 +794,6 @@ namespace UI
             var codeLine = unpinnedCodeline;
             DestroyCodeLine(unpinnedCodeline);
             unpinnedCodeline = null;
-            //Rearrange();
             RemoveDeadJumpInstructions();
         }
 

@@ -15,11 +15,11 @@ namespace Models
             Piece = piece;
         }
 
-        public bool IsNothing
+        public bool IsEmptyFloor
         {
             get
             {
-                return Bot == null && Piece == null;
+                return Bot == null && Piece == null && TileType == TileType.Normal;
             }
         }
 

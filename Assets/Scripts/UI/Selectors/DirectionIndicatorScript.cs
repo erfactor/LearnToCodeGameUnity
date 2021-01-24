@@ -6,7 +6,8 @@ public class DirectionIndicatorScript : MonoBehaviour, IPointerClickHandler
     GameObject directionSelectionWindow;
     CanvasGroup canvasGroup;
 
-    public Direction? SelectedDirection { get; set; } = null;
+    public Direction? SelectedDirection { get; set; } = Direction.Right;
+    public bool HasBeenSetManually { get; set; }
     SelectorBlocker selectorBlocker;
 
     // Start is called before the first frame update
