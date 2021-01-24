@@ -792,12 +792,12 @@ PrefabInstance:
     - target: {fileID: 114203227262763276, guid: 840ad8b7ad2c249179d3bc1e62ace2f2,
         type: 3}
       propertyPath: Height
-      value: 9
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 114203227262763276, guid: 840ad8b7ad2c249179d3bc1e62ace2f2,
         type: 3}
       propertyPath: Width
-      value: 9
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 114203227262763276, guid: 840ad8b7ad2c249179d3bc1e62ace2f2,
         type: 3}

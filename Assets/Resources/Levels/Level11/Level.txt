@@ -1,0 +1,13 @@
+12,12,3
+,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;piece,,tile2;,,hole;,,hole;,,hole
+,,hole;piece,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,tile2;,,hole;,,hole;,,hole
+,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole
+,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole
+,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,hole;,,hole;,,tile2;,,hole;piece,,tile2;,,hole
+,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,hole;piece,,tile2;,,tile2;,,tile2;,,tile2;,,hole
+,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,tile2;,,hole
+,,hole;,,hole;,,tile2;,,tile2;,,tile2;,,tile2;,botHead,tile2;piece,,tile2;,,hole;,,hole;,,tile2;,,hole
+,,hole;,,hole;piece,,tile2;,,hole;,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,tile2;,,hole
+,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;,,tile2;,,hole;,,hole;,,hole;,,tile2;,,hole
+,,hole;piece,,tile2;,botHead,tile2;,,tile2;,,tile2;,,tile2;,botHead,tile2;,,hole;,,tile2;,,tile2;,,tile2;piece,,tile2
+,,hole;,,hole;,,hole;,,hole;,,hole;,,hole;piece,,tile2;,,hole;,,hole;,,hole;,,hole;,,hole
