@@ -347,7 +347,7 @@ namespace Services
 
                     if (!(command is FinishCommand))
                     {
-                        executionIndicatorManager.UpdateIndicator(bot, bot.CommandId);
+                        executionIndicatorManager.UpdateIndicator(bot, bot.CommandId, command);
                         bot.CommandId = command.Execute(_board, bot);
                         print(commands[bot.CommandId]);
                     }

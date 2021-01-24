@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Models;
+using System;
 using System.Collections.Generic;
-using Enumerations;
-using Models;
-using UnityEngine;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Commands
 {
-    public class IfCommand : ICommand
+    public class WhileCommand: ICommand
     {
         public int NextCommandId { get; set; }
         public int TrueCommandId { get; set; }
@@ -15,9 +16,7 @@ namespace Commands
 
         public LogicalExpression logicalExpression;
 
-        
-
-        public IfCommand(int trueCommandId, int falseCommandId, List<Condition> conditions, List<LogicalOperator> logicalOperators)
+        public WhileCommand(int trueCommandId, int falseCommandId, List<Condition> conditions, List<LogicalOperator> logicalOperators)
         {
             NextCommandId = falseCommandId;
             TrueCommandId = trueCommandId;
@@ -26,7 +25,7 @@ namespace Commands
                 conditions = conditions,
                 logicalOperators = logicalOperators
             };
-        }        
+        }
 
         public int Execute(Board board, Bot bot)
         {
@@ -40,6 +39,6 @@ namespace Commands
             {
                 return NextCommandId;
             }
-        }        
-    }   
+        }
+    }
 }

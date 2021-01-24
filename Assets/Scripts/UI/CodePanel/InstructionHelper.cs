@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -62,23 +63,45 @@ namespace UI
         public static bool IsGroupInstruction(GameObject go)
         {
             if (IsIfInstruction(go)) return true; 
+            if (IsWhileInstruction(go)) return true; 
+            if (IsRepeatInstruction(go)) return true;
+            return false;
+        }
+
+        public static bool IsLoopInstruction(GameObject go)
+        {
+            if (IsWhileInstruction(go)) return true;
+            if (IsRepeatInstruction(go)) return true;
+            return false;
+        }
+
+        public static bool IsConditionalInstruction(GameObject go)
+        {
+            if (IsIfInstruction(go)) return true;
+            if (IsWhileInstruction(go)) return true;
             return false;
         }
 
         public static bool IsWhileInstruction(GameObject go)
         {
-            throw new NotImplementedException();
+            return go.GetComponent<WhileInstructionScript>() != null;
         }
 
         public static bool IsRepeatInstruction(GameObject go)
         {
-            throw new NotImplementedException();
+            return go.GetComponent<RepeatInstructionScript>() != null;
         }
 
         public static Direction GetInstructionDirection(GameObject go)
         {
             Direction direction = go.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>().SelectedDirection.Value;
             return direction;
+        }
+
+        public static int GetRepeatTimes(GameObject go)
+        {
+            string text = go.transform.Find("Dropdown").Find("Label").GetComponent<Text>().text;
+            return int.Parse(text);
         }
     }
 }

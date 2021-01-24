@@ -6,12 +6,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UI;
+using Commands;
 
 public class ExecutionIndicatorManager : MonoBehaviour
 {
     LevelLoader levelLoader;
     Dictionary<Bot, GameObject> indicators = new Dictionary<Bot, GameObject>();
     Dictionary<Bot, int> indicatorPositions = new Dictionary<Bot, int>();
+    public Dictionary<ICommand, CodeLine> commandToCodeLineMappings;
 
     public GameObject indicatorPrefab;
 
@@ -118,12 +120,12 @@ public class ExecutionIndicatorManager : MonoBehaviour
         indicator.transform.position = Vector2.Lerp(indicator.transform.position, destination, 0.5f);
     }    
 
-    public void UpdateIndicator(Bot bot, int commandId)
+    public void UpdateIndicator(Bot bot, int commandId, ICommand command)
     {
         indicatorPositions[bot] = commandId;
         var indicatorToUpdate = indicators[bot];
         //cache this list plox
-        var codeLine = panel.AllCodeLines[commandId];
+        var codeLine = commandToCodeLineMappings[command];
         StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(codeLine.instruction, commandId)));
         SortIndicators();
     }

@@ -10,67 +10,7 @@ using UnityEngine.UI;
 namespace UI
 {
     public class CommandHelper
-    {
-        public ICommand GetCommand(List<CodeLine> solution, int currentLine)
-        {
-            var line = solution[currentLine];
-
-            if (InstructionHelper.IsMoveInstruction(line.instruction))
-            {
-                return new MoveCommand(InstructionHelper.GetInstructionDirection(line.instruction), currentLine + 1);
-            }
-
-            if (InstructionHelper.IsPickInstruction(line.instruction))
-            {
-                return new PickCommand(currentLine + 1);
-            }
-
-            if (InstructionHelper.IsPutInstruction(line.instruction))
-            {
-                return new PutCommand(currentLine + 1);
-            }
-
-            if (InstructionHelper.IsAddInstruction(line.instruction))
-            {
-                return new AddCommand(currentLine + 1);
-            }
-
-            if (InstructionHelper.IsSubInstruction(line.instruction))
-            {
-                return new SubCommand(currentLine + 1);
-            }
-
-            if (InstructionHelper.IsDecInstruction(line.instruction))
-            {
-                return new DecCommand(currentLine + 1);
-            }
-
-            if (InstructionHelper.IsIncInstruction(line.instruction))
-            {
-                return new IncCommand(currentLine + 1);
-            }
-
-            if (InstructionHelper.IsJumpInstruction(line.instruction))
-            {
-                if (InstructionHelper.IsJumpInstructionLabel(line.instruction))
-                {
-                    return new JumpCommand(currentLine + 1);
-                }
-
-                int jumpIndex = GetJumpLineNumber(solution, line.instruction);
-                return new JumpCommand(jumpIndex);
-            }
-
-            if (InstructionHelper.IsIfInstruction(line.instruction))
-            {
-                int trueLineNumber = currentLine + 1;
-                int elseLineNumber = currentLine + line.TotalChildrenCount + 1;
-                return new IfCommand(trueLineNumber, elseLineNumber, GetConditions(line), GetLogicalOperators(line));
-            }
-
-            throw new System.Exception("Could not generate a command.");
-        }
-
+    {       
         public List<Condition> GetConditions(CodeLine ifLine)
         {
             var directionIndicator = ifLine.instruction.transform.Find("DirectionIndicator");
@@ -115,33 +55,140 @@ namespace UI
             return new List<LogicalOperator>() { };
         }
 
-        public int GetJumpLineNumber(List<CodeLine> solution, GameObject go)
-        {
-            return GetIndexOnTheList(solution, go.GetComponent<JumpInstructionScript>().bindedInstruction);
-        }
+        private int currentCodeLineNumber;
+        public Dictionary<ICommand, CodeLine> commandToCodeLineMapping;
+        private List<ICommand> allCommands;
 
-        public List<ICommand> GetCommands(List<CodeLine> solution)
-        {
-            List<ICommand> commandList = new List<ICommand>();
+        public List<ICommand> GetCommands(List<CodeLine> rootContainerCodeLines)
+        {           
+            currentCodeLineNumber = 0;
+            commandToCodeLineMapping = new Dictionary<ICommand, CodeLine>();
+            allCommands = new List<ICommand>();
 
-            for (int i = 0; i < solution.Count; i++)
+            foreach(var codeLine in rootContainerCodeLines)
             {
-                var command = GetCommand(solution, i);
-                commandList.Add(command);
+                GenerateCodeForInstruction(codeLine);
             }
 
-            commandList.Add(new FinishCommand());
-            return commandList;
+            RepairJumps();
+            allCommands.Add(new FinishCommand());
+            return allCommands;
         }
 
-        public int GetIndexOnTheList(List<CodeLine> solution, GameObject go)
+        public void GenerateCodeForInstruction(CodeLine line)
         {
-            for (int i = 0; i < solution.Count; i++)
+            if (InstructionHelper.IsMoveInstruction(line.instruction))
             {
-                if (go == solution[i].instruction) return i;
+                var command = new MoveCommand(InstructionHelper.GetInstructionDirection(line.instruction), currentCodeLineNumber + 1);
+                commandToCodeLineMapping.Add(command, line);
+                allCommands.Add(command);
+            }
+            if (InstructionHelper.IsPutInstruction(line.instruction))
+            {
+                var command = new PutCommand(currentCodeLineNumber + 1);
+                commandToCodeLineMapping.Add(command, line);
+                allCommands.Add(command);
+            }
+            if (InstructionHelper.IsPickInstruction(line.instruction))
+            {
+                var command = new PickCommand(currentCodeLineNumber + 1);
+                commandToCodeLineMapping.Add(command, line);
+                allCommands.Add(command);
+            }
+            if (InstructionHelper.IsJumpInstruction(line.instruction))
+            {
+                ICommand command;
+
+                if (InstructionHelper.IsJumpInstructionLabel(line.instruction))
+                {
+                    command = new JumpCommand(currentCodeLineNumber + 1);
+                    allCommands.Add(command);
+                }
+                else
+                {
+                    //this is being set in code later - otherwise forward jumps will not work - see RepairJumps for reference.
+                    command = new JumpCommand(currentCodeLineNumber + 1);
+                    allCommands.Add(command);
+                }
+                commandToCodeLineMapping.Add(command, line);
             }
 
-            return -1;
+            if (InstructionHelper.IsIfInstruction(line.instruction))
+            {
+                int trueLineNumber = currentCodeLineNumber + 1;
+                int elseLineNumber = currentCodeLineNumber + line.TotalChildrenCount + 1;
+                var command = new IfCommand(trueLineNumber, elseLineNumber, GetConditions(line), GetLogicalOperators(line));
+                allCommands.Add(command);
+                commandToCodeLineMapping.Add(command, line);
+                currentCodeLineNumber++;
+                foreach (var child in line.children)
+                {
+                    GenerateCodeForInstruction(child);
+                }
+                command.NextCommandId = currentCodeLineNumber;
+                currentCodeLineNumber--; //this may seem wrong but actually it is not
+            }
+
+            if (InstructionHelper.IsWhileInstruction(line.instruction))
+            {
+                int trueLineNumber = currentCodeLineNumber + 1;
+                int falseLineNumber = currentCodeLineNumber + line.TotalChildrenCount + 1;
+                var command = new WhileCommand(trueLineNumber, falseLineNumber, GetConditions(line), GetLogicalOperators(line));
+                allCommands.Add(command);
+                commandToCodeLineMapping.Add(command, line);
+                currentCodeLineNumber++;
+                foreach (var child in line.children)
+                {
+                    GenerateCodeForInstruction(child);
+                }
+                var loopJumpCommand = new JumpCommand(trueLineNumber - 1);
+                commandToCodeLineMapping.Add(loopJumpCommand, null);
+                command.NextCommandId = currentCodeLineNumber+1;
+                allCommands.Add(loopJumpCommand);
+            }
+
+            if (InstructionHelper.IsRepeatInstruction(line.instruction))
+            {
+                int trueLineNumber = currentCodeLineNumber + 1;
+                int falseLineNumber = currentCodeLineNumber + line.TotalChildrenCount + 1;
+                var command = new RepeatCommand(trueLineNumber, falseLineNumber, InstructionHelper.GetRepeatTimes(line.instruction));
+                allCommands.Add(command);
+                commandToCodeLineMapping.Add(command, line);
+                currentCodeLineNumber++;
+                foreach (var child in line.children)
+                {
+                    GenerateCodeForInstruction(child);
+                }
+                var loopJumpCommand = new JumpCommand(trueLineNumber - 1);
+                commandToCodeLineMapping.Add(loopJumpCommand, null);
+                command.NextCommandId = currentCodeLineNumber;                
+                allCommands.Add(loopJumpCommand);
+            }
+
+            currentCodeLineNumber++;
+        }
+        private void RepairJumps()
+        {
+            for(int i=0; i<allCommands.Count; i++)
+            {
+                var currentCommand = allCommands[i];
+                if (!(currentCommand is JumpCommand)) continue;
+                var jumpCommand = currentCommand as JumpCommand;
+                var jumpCodeLine = commandToCodeLineMapping[jumpCommand];
+                if (jumpCodeLine == null) continue;
+                if (InstructionHelper.IsJumpInstructionLabel(jumpCodeLine.instruction)) continue; //labels does not need to be repaired                
+                var pairedLine = GetPairedLabelCommand(jumpCodeLine);
+                var indexToJump = allCommands.IndexOf(pairedLine);
+                jumpCommand.NextCommandId = indexToJump;
+            }
+        }
+
+        private ICommand GetPairedLabelCommand(CodeLine mainJumpLine)
+        {
+            var jumpScript = mainJumpLine.instruction.GetComponent<JumpInstructionScript>();
+            var paired = jumpScript.bindedInstruction;
+            var pairedCodeLine = commandToCodeLineMapping.Where(x => x.Value.instruction == paired).First();
+            return pairedCodeLine.Key;
         }
     }
 

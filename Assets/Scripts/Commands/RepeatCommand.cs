@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Commands
 {
-    public class IfCommand : ICommand
+    public class RepeatCommand : ICommand
     {
         public int NextCommandId { get; set; }
         public int TrueCommandId { get; set; }
@@ -15,24 +15,20 @@ namespace Commands
 
         public LogicalExpression logicalExpression;
 
-        
+        private int counter;
 
-        public IfCommand(int trueCommandId, int falseCommandId, List<Condition> conditions, List<LogicalOperator> logicalOperators)
+        public RepeatCommand(int trueCommandId, int falseCommandId, int times)
         {
             NextCommandId = falseCommandId;
             TrueCommandId = trueCommandId;
-            logicalExpression = new LogicalExpression()
-            {
-                conditions = conditions,
-                logicalOperators = logicalOperators
-            };
+            counter = times;
         }        
 
         public int Execute(Board board, Bot bot)
         {
-            bool evaluationResult = logicalExpression.Evaluate(board, bot);
+            counter--;
 
-            if (evaluationResult)
+            if (counter >= 0)
             {
                 return TrueCommandId;
             }

@@ -97,7 +97,6 @@ namespace UI
         public float _desiredNestHeight = 30;
         public float DesiredNestHeight => _desiredNestHeight + TemporaryCodeLineHeight;
 
-
         public float RealtimeNestHeight => nestObject.GetComponent<RectTransform>().rect.height;
         
         private float _blockHeight = 60.0f;
@@ -429,6 +428,17 @@ namespace UI
         }
 
         #endregion PHYSICS
+
+        public bool IsLastChild()
+        {
+            if (parent == null) return false;
+            return parent.children.Last() == this;
+        }
+
+        public bool ShouldReturnControlToParent()
+        {
+            return IsLastChild() && InstructionHelper.IsLoopInstruction(parent.instruction);
+        }
 
     }
 }

@@ -144,7 +144,6 @@ namespace UI
             Rearrange();
             UpdateFiller();
         }
-
         
         private void ShowGhostInstruction(GameObject parentObject, List<CodeLine> siblings, int index, Vector2 firstPosition)
         {            
@@ -175,9 +174,7 @@ namespace UI
                     var size = childContainerRT.sizeDelta;
                     var ghostSize = ghostContainerRT.sizeDelta;
                     ghostContainerRT.anchoredPosition = pos + new Vector2(0, +size.y / 2 - ghostSize.y / 2);
-                }
-
-                
+                }                
             }
         }
 
@@ -263,21 +260,21 @@ namespace UI
             }
         }
 
-        private void HandleIfInstructionFirstDrop(PointerEventData eventData)
+        private void HandleConditionalInstructionFirstDrop(PointerEventData eventData)
         {
-            if (!InstructionHelper.IsIfInstruction(eventData.pointerDrag)) return;
+            if (!InstructionHelper.IsConditionalInstruction(eventData.pointerDrag)) return;
             if (unpinnedCodeline != null) return;
 
             ShowDirectionIndicatorIfNeeded(eventData);
             ShowComparisonTypeIndicatorIfNeeded(eventData);
             ShowDropDownIfNeeded(eventData);
-            StartCoroutine(CoroutineHandleIfInstructionDrop(eventData,
+            StartCoroutine(CoroutineHandleConditionalInstructionDrop(eventData,
                 eventData.pointerDrag.transform.Find("DirectionIndicator").GetComponent<DirectionIndicatorScript>(),
                 eventData.pointerDrag.transform.Find("ComparisonIndicator").GetComponent<ComparisonTypeIndicatorScript>()
                 ));
         }
 
-        private IEnumerator CoroutineHandleIfInstructionDrop(PointerEventData eventData, DirectionIndicatorScript directionScript, ComparisonTypeIndicatorScript comparisonScript)
+        private IEnumerator CoroutineHandleConditionalInstructionDrop(PointerEventData eventData, DirectionIndicatorScript directionScript, ComparisonTypeIndicatorScript comparisonScript)
         {
             yield return new WaitForFixedUpdate();
             yield return CoroutineExpandDirectionIndicator(eventData, directionScript);
@@ -339,7 +336,13 @@ namespace UI
         public List<ICommand> GetCommands()
         {
             var commandHelper = new CommandHelper();
-            return commandHelper.GetCommands(AllCodeLines);
+            var commands = commandHelper.GetCommands(Solution);
+            GameObject.Find("ExecutionIndicatorManager").GetComponent<ExecutionIndicatorManager>().commandToCodeLineMappings = commandHelper.commandToCodeLineMapping;
+            for (int i=0; i<commands.Count; i++)
+            {
+                Debug.Log($"{i}. {commands[i].GetType()}, nextCommandId: {commands[i].NextCommandId}");
+            }
+            return commands;
         }
 
         public void OnScroll(PointerEventData eventData)
@@ -525,7 +528,7 @@ namespace UI
         private void HandlePostDrag(CodeLine lineToInsert, PointerEventData eventData)
         {
             HandleMoveInstructionFirstDrop(eventData);
-            HandleIfInstructionFirstDrop(eventData);
+            HandleConditionalInstructionFirstDrop(eventData);
             ShowDirectionIndicatorIfNeeded(eventData);
             ShowComparisonTypeIndicatorIfNeeded(eventData);
             ShowDropDownIfNeeded(eventData);

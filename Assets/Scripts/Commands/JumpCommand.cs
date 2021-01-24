@@ -5,7 +5,7 @@ namespace Commands
     public class JumpCommand : ICommand
     {
         private readonly Direction _direction;
-        public int NextCommandId { get; }
+        public int NextCommandId { get; set; }
 
         public float ExecutionTime { get; } = 0.0f;
 
