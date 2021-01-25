@@ -82,7 +82,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "kliknij tutaj, aby kontynuowa\u0107..."
+  m_Text: "kliknij <b><color=green>tutaj</color></b>, aby kontynuowa\u0107..."
 --- !u!114 &679782363378019955
 MonoBehaviour:
   m_ObjectHideFlags: 0
