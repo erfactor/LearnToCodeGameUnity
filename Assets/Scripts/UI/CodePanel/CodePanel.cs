@@ -801,6 +801,11 @@ namespace UI
 
         public void DestroyCodeLine(CodeLine line)
         {
+            if (InstructionHelper.IsJumpInstruction(line.instruction))
+            {
+                var arrow = line.instruction.GetComponent<JumpInstructionScript>().arrow;
+                Destroy(arrow);
+            }
             DestroyImmediate(line.instruction);
             DestroyImmediate(line.container);
         }

@@ -288,14 +288,6 @@ namespace UI
 
             RecalculateContainer();
             RearrangeChildren();
-
-            //var dropdown = instruction.transform.Find("Dropdown")
-
-            //if (dropdown != null)
-            //{
-            //    var isActivestring = dropdown.gameObject.
-            //    Debug.Log("czy dropdown jest aktywny?");
-            //}
         }
 
         public void RepelUpdate(Vector2 mousePosition)
@@ -338,12 +330,12 @@ namespace UI
 
         public void UpdateArrowIfNeeded()
         {
-            if (InstructionHelper.IsJumpInstruction(instruction))
-            {
-                if (instruction.GetComponent<JumpInstructionScript>().arrow == null) Debug.Log("Null at arrow");
-                if (instruction.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");
-                instruction.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>().UpdateCurve();
-            }
+            //if (InstructionHelper.IsJumpInstruction(instruction))
+            //{
+            //    if (instruction.GetComponent<JumpInstructionScript>().arrow == null) Debug.Log("Null at arrow");
+            //    if (instruction.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>() == null) Debug.Log("Null at arrow script");
+            //    instruction.GetComponent<JumpInstructionScript>().arrow.GetComponent<JumpInstructionArrow>().UpdateCurve();
+            //}
         }
 
         public void UpdateReturnPhysics()
