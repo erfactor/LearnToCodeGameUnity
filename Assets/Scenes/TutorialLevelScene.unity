@@ -458,8 +458,8 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "Na razie nie b\u0119dzie nam potrzebna, wi\u0119c j\u0105 st\u0105d
-        zabior\u0119."
+      value: But for now it would cause unnecessary distraction, so let's hide it
+        for a while.
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -519,12 +519,12 @@ PrefabInstance:
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2238
+      value: 2230
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 552
+      value: 554.75
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -534,7 +534,7 @@ PrefabInstance:
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 78.07922
+      value: 94.7193
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -1675,8 +1675,8 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "Gratulacje! Uda\u0142o ci si\u0119 uko\u0144czy\u0107 tutorial!\n\nPowodzenia
-        w rozwi\u0105zywaniu poziom\xF3w!"
+      value: "That's all. \n\nNow you know the basics - let's dive straight into
+        coding.\n\nGood luck with the levels!"
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -1741,7 +1741,7 @@ PrefabInstance:
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 284.8
+      value: 199
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -1811,9 +1811,11 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "Masz do dyspozycji trzy oddzielne panele z rozwi\u0105zaniem.\n\nMo\u017Cesz
-        prze\u0142\u0105cza\u0107 si\u0119 pomi\u0119dzy nimi, je\u015Bli zajdzie
-        taka potrzeba."
+      value: 'You have three different solutions that are completely independent.
+
+
+        You
+        can switch between them if you need to do so.'
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -2199,7 +2201,7 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: Witaj w tutorialu do gry Learn To Code!
+      value: Welcome to the tutorial!
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -2348,8 +2350,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -404, y: -134}
-  m_SizeDelta: {x: 1117.2197, y: 433.0698}
+  m_AnchoredPosition: {x: -405.9, y: -166.4}
+  m_SizeDelta: {x: 987.7971, y: 368.35843}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &234076863
 MonoBehaviour:
@@ -2647,10 +2649,16 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "Tutaj znajduj\u0105 si\u0119 przyciski do kontroli rozwi\u0105zania.\n\nPami\u0119taj,
-        \u017Ce podczas wykonywania kodu nie mo\u017Cesz zmienia\u0107 rozwi\u0105zania.
-        \n\nAby m\xF3c ponownie modyfikowa\u0107 kod, zatrzymaj jego wykonywanie
-        przyciskiem STOP."
+      value: 'Here is the control panel. Those buttons are used to control the command
+        execution.
+
+
+        Remember: you cannot modify the solution or switch them
+        if the code is being executed.
+
+
+        To be able to modify it again, you
+        have to press the STOP button (PAUSE is not enough).'
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -2977,8 +2985,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -214, y: -422}
-  m_SizeDelta: {x: 300, y: 120.730804}
+  m_AnchoredPosition: {x: -163, y: -401}
+  m_SizeDelta: {x: 300, y: 73.793076}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &285721432
 MonoBehaviour:
@@ -3439,7 +3447,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Zmiana tempa animacji
+  m_Text: Change speed
 --- !u!222 &342241291
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3610,8 +3618,11 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "To jest bank instrukcji.\nNie martw si\u0119, jest ich na tyle du\u017Co
-        \u017Ce na pewno starczy na napisanie ka\u017Cdego rozwi\u0105zania."
+      value: 'This is the instruction bank.
+
+
+        You can use every instruction
+        as many times as you want, so don''t worry about limited quantity.'
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -3998,7 +4009,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Start/Pauza
+  m_Text: Start/Pause
 --- !u!222 &412487395
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4636,7 +4647,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &550659750
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4653,8 +4664,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -892, y: -77.86}
-  m_SizeDelta: {x: 1003.42664, y: 481.8383}
+  m_AnchoredPosition: {x: -891.1, y: -77.86}
+  m_SizeDelta: {x: 1031.16, y: 481.8383}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &550659751
 MonoBehaviour:
@@ -5817,7 +5828,7 @@ PrefabInstance:
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -99.997
+      value: -126
       objectReference: {fileID: 0}
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
@@ -9382,8 +9393,8 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "To jest plansza gry. Tutaj znajduj\u0105 si\u0119 wszystkie obiekty
-        gry."
+      value: This is the board - a playground, where bots will  move, analyze the
+        surroundings or interact with objects - by executing your code.
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -9443,22 +9454,22 @@ PrefabInstance:
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2215
+      value: 2235.5
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 547.7996
+      value: 561.2
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1085.4634
+      value: 1191.1401
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 78.07922
+      value: 103.45535
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -9688,10 +9699,19 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "T\u0119 plansz\u0119 nazywamy rozwi\u0105zaniem.\nTutaj uk\u0142ada
-        si\u0119 kod kt\xF3ry b\u0119d\u0105 wykonywa\u0107 boty na planszy.\n\nAby
-        doda\u0107 instrukcj\u0119 do rozwi\u0105zania, przeci\u0105gnij j\u0105
-        z banku.\n\nPami\u0119taj: wszystkie boty wykonuj\u0105 ten sam kod!"
+      value: 'This is the solution.
+
+
+        Here you can place your instructions
+        that the bots will execute.
+
+
+        To add an instruction to the solution,
+        simply drag it from the instruction bank.
+
+
+        Remember: all bots execute
+        the exact same code!'
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -12657,8 +12677,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 270.03, y: 155}
-  m_SizeDelta: {x: 350.06433, y: 120.730804}
+  m_AnchoredPosition: {x: 222, y: 155}
+  m_SizeDelta: {x: 254.09106, y: 120.730804}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1590686261
 MonoBehaviour:
@@ -12783,8 +12803,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2230, y: 511.09998}
-  m_SizeDelta: {x: 1117.2197, y: 159.92426}
+  m_AnchoredPosition: {x: 2230, y: 516.6}
+  m_SizeDelta: {x: 1117.2197, y: 171.01764}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1614476875
 MonoBehaviour:
@@ -13307,7 +13327,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Wykonaj nast\u0119pn\u0105 instrukcj\u0119"
+  m_Text: Execute next instruction
 --- !u!222 &1657225729
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13401,8 +13421,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2217, y: 521.76}
-  m_SizeDelta: {x: 1117.2197, y: 159.92426}
+  m_AnchoredPosition: {x: 2235.5, y: 527.4}
+  m_SizeDelta: {x: 1191.1484, y: 171.01752}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1677512634
 MonoBehaviour:
@@ -13635,8 +13655,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1132, y: 58.6}
-  m_SizeDelta: {x: 1117.2197, y: 433.0698}
+  m_AnchoredPosition: {x: -1132, y: 78}
+  m_SizeDelta: {x: 1117.2197, y: 516.27}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1795119668
 MonoBehaviour:
@@ -13695,10 +13715,19 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "Po lewej stronie s\u0105 przyciski menu.\n\nPrzycisk ze znakiem zapytania
-        wysuwa panel, na kt\xF3rym widnieje, jak wygl\u0105da poprawna plansza.\n\nW
-        okienku z czarnym obwodem cz\u0119sto znajduj\u0105 si\u0119 warto\u015Bciowe
-        wskaz\xF3wki - warto si\u0119 z nimi zapozna\u0107."
+      value: 'The three yellow buttons are: (from left to right)
+
+        Back to
+        Main Menu
+
+        Sound On/Off
+
+        Show Solution Board
+
+
+        The
+        big box contains useful information - be sure to its contents as it can really
+        make a difference!'
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -14015,8 +14044,8 @@ PrefabInstance:
     - target: {fileID: 3222611282141099173, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
       propertyPath: m_Text
-      value: "Zacznijmy od wyt\u0142umaczenia, co tu si\u0119 tak naprawd\u0119 robi
-        i co do czego s\u0142u\u017Cy."
+      value: Here you will learn every bit of the user interface - how it works and
+        when to use it.
       objectReference: {fileID: 0}
     - target: {fileID: 3222611282141099175, guid: 5b96373cbe17bb7468730878194a0ee2,
         type: 3}
@@ -15212,7 +15241,7 @@ PrefabInstance:
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 486
+      value: 469.34
       objectReference: {fileID: 0}
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
@@ -16699,7 +16728,7 @@ PrefabInstance:
     - target: {fileID: 5514376902600672229, guid: 60bea018076b22444bebdbb66972b379,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60bea018076b22444bebdbb66972b379, type: 3}
@@ -16796,8 +16825,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "kliknij <b><color=green>tutaj</color></b>, aby wr\xF3ci\u0107 do menu
-    g\u0142\xF3wnego."
+  m_Text: click <b><color=green>here</color></b>, to go back to main menu...
 --- !u!1 &5334142105724985370
 GameObject:
   m_ObjectHideFlags: 0
@@ -16928,12 +16956,12 @@ PrefabInstance:
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 2176
+      value: 2269.7
       objectReference: {fileID: 0}
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 480
+      value: 480.09
       objectReference: {fileID: 0}
     - target: {fileID: 4672956907142512625, guid: e3e64cbfd463b594cb5f28db296c1798,
         type: 3}
