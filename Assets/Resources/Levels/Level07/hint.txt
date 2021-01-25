@@ -1,4 +1,1 @@
-Those yellow blocks are called pieces.
-Bots can either: pick up or put down a piece.
-You received two new commands: pick and put.
-Use them to drag all the pieces from left to right.
+Use If commands to check bot's surroundings for holes!. If you find one, try to change direction of bot's movement. And don't forget to pick up pieces when you finally step on them.

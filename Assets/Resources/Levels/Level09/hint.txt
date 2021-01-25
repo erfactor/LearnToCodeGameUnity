@@ -1,1 +1,2 @@
-dasdasdasdasd
+Firstly, let first line of bots pass the holes, because they can't go all at once. Then make the second line of bots follow the first, and remember to place them correctly at the end.
+Use debugger to help you see exactly what's happening.

@@ -1,1 +1,1 @@
-dasdasdasdasd
+This level is very similar to level 5. Split your task into three parts: 1. Move all bots to the bottom of the board, picking up the pieces along. 2. Place pieces crosswise. 3. Make your way to the top of the board.

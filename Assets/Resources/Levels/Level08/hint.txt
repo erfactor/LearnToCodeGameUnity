@@ -1,4 +1,1 @@
-Those yellow blocks are called pieces.
-Bots can either: pick up or put down a piece.
-You received two new commands: pick and put.
-Use them to drag all the pieces from left to right.
+There are many solutions to this problem, but probably the simplest one would be to move your bots around the edges of the board.

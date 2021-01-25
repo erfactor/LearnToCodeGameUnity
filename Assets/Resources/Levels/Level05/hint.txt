@@ -1,5 +1,1 @@
-this is the test hint
-it will be replaced
-maybe 
-someday
-or not
+Place pieces crosswise!. It's not as hard as you think. Make sure to act upon another bot's position relative to yours. And as you can see, some bots hug the walls while other don't

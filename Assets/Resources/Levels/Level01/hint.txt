@@ -1,3 +1,4 @@
-Twoim zadaniem jest przemieścić wszystkie boty z lewej strony do prawej strony.
-Do poruszania botami służy komenda MOVE.
-Przeciągnij ją na panel po prawej, a następnie wybierz kierunek, w którym ma poruszyć się bot.
+Your task is to move all the bots from left to right.
+The MOVE command is used to move the bots.
+Drag it to the panel on the right, and then select the direction you want the bot to move.
+Ah, and don't forget about JUMP command.

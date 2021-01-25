@@ -1,5 +1,1 @@
-this is the test hint
-it will be replaced
-maybe 
-someday
-or not
+Make bots change corners of the board! Make use of If command. It may be helpful for bots to check the position of the wall.
