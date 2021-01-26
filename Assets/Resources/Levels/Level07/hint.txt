@@ -1,1 +1,4 @@
-Use If commands to check bot's surroundings for holes!. If you find one, try to change direction of bot's movement. And don't forget to pick up pieces when you finally step on them.
+Ugh! More holes!
+Use If commands to check bot's surroundings for holes!
+If you find one, try to change direction of bot's movement. 
+And don't forget to pick up pieces when you finally step on them.

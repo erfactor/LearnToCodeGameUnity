@@ -1,3 +1,4 @@
 This task is a special mission.
 See those holes down there? We normally try to avoid them.
-To find out why, try climbing them with each of the bots. Don't forget to take pieces with you.
+To find out why, try climbing them with each of the bots. 
+Don't forget to take pieces with you!

@@ -1,1 +1,4 @@
-This level is quite simple despite how it looks. Just make sure to go in certain direction whenever you find a piece around bot and you're good to go. And don't forget to stop moving before last hole.
+Ah, finally, the labirynth!
+This level is quite simple despite how it looks. 
+Just make sure to go in certain direction whenever you find a piece around bot and you're good to go. 
+And don't forget to stop moving before last hole.

@@ -1,1 +1,4 @@
-Unzip those pieces!. Firstly, think about what should one bot do to place first piece into right position. Then think about what second bot can do with this information. Follow this flow of logic and you'll quickly find solution :).
+Unzip those pieces! 
+Up, down, up, down, up, down.
+Click the ? button to see how the level should look like.
+Tip: what makes the letfmost bot special?

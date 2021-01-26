@@ -1,1 +1,3 @@
-There are many solutions to this problem, but probably the simplest one would be to move your bots around the edges of the board.
+There are many solutions to this problem.
+Probably the simplest one would be to move your bots around the edges of the board.
+Clockwise or counter-clockwise - does not matter. Or does it? Find out by yourself.
