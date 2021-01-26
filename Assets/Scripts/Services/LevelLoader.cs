@@ -10,6 +10,7 @@ using Enumerations;
 using Models;
 using Packages._2DTileMapLevelEditor.Scripts;
 using Profiles;
+using UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
@@ -411,16 +412,26 @@ namespace Services
             _commandsToExecuteCount = 0;
         }
 
-        public void StartExecution(List<ICommand> commands)
+        public void StartExecution()
         {
             _commandsToExecuteCount = int.MaxValue;
-            if (!_codeExecutionOn) StartCoroutine("InterpretCode", commands);
+            if (!_codeExecutionOn)
+            {
+                var commands = GameObject.Find("SolutionPanel").GetComponent<CodePanel>().GetCommands();
+                StartCoroutine("InterpretCode", commands);
+            }
         }
 
-        public void StepOnce(List<ICommand> commands)
+        public void StepOnce()
         {
             _commandsToExecuteCount = 1;
-            if (!_codeExecutionOn) StartCoroutine("InterpretCode", commands);
+
+            if (!_codeExecutionOn)
+            {
+                var commands = GameObject.Find("SolutionPanel").GetComponent<CodePanel>().GetCommands();
+                StartCoroutine("InterpretCode", commands);
+            }
+
         }
 
         public void StopExecution()

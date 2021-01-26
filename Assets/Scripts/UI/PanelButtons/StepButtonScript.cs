@@ -16,8 +16,8 @@ namespace UI.PanelButtons
         public void OnPointerClick(PointerEventData eventData)
         {
             _stopButton.SetButtonActive();
-            var commands = GameObject.Find("SolutionPanel").GetComponent<CodePanel>().GetCommands();
-            GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StepOnce(commands);
+            
+            GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StepOnce();
         }
     }
 }

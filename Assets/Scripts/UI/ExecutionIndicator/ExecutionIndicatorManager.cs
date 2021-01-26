@@ -124,7 +124,6 @@ public class ExecutionIndicatorManager : MonoBehaviour
     {
         indicatorPositions[bot] = commandId;
         var indicatorToUpdate = indicators[bot];
-        //cache this list plox
         var codeLine = commandToCodeLineMappings[command];
         StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(codeLine.instruction, commandId)));
         SortIndicators();

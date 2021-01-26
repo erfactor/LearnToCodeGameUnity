@@ -29,8 +29,7 @@ namespace UI.PanelButtons
                 RaycastManagerScript.SetRaycastBlockingOnCodeExecutionStart();
                 GetComponent<Image>().overrideSprite = PauseButton;
                 _stopButton.SetButtonActive();
-                var commands = GameObject.Find("SolutionPanel").GetComponent<CodePanel>().GetCommands();
-                GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StartExecution(commands);
+                GameObject.Find("LevelLoader").GetComponent<LevelLoader>().StartExecution();
                 _isGameOn = true;
             }
         }
