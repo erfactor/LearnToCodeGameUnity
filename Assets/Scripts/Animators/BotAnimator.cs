@@ -27,19 +27,6 @@ namespace Animators
             _tileLevel = GameObject.Find("TileLevel").transform.Find("Layer 1").transform;
         }
 
-        private void Update()
-        {
-            var moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-                animator.SetTrigger("Up");
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-                animator.SetTrigger("Down");
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-                animator.SetTrigger("Left");
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-                animator.SetTrigger("Right");
-        }
-
         public void Move(Direction direction)
         {
             animator.SetTrigger(direction.ToString());
