@@ -93,6 +93,14 @@ namespace Menu
 
         public void PlayTutorial()
         {
+            LevelLoader.Level = new Level
+            {
+                Number = levelIndex,
+                Hint = hint.text,
+                File = level.text,
+                SolutionFile = levelSolution.text
+            };
+
             GameObject.Find("AnimationPanel").GetComponent<AnimationPanel>().ChangeScene(4);
         }
 
