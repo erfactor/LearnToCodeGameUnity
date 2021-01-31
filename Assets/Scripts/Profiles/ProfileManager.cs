@@ -152,13 +152,5 @@ namespace Profiles
             selectedProfile.TutorialCompleted = true;
             SerializeProfiles();
         }
-
-        public void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.N))
-            {
-                UnlockNextLevel();
-            }
-        }
     }
 }
