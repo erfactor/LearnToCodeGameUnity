@@ -45,7 +45,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
         foreach (var bot in bots)
         {
             if (indicators.ContainsKey(bot)) continue;
-            var indicator = Instantiate(GameObject.Find("ExecutionIndicator"), panel.transform, true);
+            var indicator = Instantiate(GameObject.Find("ExecutionIndicator"), panel.transform.Find("RootContainer"), true);
             indicator.GetComponent<Image>().color = bot.Color;
             indicators.Add(bot, indicator);
             indicatorPositions.Add(bot, startingPosition);
@@ -108,12 +108,7 @@ public class ExecutionIndicatorManager : MonoBehaviour
         }
     }
 
-    Vector2 GetPositionForIndicator(GameObject instruction, int commandId)
-    {
-        Vector2 indicatorOffset = new Vector2(-instruction.GetComponent<RectTransform>().sizeDelta.x/2 - 10, 0);
-        Vector2 instructionPosition = instruction.transform.position;
-        return instructionPosition + indicatorOffset + GetIndicatorYOffset(commandId);
-    }
+    
 
     void MoveTowards(GameObject indicator, Vector2 destination)
     {
@@ -125,25 +120,34 @@ public class ExecutionIndicatorManager : MonoBehaviour
         indicatorPositions[bot] = commandId;
         var indicatorToUpdate = indicators[bot];
         var codeLine = commandToCodeLineMappings[command];
-        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, GetPositionForIndicator(codeLine.instruction, commandId)));
+        indicatorToUpdate.transform.SetParent(codeLine.instruction.transform, true);
+        StartCoroutine(CoroutineMoveToPosition(indicatorToUpdate, codeLine.instruction, commandId, bot));
         SortIndicators();
     }
 
-    public IEnumerator CoroutineMoveToPosition(GameObject indicator, Vector2 destination)
+    public IEnumerator CoroutineMoveToPosition(GameObject indicator, GameObject instruction, int commandId, Bot bot)
     {
         for (int i = 0; i < 20; i++)
         {
-            MoveTowards(indicator, destination);
+            var desiredPosition = GetPositionForIndicator(instruction, commandId, bot);
+            MoveTowards(indicator, desiredPosition);
             yield return new WaitForFixedUpdate();
         }
 
         yield break;
     }
-
-    public Vector2 GetIndicatorYOffset(int commandId)
+    Vector2 GetPositionForIndicator(GameObject instruction, int commandId, Bot bot)
     {
-        int stackSize = indicatorPositions.Where(x => x.Value == commandId).Count() - 1;
-        switch (stackSize)
+        Vector2 indicatorOffset = new Vector2(-instruction.GetComponent<RectTransform>().sizeDelta.x / 2 - 10, 0);
+        Vector2 instructionPosition = instruction.transform.position;
+        return instructionPosition + indicatorOffset + GetIndicatorYOffset(commandId, bot);
+    }
+
+    public Vector2 GetIndicatorYOffset(int commandId, Bot bot)
+    {
+        var botsOnThisId = indicatorPositions.Where(x => x.Value == commandId).Select(x => x.Key).ToList();
+        var index = botsOnThisId.IndexOf(bot);
+        switch (index)
         {
             case 0: return new Vector2(0, 0);
             case 1: return new Vector2(0, -YSpacing);

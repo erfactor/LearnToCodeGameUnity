@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class CodePanel : MonoBehaviour, IDropHandler, IScrollHandler
+    public class CodePanel : MonoBehaviour, IDropHandler//, IScrollHandler
     {
         private float ScrollMultiplier = 5;
 
@@ -345,14 +345,16 @@ namespace UI
             return commands;
         }
 
-        public void OnScroll(PointerEventData eventData)
+        public void HandleScrollInput()
         {
-            ApplyScroll(eventData);
+            var scrollChange = Input.mouseScrollDelta;
+            ApplyScroll(scrollChange);
         }
 
-        private void ApplyScroll(PointerEventData eventData)
+        internal void ApplyScroll(Vector2 scrollDelta)
         {
-            scrollVelocity += -eventData.scrollDelta.y * ScrollMultiplier;
+            Debug.Log("ApplyScroll");
+            scrollVelocity += -scrollDelta.y * ScrollMultiplier;
         }
 
         private const float scrollFrameDecay = 0.15f;
@@ -361,6 +363,7 @@ namespace UI
 
         public void UpdateScroll()
         {
+            HandleScrollInput();
             var scrollVelocitySign = Mathf.Sign(scrollVelocity);
             scrollVelocity = scrollVelocitySign * Mathf.Max(0, Mathf.Abs(scrollVelocity) - scrollFrameDecay);
             scrollY += scrollVelocity;
