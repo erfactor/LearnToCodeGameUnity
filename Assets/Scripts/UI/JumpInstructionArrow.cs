@@ -52,11 +52,10 @@ public class JumpInstructionArrow : MonoBehaviour
         }        
 
         var line = GameObject.Instantiate(GameObject.Find("ArrowLine"));
-        //line.transform.SetParent(this.transform);
+        line.transform.SetParent(GameObject.Find("SolutionPanel").transform);
         lineRenderer = line.GetComponent<LineRenderer>();
         lineRenderer.positionCount = CurveLength * 2;
         lineObject = line;
-        //lineRenderer.startColor = lineRenderer.endColor = lineObject.GetComponent<SpriteRenderer>().color;
     }
 
     public void UpdateImageCurve()
@@ -100,7 +99,7 @@ public class JumpInstructionArrow : MonoBehaviour
     {
         Vector2 headingVector = Heading1 - Heading2;
         float angle = Mathf.Atan2(headingVector.y, headingVector.x);
-        lineObject.transform.position = Heading1;
         lineObject.transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * angle);
+        lineObject.transform.position = Heading1;
     }
 }
