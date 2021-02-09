@@ -236,7 +236,8 @@ namespace Services
             var sr = t.GetComponent<SpriteRenderer>();
             if (sr != null)
             {
-                sr.sortingOrder += 20;
+                sr.sortingOrder += 2000;
+                sr.sortingLayerName = "UI";
             }
             for(int i=0; i<t.childCount; i++)
             {
