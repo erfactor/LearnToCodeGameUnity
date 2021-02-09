@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SFXManagerScript : MonoBehaviour
 {
+    private const float MusicVolumeMultiplier = 0.5f;
+
     public AudioClip unlockedLevelClick;
     public AudioClip lockedLevelClick;
     public AudioClip returnClip;
@@ -42,6 +44,7 @@ public class SFXManagerScript : MonoBehaviour
         audioSourceMusic.loop = true;
         UnmuteSound();
         DontDestroyOnLoad(this);
+        audioSourceMusic.volume = MusicVolumeMultiplier;
     }
 
     private AudioSource GetFreeAudioSource()
@@ -95,10 +98,10 @@ public class SFXManagerScript : MonoBehaviour
 
     private IEnumerator CoroutineLevelCompletedSound()
     {
-        yield return CoroutineLowerMusicVolumeOverTime(10);
+        yield return CoroutineLowerMusicVolumeOverTime(20);
         InternalPlaySound(levelCompleted);
         yield return new WaitForSeconds(2.0f);
-        yield return CoroutineRaiseMusicVolumeOverTime(10);
+        yield return CoroutineRaiseMusicVolumeOverTime(20);
     }
 
     public void MuteSound()
@@ -112,7 +115,7 @@ public class SFXManagerScript : MonoBehaviour
     public void UnmuteSound()
     {
         SoundMuted = false;
-        foreach (var v in audioSources) v.volume = 1.0f;
+        foreach (var v in audioSources) v.volume = 1.0f * MusicVolumeMultiplier;
         RaiseMusicVolumeOverTime();
     }
 
@@ -122,11 +125,11 @@ public class SFXManagerScript : MonoBehaviour
         StartCoroutine(CoroutineLowerMusicVolumeOverTime());
     }
 
-    IEnumerator CoroutineLowerMusicVolumeOverTime(int step = 5)
+    IEnumerator CoroutineLowerMusicVolumeOverTime(int step = 20)
     {
         for(int i=100; i>=0; i -= step)
         {
-            float newVolume = i / 100.0f;
+            float newVolume = i / 100.0f * MusicVolumeMultiplier;
             if (newVolume > audioSourceMusic.volume) continue;
             audioSourceMusic.volume = newVolume;
             yield return new WaitForFixedUpdate();
@@ -141,12 +144,12 @@ public class SFXManagerScript : MonoBehaviour
         StartCoroutine(CoroutineRaiseMusicVolumeOverTime());
     }
 
-    IEnumerator CoroutineRaiseMusicVolumeOverTime(int step = 5)
+    IEnumerator CoroutineRaiseMusicVolumeOverTime(int step = 20)
     {
         if (SoundMuted) yield break;
         for (int i = 0; i <= 100; i += step)
         {
-            float newVolume = i / 100.0f;
+            float newVolume = i / 100.0f * MusicVolumeMultiplier;
             if (newVolume < audioSourceMusic.volume) continue;
             audioSourceMusic.volume = newVolume;
             yield return new WaitForFixedUpdate();
