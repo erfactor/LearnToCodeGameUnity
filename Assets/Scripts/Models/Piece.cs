@@ -25,7 +25,7 @@ namespace Models
             set
             {
                 _number = value;
-                if (PieceTransform != null) PieceTransform.GetComponent<PieceText>().Text = value.ToString();
+                if (PieceTransform != null) PieceTransform.GetComponent<PieceText>().Text = ""; //value.ToString();
             }
         }
     }
